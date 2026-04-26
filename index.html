@@ -654,7 +654,6 @@
             <div class="navbar-tabs">
                 <button class="tab-btn" onclick="switchTab(event, 'sucursales')">SUCURSALES</button>
                 <button class="tab-btn" onclick="switchTab(event, 'usuarios')">USUARIOS</button>
-                <button class="tab-btn" onclick="switchTab(event, 'actividad')">ACTIVIDAD</button>
             </div>
             <div class="user-menu-container">
                 <button class="logout-btn" onclick="toggleUserMenu(event)">⋮</button>
@@ -762,13 +761,7 @@
                         </div>
                     </div>
 
-                    <!-- Gráfica de Actividad -->
-                    <div class="dashboard-card" style="padding: 20px; min-height: 400px; display: flex; flex-direction: column;">
-                        <h3 style="margin-bottom: 15px; flex-shrink: 0;">Actividad Diaria (últimos 7 días)</h3>
-                        <div style="flex-grow: 1; position: relative; min-height: 320px;">
-                            <canvas id="actividadDiariaChart"></canvas>
-                        </div>
-                    </div>
+
 
                     <!-- Gráfica de Estado de Usuarios -->
                     <div class="dashboard-card" style="padding: 20px; min-height: 400px; display: flex; flex-direction: column;">
@@ -861,18 +854,7 @@
                 </div>
             </div>
             
-            <!-- ACTIVIDAD TAB -->
-            <div id="actividad" class="tab-content">
-                <div class="section" style="margin-top: 30px;">
-                    <div class="section-header">
-                        <h3 style="margin: 0;">Usuarios Online</h3>
-                        <button class="btn-agregar" onclick="loadActiveUsers()">🔄 Refrescar</button>
-                    </div>
-                    <div id="onlineUsersContainer" style="padding: 20px;">
-                        <p style="text-align: center; color: #999;">Cargando usuarios online...</p>
-                    </div>
-                </div>
-            </div>
+
             
             <!-- GESTION DE USUARIOS TAB -->
             <div id="GESTION_USUARIOS" class="tab-content">
@@ -1119,7 +1101,6 @@ function handleLogout() {
 // Chart.js instances
 let usuariosPorSucursalChart = null;
 let usuariosPorRolChart = null;
-let actividadDiariaChart = null;
 let estadoUsuariosChart = null;
 
 // Función para actualizar gráficas del dashboard
@@ -1221,49 +1202,7 @@ function updateDashboardCharts() {
         console.error('Canvas #usuariosPorRolChart no encontrado');
     }
 
-    // 3. Gráfica de Actividad Diaria (simulated data)
-    const actividadDatos = {
-        'Lunes': Math.floor(Math.random() * 50) + 20,
-        'Martes': Math.floor(Math.random() * 50) + 20,
-        'Miércoles': Math.floor(Math.random() * 50) + 20,
-        'Jueves': Math.floor(Math.random() * 50) + 20,
-        'Viernes': Math.floor(Math.random() * 50) + 20,
-        'Sábado': Math.floor(Math.random() * 30) + 10,
-        'Domingo': Math.floor(Math.random() * 30) + 10
-    };
-
-    const ctx3 = document.getElementById('actividadDiariaChart');
-    if (ctx3) {
-        try {
-            if (actividadDiariaChart) actividadDiariaChart.destroy();
-            actividadDiariaChart = new Chart(ctx3, {
-                type: 'line',
-                data: {
-                    labels: Object.keys(actividadDatos),
-                    datasets: [{
-                        label: 'Solicitudes',
-                        data: Object.values(actividadDatos),
-                        borderColor: '#1a73e8',
-                        backgroundColor: 'rgba(26, 115, 232, 0.1)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: true } },
-                    scales: { y: { beginAtZero: true } }
-                }
-            });
-            console.log('  ✓ Chart 3 (Line) creado');
-        } catch (e) {
-            console.error('Error en Chart 3:', e);
-        }
-    } else {
-        console.error('Canvas #actividadDiariaChart no encontrado');
-    }
+    // 3. [GRÁFICO DE ACTIVIDAD ELIMINADO]
 
     // 4. Gráfica de Uso por Sucursal (Consultas)
     const usoPorSucursal = {};
@@ -1321,11 +1260,7 @@ async function switchTab(evt, name) {
     document.getElementById("dashboard").style.setProperty("display", "none", "important");
     document.getElementById("sucursales").style.setProperty("display", "none", "important");
     document.getElementById("usuarios").style.setProperty("display", "none", "important");
-    document.getElementById("actividad").style.setProperty("display", "none", "important");
-    document.getElementById("actividad").style.setProperty("display", "none", "important");
-    document.getElementById("actividad").style.setProperty("display", "none", "important");
-    const actividadTab = document.getElementById("actividad");
-    if (actividadTab) actividadTab.style.setProperty("display", "none", "important");
+
     
     // Remove active button class from ALL buttons
     document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
@@ -1343,28 +1278,6 @@ async function switchTab(evt, name) {
         const usuariosTab = document.getElementById("usuarios");
         usuariosTab.style.setProperty("display", "block", "important");
         await loadUsuarios();
-    } else if (name === "actividad") {
-        const actividadTab = document.getElementById("actividad");
-        actividadTab.style.setProperty("display", "block", "important");
-        await loadActiveUsers();
-    } else if (name === "actividad") {
-        const actividadTab = document.getElementById("actividad");
-        actividadTab.style.setProperty("display", "block", "important");
-        await loadActiveUsers();
-    } else if (name === "actividad") {
-        const actividadTab = document.getElementById("actividad");
-        actividadTab.style.setProperty("display", "block", "important");
-        await loadOnlineUsers();
-    } else if (name === "actividad") {
-        const actividadTab = document.getElementById("actividad");
-        actividadTab.style.setProperty("display", "block", "important");
-        await loadOnlineUsers();
-    } else if (name === "actividad") {
-        const actTab = document.getElementById("actividad");
-        if (actTab) {
-            actTab.style.setProperty("display", "block", "important");
-            await loadActiveUsers();
-        }
     }
     
     // Mark ONLY this button as active - remove from all first
@@ -1416,56 +1329,6 @@ function renderZonaSucursales(zona) {
     }
 }
 
-async function loadOnlineUsers() {
-    try {
-        const res = await fetch(API + "/api/v1/online");
-        if (!res.ok) throw new Error("Error cargando usuarios en línea");
-        
-        const data = await res.json();
-        const container = document.getElementById("actividad");
-        
-        if (!container) return;
-        
-        let html = '<h3>Usuarios en Línea</h3>';
-        
-        // Usuarios web por departamento
-        if (data.usuarios_web) {
-            html += '<h4>Usuarios Web</h4>';
-            for (const dept in data.usuarios_web) {
-                const usuarios = data.usuarios_web[dept];
-                html += `<p><strong>${dept}:</strong> ${usuarios.join(", ")}</p>`;
-            }
-        }
-        
-        // Programas desktop
-        if (data.programas_desktop && data.programas_desktop.length > 0) {
-            html += '<h4>Programas Desktop</h4>';
-            html += '<table border="1" cellpadding="10" style="width:100%;">';
-            html += '<tr><th>Programa</th><th>Máquina</th><th>Usuario SO</th><th>Última Actividad</th><th>Acción</th></tr>';
-            
-            for (const prog of data.programas_desktop) {
-                const appId = prog.id;
-                html += `<tr>
-                    <td>${prog.nombre_programa || 'N/A'}</td>
-                    <td>${prog.maquina || 'N/A'}</td>
-                    <td>${prog.usuario_so || 'N/A'}</td>
-                    <td>${prog.ultima_actividad || 'N/A'}</td>
-                    <td><button onclick="desconectarPrograma('${appId}')" style="background: #e74c3c; color: white; padding: 5px 10px; border: none; cursor: pointer;">Desconectar</button></td>
-                </tr>`;
-            }
-            html += '</table>';
-        }
-        
-        container.innerHTML = html;
-    } catch (err) {
-        console.error("Error loading online users:", err);
-        const container = document.getElementById("actividad");
-        if (container) {
-            container.innerHTML = `<p style="color: red;">Error: ${err.message}</p>`;
-        }
-    }
-}
-
 async function loadSucursales() {
     try {
         const res = await fetch(API + "/api/v1/sucursales?limit=200");
@@ -1501,117 +1364,6 @@ async function loadUsuarios() {
     }
 }
 
-
-
-async function loadActiveUsers() {
-    try {
-        console.log('Loading users...');
-        const response = await fetch(API + '/api/v1/usuarios');
-        const data = await response.json();
-        console.log('Users data:', data);
-        
-        const container = document.getElementById('onlineUsersContainer');
-        if (!container) return;
-        
-        let usuarios = data.usuarios || [];
-        
-        // Ordenar por última actividad (más reciente primero)
-        usuarios.sort((a, b) => {
-            const timeA = a.ultima_actividad ? new Date(a.ultima_actividad).getTime() : 0;
-            const timeB = b.ultima_actividad ? new Date(b.ultima_actividad).getTime() : 0;
-            return timeB - timeA;
-        });
-        
-        // Obtener sucursales para mapear IDs a nombres
-        const sucResponse = await fetch(API + '/api/v1/sucursales');
-        const sucData = await sucResponse.json();
-        const sucursalesMap = {};
-        for (const suc of (sucData.sucursales || [])) {
-            sucursalesMap[suc.id] = suc.nombre;
-        }
-        
-        let html = '<table style="width: 100%; border-collapse: collapse; margin-top: 20px;">';
-        html += '<tr style="background: #0066cc; color: white; font-weight: bold;">';
-        html += '<th style="padding: 12px; text-align: left; border-bottom: 2px solid #333;">Nombre</th>';
-        html += '<th style="padding: 12px; text-align: left; border-bottom: 2px solid #333;">Rol</th>';
-        html += '<th style="padding: 12px; text-align: left; border-bottom: 2px solid #333;">Sucursal</th>';
-        html += '<th style="padding: 12px; text-align: left; border-bottom: 2px solid #333;">Último Login</th>';
-        html += '</tr>';
-        
-        let count = 0;
-        for (const user of usuarios) {
-            const sucursal = sucursalesMap[user.sucursal_id] || 'N/A';
-            const time = user.ultima_actividad ? new Date(user.ultima_actividad).toLocaleString('es-ES') : 'Nunca';
-            const rowColor = count % 2 === 0 ? '#f9f9f9' : '#fff';
-            
-            html += '<tr style="background: ' + rowColor + '; border-bottom: 1px solid #ddd;">';
-            html += '<td style="padding: 12px;">' + (user.nombre_completo || '-') + '</td>';
-            html += '<td style="padding: 12px;">' + (user.rol || '-') + '</td>';
-            html += '<td style="padding: 12px;">' + sucursal + '</td>';
-            html += '<td style="padding: 12px;">' + time + '</td>';
-            html += '</tr>';
-            count++;
-        }
-        
-        html += '</table>';
-        
-        const summary = '<div style="background: #e3f2fd; padding: 15px; border-radius: 5px; margin-bottom: 20px; border-left: 4px solid #0066cc;">' +
-                       '<strong>Total Usuarios:</strong> ' + usuarios.length + 
-                       '</div>';
-        
-        container.innerHTML = summary + html;
-        console.log('Users displayed successfully');
-        
-    } catch(err) {
-        console.error('Error loading users:', err);
-        const container = document.getElementById('onlineUsersContainer');
-        if (container) {
-            container.innerHTML = '<div style="color: red; padding: 20px; background: #ffebee; border-radius: 5px;"><strong>Error:</strong> ' + err.message + '</div>';
-        }
-    }
-}
-
-
-
-
-
-async function loadActiveUsers() {
-    try {
-        const res = await fetch(API + "/api/v1/usuarios?limit=200");
-        if (!res.ok) throw new Error('Error fetching usuarios');
-        const data = await res.json();
-        const usuarios = data.usuarios || [];
-        
-        // Construir tabla HTML
-        let html = '<table style="width: 100%; border-collapse: collapse;">';
-        html += '<thead><tr style="background-color: #f5f5f5; border-bottom: 2px solid #ddd;">';
-        html += '<th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Nombre</th>';
-        html += '<th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Rol</th>';
-        html += '<th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Sucursal</th>';
-        html += '</tr></thead>';
-        html += '<tbody>';
-        
-        if (usuarios.length === 0) {
-            html += '<tr><td colspan="3" style="padding: 20px; text-align: center; color: #999;">No hay usuarios</td></tr>';
-        } else {
-            usuarios.forEach(u => {
-                const sucursal = allSucursales.find(s => s.id === u.sucursal_id);
-                const nombreSucursal = sucursal ? sucursal.nombre : 'N/A';
-                html += '<tr style="border-bottom: 1px solid #eee;">';
-                html += '<td style="padding: 10px; border: 1px solid #ddd;">' + (u.nombre_completo || 'N/A') + '</td>';
-                html += '<td style="padding: 10px; border: 1px solid #ddd;">' + (u.rol || 'N/A') + '</td>';
-                html += '<td style="padding: 10px; border: 1px solid #ddd;">' + nombreSucursal + '</td>';
-                html += '</tr>';
-            });
-        }
-        
-        html += '</tbody></table>';
-        document.getElementById('onlineUsersContainer').innerHTML = html;
-    } catch (e) {
-        console.error('Error loading active users:', e);
-        document.getElementById('onlineUsersContainer').innerHTML = '<p style="text-align: center; color: red;">Error cargando usuarios</p>';
-    }
-}
 
 
 function renderUsuariosTable(usuarios) {
@@ -1863,151 +1615,13 @@ function cerrarModalEmpleado() {
 
 
 
-async function loadActiveUsers() {
-    try {
-        console.log('Loading users...');
-        const response = await fetch(API + '/api/v1/usuarios');
-        const data = await response.json();
-        console.log('Users data:', data);
-        
-        const container = document.getElementById('onlineUsersContainer');
-        if (!container) return;
-        
-        let usuarios = data.usuarios || [];
-        
-        // Ordenar por última actividad (más reciente primero)
-        usuarios.sort((a, b) => {
-            const timeA = a.ultima_actividad ? new Date(a.ultima_actividad).getTime() : 0;
-            const timeB = b.ultima_actividad ? new Date(b.ultima_actividad).getTime() : 0;
-            return timeB - timeA;
-        });
-        
-        // Obtener sucursales para mapear IDs a nombres
-        const sucResponse = await fetch(API + '/api/v1/sucursales');
-        const sucData = await sucResponse.json();
-        const sucursalesMap = {};
-        for (const suc of (sucData.sucursales || [])) {
-            sucursalesMap[suc.id] = suc.nombre;
-        }
-        
-        let html = '<table style="width: 100%; border-collapse: collapse; margin-top: 20px;">';
-        html += '<tr style="background: #0066cc; color: white; font-weight: bold;">';
-        html += '<th style="padding: 12px; text-align: left; border-bottom: 2px solid #333;">Nombre</th>';
-        html += '<th style="padding: 12px; text-align: left; border-bottom: 2px solid #333;">Rol</th>';
-        html += '<th style="padding: 12px; text-align: left; border-bottom: 2px solid #333;">Sucursal</th>';
-        html += '<th style="padding: 12px; text-align: left; border-bottom: 2px solid #333;">Último Login</th>';
-        html += '</tr>';
-        
-        let count = 0;
-        for (const user of usuarios) {
-            const sucursal = sucursalesMap[user.sucursal_id] || 'N/A';
-            const time = user.ultima_actividad ? new Date(user.ultima_actividad).toLocaleString('es-ES') : 'Nunca';
-            const rowColor = count % 2 === 0 ? '#f9f9f9' : '#fff';
-            
-            html += '<tr style="background: ' + rowColor + '; border-bottom: 1px solid #ddd;">';
-            html += '<td style="padding: 12px;">' + (user.nombre_completo || '-') + '</td>';
-            html += '<td style="padding: 12px;">' + (user.rol || '-') + '</td>';
-            html += '<td style="padding: 12px;">' + sucursal + '</td>';
-            html += '<td style="padding: 12px;">' + time + '</td>';
-            html += '</tr>';
-            count++;
-        }
-        
-        html += '</table>';
-        
-        const summary = '<div style="background: #e3f2fd; padding: 15px; border-radius: 5px; margin-bottom: 20px; border-left: 4px solid #0066cc;">' +
-                       '<strong>Total Usuarios:</strong> ' + usuarios.length + 
-                       '</div>';
-        
-        container.innerHTML = summary + html;
-        console.log('Users displayed successfully');
-        
-    } catch(err) {
-        console.error('Error loading users:', err);
-        const container = document.getElementById('onlineUsersContainer');
-        if (container) {
-            container.innerHTML = '<div style="color: red; padding: 20px; background: #ffebee; border-radius: 5px;"><strong>Error:</strong> ' + err.message + '</div>';
-        }
-    }
-}
-
-
-
-function renderOnlineUsers(data) {
-    const total = data.total || 0;
-    const usuariosWeb = data.usuarios_web || {};
-    const programasDesktop = data.programas_desktop || [];
-    const totalUsuarios = data.total_usuarios || 0;
-    const totalProgramas = data.total_programas || 0;
-    
-    let html = '<div style="margin-bottom: 20px; padding: 15px; background: #f0f0f0; border-radius: 6px;">';
-    html += '<strong>Total Online: ' + total + '</strong> | ';
-    html += '<span style="color: #1a73e8;">👥 Usuarios: ' + totalUsuarios + '</span> | ';
-    html += '<span style="color: #f39c12;">💻 Programas: ' + totalProgramas + '</span>';
-    html += '</div>';
-    
-    if (total === 0) {
-        html += '<p style="text-align: center; color: #999;">No hay usuarios ni programas online en este momento</p>';
-    } else {
-        // Sección de Usuarios Web
-        if (totalUsuarios > 0) {
-            html += '<div style="margin-bottom: 30px;"><h3 style="color: #1a73e8; border-bottom: 2px solid #1a73e8; padding-bottom: 10px;">👥 Usuarios Web (' + totalUsuarios + ')</h3>';
-            
-            for (const [dept, usuarios] of Object.entries(usuariosWeb)) {
-                html += '<div style="margin-bottom: 20px;">';
-                html += '<h4 style="color: #27ae60; margin: 10px 0;">' + dept + ' (' + usuarios.length + ')</h4>';
-                html += '<table style="width: 100%; border-collapse: collapse;">';
-                html += '<thead><tr style="background: #f5f5f5;"><th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Usuario</th><th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Nombre</th><th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Rol</th><th style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">Acción</th></tr></thead>';
-                html += '<tbody>';
-                
-                usuarios.forEach(user => {
-                    html += '<tr style="border-bottom: 1px solid #eee;">';
-                    html += '<td style="padding: 10px;">' + (user.username || 'N/A') + '</td>';
-                    html += '<td style="padding: 10px;">' + (user.nombre_completo || 'N/A') + '</td>';
-                    html += '<td style="padding: 10px;">' + (user.rol || 'N/A') + '</td>';
-                    html += '<td style="padding: 10px; text-align: center;"><button onclick="desloguearUsuario(' + user.id + ')" style="background: #e74c3c; color: white; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">Desloguear</button></td>';
-                    html += '</tr>';
-                });
-                
-                html += '</tbody></table>';
-                html += '</div>';
-            }
-            
-            html += '</div>';
-        }
-        
-        // Sección de Programas Desktop
-        if (totalProgramas > 0) {
-            html += '<div style="margin-bottom: 30px;"><h3 style="color: #f39c12; border-bottom: 2px solid #f39c12; padding-bottom: 10px;">💻 Programas de Escritorio (' + totalProgramas + ')</h3>';
-            html += '<table style="width: 100%; border-collapse: collapse;">';
-            html += '<thead><tr style="background: #fff3cd;"><th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Programa</th><th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Versión</th><th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Máquina</th><th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Usuario SO</th><th style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">Acción</th></tr></thead>';
-            html += '<tbody>';
-            
-            programasDesktop.forEach(prog => {
-                html += '<tr style="border-bottom: 1px solid #eee; background: #fffaf0;">';
-                html += '<td style="padding: 10px;"><strong>' + (prog.nombre_programa || 'N/A') + '</strong></td>';
-                html += '<td style="padding: 10px;">' + (prog.version || 'N/A') + '</td>';
-                html += '<td style="padding: 10px;">' + (prog.maquina || 'N/A') + '</td>';
-                html += '<td style="padding: 10px;">' + (prog.usuario_so || 'N/A') + '</td>';
-                html += '<td style="padding: 10px; text-align: center;"><button onclick="desconectarPrograma(' + prog.id + ')" style="background: #f39c12; color: white; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">Desconectar</button></td>';
-                html += '</tr>';
-            });
-            
-            html += '</tbody></table>';
-            html += '</div>';
-        }
-    }
-    
-    document.getElementById("onlineUsersContainer").innerHTML = html;
-}
-
 function desconectarPrograma(appId) {
     if (confirm("¿Desconectar este programa?")) {
         fetch(API + "/api/v1/desktop/unregister/" + appId, { method: "POST" })
             .then(res => {
                 if (res.ok) {
                     alert("Programa desconectado");
-                    loadActiveUsers();
+                    // Función loadActiveUsers eliminada
                 } else {
                     alert("Error al desconectar programa");
                 }
@@ -2022,7 +1636,7 @@ async function desloguearUsuario(usuarioId) {
             const res = await fetch(API + "/api/v1/logout/" + usuarioId, { method: "POST" });
             if (res.ok) {
                 alert("Usuario deslogeado correctamente");
-                loadActiveUsers();
+                // Función loadActiveUsers eliminada
             } else {
                 alert("Error al desloguear usuario");
             }
