@@ -166,24 +166,51 @@ async def list_roles(db=Depends(get_db)):
 
 @app.get("/api/v1/empleados")
 async def list_empleados(skip: int = 0, limit: int = 200, db=Depends(get_db)):
-    """Listar empleados - DATOS REALES"""
+    """Listar empleados desde tabla coloristas con mapeo inteligente de sucursales"""
     try:
         cur = db.cursor()
-        # Simple query first
-        cur.execute("SELECT id, username, nombre_completo, email, rol, sucursal_id, telefono, activo, COALESCE(ultima_actividad, NULL) as ultima_actividad FROM usuarios LIMIT %s OFFSET %s", (limit, skip))
+        # Consultar tabla coloristas con mapeo de nombres de sucursales
+        cur.execute("""
+            SELECT 
+                c.id, 
+                c.nombre, 
+                c.codigo_empleado, 
+                c.sucursal, 
+                s.id as sucursal_id,
+                c.activo
+            FROM coloristas c
+            LEFT JOIN sucursales s ON s.nombre = CASE 
+                WHEN c.sucursal = 'Arroyohondo' THEN 'Arroyo Hondo'
+                WHEN c.sucursal = 'Bellavista' THEN 'Bella Vista'
+                WHEN c.sucursal = 'Puertoplata' THEN 'Puerto Plata'
+                WHEN c.sucursal = 'Puntacana' THEN 'Punta Cana'
+                WHEN c.sucursal = 'Rafaelvidal' THEN 'Rafael Vidal'
+                WHEN c.sucursal = 'Sanfrancisco' THEN 'San Francisco'
+                WHEN c.sucursal = 'Sanmartin' THEN 'San Martin'
+                WHEN c.sucursal = 'Santiago1' THEN 'Santiago Bartolome Colon'
+                WHEN c.sucursal = 'Test' THEN 'test'
+                WHEN c.sucursal = 'Villamella' THEN 'Villa Mella'
+                WHEN c.sucursal = 'Zonaoriental' THEN 'Zona Oriental'
+                ELSE c.sucursal
+            END
+            WHERE c.activo = true
+            ORDER BY c.nombre
+            LIMIT %s OFFSET %s
+        """, (limit, skip))
         empleados = cur.fetchall()
         
         result = []
         for e in empleados:
             result.append({
                 "id": e[0],
-                "nombre_completo": e[1],
-                "email": e[2],
-                "rol": e[3],
-                "sucursal_id": e[4],
-                "telefono": e[5] or "",
-                "activo": e[6],
-                "codigo_empleado": ""
+                "nombre_completo": e[1] or "",
+                "email": "",  # No disponible en coloristas
+                "rol": "Colorista",  # Rol por defecto
+                "sucursal_id": e[4] if e[4] else None,
+                "sucursal_nombre": e[3] or "",
+                "telefono": "",  # No disponible en coloristas
+                "activo": e[5] if e[5] is not None else True,
+                "codigo_empleado": e[2] or ""
             })
         
         return {
@@ -191,7 +218,7 @@ async def list_empleados(skip: int = 0, limit: int = 200, db=Depends(get_db)):
             "empleados": result
         }
     except Exception as e:
-        logger.error(f"Error listing empleados: {str(e)}")
+        logger.error(f"Error listing empleados from coloristas: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 # ============================================================

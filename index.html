@@ -745,11 +745,19 @@
 
                 <!-- Gráficas -->
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
-                    <!-- Gráfica de Usuarios por Sucursal -->
+                    <!-- Gráfica de Empleados por Sucursal -->
                     <div class="dashboard-card" style="padding: 20px; min-height: 400px; display: flex; flex-direction: column;">
-                        <h3 style="margin-bottom: 15px; flex-shrink: 0;">Usuarios por Sucursal</h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <h3 style="margin: 0; flex-shrink: 0;">Empleados por Sucursal</h3>
+                            <select id="zonaEmpleadosSelector" onchange="updateEmpleadosPorSucursalChart()" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; background: white; font-size: 14px;">
+                                <option value="Santo_Domingo">Santo Domingo</option>
+                                <option value="Zona_Este">Zona Este</option>
+                                <option value="Zona_Norte">Zona Norte</option>
+                                <option value="Zona_Sur">Zona Sur</option>
+                            </select>
+                        </div>
                         <div style="flex-grow: 1; position: relative; min-height: 320px;">
-                            <canvas id="usuariosPorSucursalChart"></canvas>
+                            <canvas id="empleadosPorSucursalChart"></canvas>
                         </div>
                     </div>
 
@@ -760,15 +768,21 @@
                             <canvas id="usuariosPorRolChart"></canvas>
                         </div>
                     </div>
+                </div>
 
-
-
-                    <!-- Gráfica de Estado de Usuarios -->
-                    <div class="dashboard-card" style="padding: 20px; min-height: 400px; display: flex; flex-direction: column;">
-                        <h3 style="margin-bottom: 15px; flex-shrink: 0;">Uso por Sucursal (Consultas)</h3>
-                        <div style="flex-grow: 1; position: relative; min-height: 320px;">
-                            <canvas id="estadoUsuariosChart"></canvas>
-                        </div>
+                <!-- Gráfico de Sucursales por Zona (Ancho Completo) -->
+                <div class="dashboard-card" style="padding: 20px; min-height: 400px; display: flex; flex-direction: column; margin-top: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3 style="margin: 0; flex-shrink: 0;">Sucursales por Zona</h3>
+                        <select id="zonaSelector" onchange="updateZonaChart()" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; background: white; font-size: 14px;">
+                            <option value="Santo_Domingo">Santo Domingo</option>
+                            <option value="Zona_Este">Zona Este</option>
+                            <option value="Zona_Norte">Zona Norte</option>
+                            <option value="Zona_Sur">Zona Sur</option>
+                        </select>
+                    </div>
+                    <div style="flex-grow: 1; position: relative; min-height: 320px;">
+                        <canvas id="estadoUsuariosChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -947,10 +961,10 @@ let editingEmpleadoId = null;
 
 
 const zonas = {
-    "Santo_Domingo": ["Tiradentes", "Bella Vista", "Arroyo Hondo", "Villa Mella", "Churchill", "Luperon", "Alameda", "Zona Oriental", "San martin", "San Isidro"],
-    "Zona_Este": ["Romana", "Bavaro", "Punta Cana"],
-    "Zona_Norte": ["Santiago 1", "San Francisco", "Rafael Vidal", "Puerto Plata", "Terrenas", "La Vega"],
-    "Zona_Sur": ["Bani"]
+    "Santo_Domingo": ["Bella Vista", "Churchill", "Tiradentes", "San Martin", "Luperon", "Arroyo Hondo", "San Isidro", "Alameda", "Zona Oriental", "Villa Mella"],
+    "Zona_Este": ["Romana", "Punta Cana", "Bávaro"],
+    "Zona_Norte": ["La Vega", "Puerto Plata", "San Francisco", "Terrenas", "Rafael Vidal", "Santiago Bartolome Colon"],
+    "Zona_Sur": ["Baní"]
 };
 
 
@@ -1099,7 +1113,7 @@ function handleLogout() {
 
 
 // Chart.js instances
-let usuariosPorSucursalChart = null;
+let empleadosPorSucursalChart = null;
 let usuariosPorRolChart = null;
 let estadoUsuariosChart = null;
 
@@ -1119,49 +1133,8 @@ function updateDashboardCharts() {
     // Contar usuarios activos
     const countUsuariosActivos = (allUsuarios || []).filter(u => u.activo).length;
     
-    // 1. Gráfica de Usuarios por Sucursal
-    const usuariosPorSucursal = {};
-    allSucursales.forEach(s => usuariosPorSucursal[s.nombre] = 0);
-    
-    (allUsuarios || []).forEach(u => {
-        const sucursal = allSucursales.find(s => s.id === u.sucursal_id);
-        if (sucursal && usuariosPorSucursal[sucursal.nombre] !== undefined) {
-            usuariosPorSucursal[sucursal.nombre]++;
-        }
-    });
-    
-    console.log('  - Chart 1 data:', usuariosPorSucursal);
-
-    const ctx1 = document.getElementById('usuariosPorSucursalChart');
-    if (ctx1) {
-        try {
-            if (usuariosPorSucursalChart) usuariosPorSucursalChart.destroy();
-            usuariosPorSucursalChart = new Chart(ctx1, {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(usuariosPorSucursal).slice(0, 8),
-                    datasets: [{
-                        label: 'Usuarios',
-                        data: Object.values(usuariosPorSucursal).slice(0, 8),
-                        backgroundColor: '#1a73e8',
-                        borderColor: '#1a73e8',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true } }
-                }
-            });
-            console.log('  ✓ Chart 1 (Bar) creado');
-        } catch (e) {
-            console.error('Error en Chart 1:', e);
-        }
-    } else {
-        console.error('Canvas #usuariosPorSucursalChart no encontrado');
-    }
+    // 1. Gráfica de Empleados por Sucursal (inicializar con zona por defecto)
+    updateEmpleadosPorSucursalChart();
 
     // 2. Gráfica de Rol de Usuarios
     const usuariosPorRol = {};
@@ -1204,32 +1177,62 @@ function updateDashboardCharts() {
 
     // 3. [GRÁFICO DE ACTIVIDAD ELIMINADO]
 
-    // 4. Gráfica de Uso por Sucursal (Consultas)
-    const usoPorSucursal = {};
-    allSucursales.forEach(s => usoPorSucursal[s.nombre] = 0);
+    // 4. Gráfica de Sucursales por Zona
+    updateZonaChart();
+
+    // Actualizar contadores
+    document.getElementById('usuariosActivos').textContent = countUsuariosActivos;
+    document.getElementById('totalEmpleados').textContent = (allEmpleados || []).length;
     
-    (allUsuarios || []).forEach(u => {
-        const sucursal = allSucursales.find(s => s.id === u.sucursal_id);
-        if (sucursal && usoPorSucursal[sucursal.nombre] !== undefined) {
-            usoPorSucursal[sucursal.nombre] += Math.floor(Math.random() * 50) + 20;
+    console.log('✓ updateDashboardCharts completado');
+}
+
+// Función para actualizar gráfica de empleados por sucursal por zona
+function updateEmpleadosPorSucursalChart() {
+    console.log('✓ updateEmpleadosPorSucursalChart ejecutándose');
+    
+    const zonaSelector = document.getElementById('zonaEmpleadosSelector');
+    const zonaSeleccionada = zonaSelector ? zonaSelector.value : 'Santo_Domingo';
+    
+    console.log('  - Zona seleccionada para empleados:', zonaSeleccionada);
+    
+    // Obtener sucursales de la zona seleccionada usando el mismo objeto zonas
+    const sucursalesDeZona = zonas[zonaSeleccionada] || [];
+    console.log('  - Sucursales de la zona:', sucursalesDeZona);
+    
+    // Filtrar allSucursales para obtener solo las de la zona
+    const sucursalesFiltradas = allSucursales.filter(s => 
+        sucursalesDeZona.includes(s.nombre)
+    );
+    
+    console.log('  - Sucursales filtradas:', sucursalesFiltradas.map(s => s.nombre));
+    
+    // Contar empleados por sucursal filtrada
+    const empleadosPorSucursal = {};
+    sucursalesFiltradas.forEach(s => empleadosPorSucursal[s.nombre] = 0);
+    
+    (allEmpleados || []).forEach(e => {
+        const sucursal = sucursalesFiltradas.find(s => s.id === e.sucursal_id);
+        if (sucursal && empleadosPorSucursal[sucursal.nombre] !== undefined) {
+            empleadosPorSucursal[sucursal.nombre]++;
         }
     });
     
-    console.log('  - Chart 4 data:', usoPorSucursal);
-
-    const ctx4 = document.getElementById('estadoUsuariosChart');
-    if (ctx4) {
+    console.log('  - Datos de empleados por sucursal:', empleadosPorSucursal);
+    
+    const ctx1 = document.getElementById('empleadosPorSucursalChart');
+    if (ctx1) {
         try {
-            if (estadoUsuariosChart) estadoUsuariosChart.destroy();
-            estadoUsuariosChart = new Chart(ctx4, {
+            if (empleadosPorSucursalChart) empleadosPorSucursalChart.destroy();
+            empleadosPorSucursalChart = new Chart(ctx1, {
                 type: 'bar',
                 data: {
-                    labels: Object.keys(usoPorSucursal).slice(0, 8),
+                    labels: Object.keys(empleadosPorSucursal),
                     datasets: [{
-                        label: 'Consultas',
-                        data: Object.values(usoPorSucursal).slice(0, 8),
-                        backgroundColor: '#9b59b6',
-                        borderColor: '#9b59b6',
+                        label: 'Empleados',
+                        data: Object.values(empleadosPorSucursal),
+                        backgroundColor: '#27ae60',
+                        borderColor: '#27ae60',
                         borderWidth: 1
                     }]
                 },
@@ -1240,19 +1243,94 @@ function updateDashboardCharts() {
                     scales: { y: { beginAtZero: true } }
                 }
             });
-            console.log('  ✓ Chart 4 (Bar) creado');
+            console.log('  ✓ Gráfica de empleados por sucursal actualizada para zona:', zonaSeleccionada);
         } catch (e) {
-            console.error('Error en Chart 4:', e);
+            console.error('Error actualizando gráfica de empleados por sucursal:', e);
+        }
+    } else {
+        console.error('Canvas #empleadosPorSucursalChart no encontrado');
+    }
+}
+
+// Función para actualizar el gráfico de sucursales por zona
+function updateZonaChart() {
+    const zonaSelector = document.getElementById('zonaSelector');
+    if (!zonaSelector) return;
+    
+    const zonaSeleccionada = zonaSelector.value;
+    console.log('✓ updateZonaChart ejecutándose para zona:', zonaSeleccionada);
+    
+    // Filtrar sucursales por zona seleccionada (usando la misma lógica que las pestañas)
+    const sucursalesZona = zonas[zonaSeleccionada] || [];
+    const sucursalesDeZona = allSucursales.filter(s => 
+        sucursalesZona.some(sZ => sZ.toLowerCase() === s.nombre.toLowerCase())
+    );
+    console.log('  - Sucursales en', zonaSeleccionada + ':', sucursalesDeZona.length);
+    console.log('  - Nombres:', sucursalesDeZona.map(s => s.nombre));
+    
+    // Contar consultas por sucursal en esta zona (datos simulados)
+    const consultasPorSucursal = {};
+    sucursalesDeZona.forEach(s => {
+        consultasPorSucursal[s.nombre] = Math.floor(Math.random() * 150) + 50; // Entre 50 y 200 consultas
+    });
+    
+    console.log('  - Datos del gráfico:', consultasPorSucursal);
+    
+    const ctx4 = document.getElementById('estadoUsuariosChart');
+    if (ctx4) {
+        try {
+            if (estadoUsuariosChart) estadoUsuariosChart.destroy();
+            
+            const labels = Object.keys(consultasPorSucursal);
+            const data = Object.values(consultasPorSucursal);
+            
+            estadoUsuariosChart = new Chart(ctx4, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Consultas',
+                        data: data,
+                        backgroundColor: '#3498db',
+                        borderColor: '#2980b9',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: `Consultas por Sucursal - ${zonaSeleccionada.replace('_', ' ')}`,
+                            font: { size: 14 }
+                        }
+                    },
+                    scales: { 
+                        y: { 
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Número de Consultas'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Sucursales'
+                            }
+                        }
+                    }
+                }
+            });
+            console.log('  ✓ Gráfico de zona creado para', zonaSeleccionada);
+        } catch (e) {
+            console.error('Error creando gráfico de zona:', e);
         }
     } else {
         console.error('Canvas #estadoUsuariosChart no encontrado');
     }
-
-    // Actualizar contadores
-    document.getElementById('usuariosActivos').textContent = countUsuariosActivos;
-    document.getElementById('totalEmpleados').textContent = (allEmpleados || []).length;
-    
-    console.log('✓ updateDashboardCharts completado');
 }
 
 async function switchTab(evt, name) {
@@ -1278,6 +1356,16 @@ async function switchTab(evt, name) {
         const usuariosTab = document.getElementById("usuarios");
         usuariosTab.style.setProperty("display", "block", "important");
         await loadUsuarios();
+        
+        // Asegurar que el rol Administrador esté seleccionado por defecto
+        document.querySelectorAll('div[id^="rol-"]').forEach(t => t.classList.remove("active"));
+        document.querySelectorAll(".subtab-btn").forEach(b => b.classList.remove("active"));
+        
+        const adminRolDiv = document.getElementById("rol-Administrador");
+        const adminButton = document.querySelector('button[onclick*="Administrador"]');
+        
+        if (adminRolDiv) adminRolDiv.classList.add("active");
+        if (adminButton) adminButton.classList.add("active");
     }
     
     // Mark ONLY this button as active - remove from all first
@@ -1656,8 +1744,30 @@ async function loadData() {
             if (resSuc.ok) {
                 const dataSuc = await resSuc.json();
                 allSucursales = dataSuc.sucursales || [];
+                
+                // Filtrar solo sucursales que son tiendas (están en zonas) y están activas
+                const sucursalesTiendas = Object.values(zonas).flat(); // ["Bella Vista", "Churchill", ...]
+                
+                // Función para normalizar nombres (sin acentos, lowercase)
+                const normalizar = (str) => str.toLowerCase()
+                    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                    .replace(/\s+/g, " ").trim();
+                
+                const sucursalesNormalizadas = sucursalesTiendas.map(normalizar);
+                
+                const sucursalesActivas = allSucursales.filter(s => {
+                    // Verificar que esté activa usando el campo estado
+                    if (s.estado !== "activa") return false;
+                    
+                    const nombreNormalizado = normalizar(s.nombre);
+                    return sucursalesNormalizadas.includes(nombreNormalizado);
+                });
+                
                 const totalEl = document.getElementById("totalSucursales");
-                if (totalEl) totalEl.textContent = dataSuc.total || 0;
+                if (totalEl) totalEl.textContent = sucursalesActivas.length;
+                console.log('✓ Sucursales tiendas activas:', sucursalesActivas.length);
+                console.log('  - Nombres encontrados:', sucursalesActivas.map(s => s.nombre));
+                console.log('  - Buscando:', sucursalesTiendas);
             }
         } catch (e) {
             console.warn('Warning loading sucursales:', e);
@@ -1676,6 +1786,21 @@ async function loadData() {
         } catch (e) {
             console.warn('Warning loading usuarios:', e);
             allUsuarios = [];
+        }
+        
+        // Cargar empleados
+        try {
+            const resEmp = await fetch(API + "/api/v1/empleados?limit=200", {timeout: 5000});
+            if (resEmp.ok) {
+                const dataEmp = await resEmp.json();
+                allEmpleados = dataEmp.empleados || [];
+                const totalEl = document.getElementById("totalEmpleados");
+                if (totalEl) totalEl.textContent = dataEmp.total || 0;
+                console.log('✓ Empleados cargados:', allEmpleados.length);
+            }
+        } catch (e) {
+            console.warn('Warning loading empleados:', e);
+            allEmpleados = [];
         }
         
         console.log('Data loading complete');
