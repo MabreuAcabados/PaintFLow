@@ -1580,11 +1580,15 @@ function switchRol(evt, rol) {
 }
 
 function renderZonaSucursales(zona) {
-    const sucursalesZona = zonas[zona] || [];
     const tableBody = document.getElementById("tbody-" + zona);
-    const sucursalesFiltradas = allSucursales.filter(s => 
-        sucursalesZona.some(sZ => sZ.toLowerCase() === s.nombre.toLowerCase())
-    );
+    if (!tableBody) {
+        console.error(`No se encontró tbody para zona: ${zona}`);
+        return;
+    }
+    
+    // Filtrar sucursales por la propiedad zona de la API
+    const sucursalesFiltradas = allSucursales.filter(s => s.zona === zona);
+    
     if (sucursalesFiltradas.length > 0) {
         tableBody.innerHTML = sucursalesFiltradas.map(s => {
             const isActive = s.estado === "activa" || s.estado === "Activa";
@@ -1593,6 +1597,8 @@ function renderZonaSucursales(zona) {
     } else {
         tableBody.innerHTML = "<tr><td colspan='6' style='text-align:center;'>No hay sucursales en esta zona</td></tr>";
     }
+    
+    console.log(`Zona ${zona}: ${sucursalesFiltradas.length} sucursales`);
 }
 
 async function loadSucursales() {
@@ -1602,11 +1608,34 @@ async function loadSucursales() {
         const data = await res.json();
         allSucursales = data.sucursales || [];
         document.getElementById("totalSucursales").textContent = data.total || 0;
-        Object.keys(zonas).forEach(zona => renderZonaSucursales(zona));
+        
+        // Obtener zonas dinámicamente de los datos de la API
+        const zonasEncontradas = new Set();
+        allSucursales.forEach(s => {
+            if (s.zona) {
+                zonasEncontradas.add(s.zona);
+            }
+        });
+        
+        // Renderizar solo las zonas que existen en la BD
+        const zonasDisponibles = ['Santo_Domingo', 'Zona_Este', 'Zona_Norte', 'Zona_Sur'];
+        zonasDisponibles.forEach(zona => {
+            renderZonaSucursales(zona);
+        });
+        
         console.log('Sucursales loaded:', allSucursales.length);
+        console.log('Zonas encontradas:', Array.from(zonasEncontradas));
     } catch (e) { 
         console.error('Error loading sucursales:', e);
         document.getElementById("totalSucursales").textContent = '0';
+        // En caso de error, limpiar las tablas
+        const zonasDisponibles = ['Santo_Domingo', 'Zona_Este', 'Zona_Norte', 'Zona_Sur'];
+        zonasDisponibles.forEach(zona => {
+            const tableBody = document.getElementById("tbody-" + zona);
+            if (tableBody) {
+                tableBody.innerHTML = "<tr><td colspan='6' style='text-align:center;'>Error al cargar sucursales</td></tr>";
+            }
+        });
     }
 }
 
