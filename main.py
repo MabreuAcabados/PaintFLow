@@ -59,7 +59,7 @@ async def root():
 
 @app.get("/health")
 async def health_check():
-    """Estado de la API - Versión actualizada con gráficas mejoradas"""
+    """Estado de la API"""
     return {"status": "healthy", "version": settings.API_VERSION, "timestamp": datetime.now().isoformat()}
 
 @app.get("/logo.png")
@@ -408,39 +408,6 @@ async def toggle_usuario_estado(usuario_id: int, activo: bool, db=Depends(get_db
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/api/v1/usuarios/ultimo-login")
-async def get_ultimo_login_usuarios(limit: int = 50, db=Depends(get_db)):
-    """Obtener información de último login de usuarios"""
-    try:
-        cur = db.cursor()
-        cur.execute("""
-            SELECT u.id, u.username, u.nombre_completo, u.rol, s.nombre as sucursal_nombre,
-                   u.fecha_creacion, u.activo
-            FROM usuarios u
-            LEFT JOIN sucursales s ON u.sucursal_id = s.id
-            ORDER BY u.fecha_creacion DESC
-            LIMIT %s
-        """, (limit,))
-        
-        usuarios = cur.fetchall()
-        return {
-            "total": len(usuarios),
-            "usuarios_login": [
-                {
-                    "id": u[0],
-                    "username": u[1],
-                    "nombre_completo": u[2],
-                    "rol": u[3],
-                    "sucursal_nombre": u[4] or "Sin asignar",
-                    "ultimo_login": u[5].isoformat() if u[5] else None,
-                    "activo": u[6]
-                }
-                for u in usuarios
-            ]
-        }
-    except Exception as e:
-        logger.error(f"Error getting ultimo login: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
 
 
 # ============================================================

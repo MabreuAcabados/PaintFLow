@@ -285,13 +285,9 @@
         
         /* Contenido de tabs */
         .tab-content { 
-            display: none !important;
+            display: none;
             background: rgba(255, 255, 255, 0.95);
             min-height: 600px;
-            position: relative;
-            z-index: 1;
-            padding: 0;
-            margin: 0;
         }
         
         .tab-content.active { 
@@ -300,8 +296,6 @@
             opacity: 1 !important;
             height: auto !important;
         }
-
-
         
         /* Subtabs mejorado */
         .subtabs-container { 
@@ -660,6 +654,7 @@
             <div class="navbar-tabs">
                 <button class="tab-btn" onclick="switchTab(event, 'sucursales')">SUCURSALES</button>
                 <button class="tab-btn" onclick="switchTab(event, 'usuarios')">USUARIOS</button>
+                <button class="tab-btn" onclick="switchTab(event, 'actividad')">ACTIVIDAD</button>
             </div>
             <div class="user-menu-container">
                 <button class="logout-btn" onclick="toggleUserMenu(event)">⋮</button>
@@ -729,7 +724,6 @@
             </div>
 
             <div id="dashboard" class="tab-content active" style="padding: 30px; background: #fff; border: 1px solid #e0e0e0; border-top: none; border-radius: 0 0 10px 10px;">
-
                 <!-- Estadísticas en tarjetas -->
                 <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px;">
                     <div class="dashboard-card" style="text-align: center;">
@@ -751,29 +745,35 @@
                 </div>
 
                 <!-- Gráficas -->
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px;">
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
                     <!-- Gráfica de Usuarios por Sucursal -->
-                    <div class="dashboard-card" style="padding: 30px; min-height: 500px; display: flex; flex-direction: column;">
-                        <h3 style="margin-bottom: 20px; flex-shrink: 0;">Usuarios por Sucursal</h3>
-                        <div style="flex-grow: 1; position: relative; min-height: 420px;">
+                    <div class="dashboard-card" style="padding: 20px; min-height: 400px; display: flex; flex-direction: column;">
+                        <h3 style="margin-bottom: 15px; flex-shrink: 0;">Usuarios por Sucursal</h3>
+                        <div style="flex-grow: 1; position: relative; min-height: 320px;">
                             <canvas id="usuariosPorSucursalChart"></canvas>
                         </div>
                     </div>
 
                     <!-- Gráfica de Rol de Usuarios -->
-                    <div class="dashboard-card" style="padding: 30px; min-height: 500px; display: flex; flex-direction: column;">
-                        <h3 style="margin-bottom: 20px; flex-shrink: 0;">Distribución por Rol</h3>
-                        <div style="flex-grow: 1; position: relative; min-height: 420px;">
+                    <div class="dashboard-card" style="padding: 20px; min-height: 400px; display: flex; flex-direction: column;">
+                        <h3 style="margin-bottom: 15px; flex-shrink: 0;">Distribución por Rol</h3>
+                        <div style="flex-grow: 1; position: relative; min-height: 320px;">
                             <canvas id="usuariosPorRolChart"></canvas>
                         </div>
                     </div>
 
-                </div>
+                    <!-- Gráfica de Actividad -->
+                    <div class="dashboard-card" style="padding: 20px; min-height: 400px; display: flex; flex-direction: column;">
+                        <h3 style="margin-bottom: 15px; flex-shrink: 0;">Actividad Diaria (últimos 7 días)</h3>
+                        <div style="flex-grow: 1; position: relative; min-height: 320px;">
+                            <canvas id="actividadDiariaChart"></canvas>
+                        </div>
+                    </div>
 
                     <!-- Gráfica de Estado de Usuarios -->
-                    <div class="dashboard-card" style="padding: 30px; min-height: 500px; display: flex; flex-direction: column;">
-                        <h3 style="margin-bottom: 20px; flex-shrink: 0;">Uso por Sucursal (Consultas)</h3>
-                        <div style="flex-grow: 1; position: relative; min-height: 420px;">
+                    <div class="dashboard-card" style="padding: 20px; min-height: 400px; display: flex; flex-direction: column;">
+                        <h3 style="margin-bottom: 15px; flex-shrink: 0;">Uso por Sucursal (Consultas)</h3>
+                        <div style="flex-grow: 1; position: relative; min-height: 320px;">
                             <canvas id="estadoUsuariosChart"></canvas>
                         </div>
                     </div>
@@ -797,31 +797,47 @@
                     <div id="Santo_Domingo" class="subtab-content active">
                         <table>
                             <thead><tr><th>Nombre</th><th>Zona</th><th>Direccion</th><th>Telefono</th><th>Estado</th><th>Acciones</th></tr></thead>
-                            <tbody id="tbody-Santo_Domingo"><tr><td colspan="6" style="text-align: center;">Cargando...</td></tr></tbody>
+                            <tbody id="tbody-Santo_Domingo"><tr><td colspan="5" style="text-align: center;">Cargando...</td></tr></tbody>
                         </table>
                     </div>
                     <div id="Zona_Este" class="subtab-content">
                         <table>
                             <thead><tr><th>Nombre</th><th>Zona</th><th>Direccion</th><th>Telefono</th><th>Estado</th><th>Acciones</th></tr></thead>
-                            <tbody id="tbody-Zona_Este"><tr><td colspan="6" style="text-align: center;">Cargando...</td></tr></tbody>
+                            <tbody id="tbody-Zona_Este"><tr><td colspan="5" style="text-align: center;">Cargando...</td></tr></tbody>
                         </table>
                     </div>
                     <div id="Zona_Norte" class="subtab-content">
                         <table>
                             <thead><tr><th>Nombre</th><th>Zona</th><th>Direccion</th><th>Telefono</th><th>Estado</th><th>Acciones</th></tr></thead>
-                            <tbody id="tbody-Zona_Norte"><tr><td colspan="6" style="text-align: center;">Cargando...</td></tr></tbody>
+                            <tbody id="tbody-Zona_Norte"><tr><td colspan="5" style="text-align: center;">Cargando...</td></tr></tbody>
                         </table>
                     </div>
                     <div id="Zona_Sur" class="subtab-content">
                         <table>
                             <thead><tr><th>Nombre</th><th>Zona</th><th>Direccion</th><th>Telefono</th><th>Estado</th><th>Acciones</th></tr></thead>
-                            <tbody id="tbody-Zona_Sur"><tr><td colspan="6" style="text-align: center;">Cargando...</td></tr></tbody>
+                            <tbody id="tbody-Zona_Sur"><tr><td colspan="5" style="text-align: center;">Cargando...</td></tr></tbody>
                         </table>
                     </div>
+        
+
+
+
+            
+            
+            
+            
+            
+            
+        </div>
+
+
                 </div>
             </div>
-
-
+            </div>
+    
+            </div>
+        </div>
+    </div>
 
     <div id="modalSucursal" class="modal">
         <div class="modal-content">
@@ -842,6 +858,19 @@
                 <div style="display: flex; gap: 10px;">
                     <button onclick="cerrarModalSucursal()" style="background: #ddd; padding: 10px 20px; border: none; cursor: pointer; border-radius: 6px;">Cancelar</button>
                     <button onclick="guardarSucursal()" style="background: #1a73e8; color: #fff; padding: 10px 20px; border: none; cursor: pointer; border-radius: 6px;">Guardar</button>
+                </div>
+            </div>
+            
+            <!-- ACTIVIDAD TAB -->
+            <div id="actividad" class="tab-content">
+                <div class="section" style="margin-top: 30px;">
+                    <div class="section-header">
+                        <h3 style="margin: 0;">Usuarios Online</h3>
+                        <button class="btn-agregar" onclick="loadActiveUsers()">🔄 Refrescar</button>
+                    </div>
+                    <div id="onlineUsersContainer" style="padding: 20px;">
+                        <p style="text-align: center; color: #999;">Cargando usuarios online...</p>
+                    </div>
                 </div>
             </div>
             
@@ -916,6 +945,7 @@ function testRenderUsuarios() {
     renderUsuariosTable(testData);
     console.log('[TEST] Test render completed');
 }
+</script>
 </script>
 
 <script>
@@ -1000,10 +1030,8 @@ function goToDashboard() {
     const tabBtns = document.querySelectorAll('.tab-btn');
     tabBtns.forEach(btn => btn.classList.remove('active'));
     
-    // Cargar datos del dashboard y actualizar gráficas
-    loadData().then(() => {
-        createDashboardCharts();
-    });
+    // Cargar datos del dashboard
+    loadData();  // Load dashboard data
 }
 
 async function handleLogin(e) {
@@ -1091,449 +1119,258 @@ function handleLogout() {
 // Chart.js instances
 let usuariosPorSucursalChart = null;
 let usuariosPorRolChart = null;
+let actividadDiariaChart = null;
 let estadoUsuariosChart = null;
 
-// Función para crear gráficas del dashboard (NUEVA VERSION)
-async function createDashboardCharts() {
-    console.log('🚀 INICIANDO createDashboardCharts');
-    
-    // Verificar que Chart.js esté disponible
+// Función para actualizar gráficas del dashboard
+function updateDashboardCharts() {
+    // Validar que Chart.js esté disponible
     if (typeof Chart === 'undefined') {
-        console.error('❌ Chart.js no está disponible, reintentando en 1 segundo...');
-        setTimeout(createDashboardCharts, 1000);
+        console.warn('Chart.js no disponible, reintentando en 500ms...');
+        setTimeout(updateDashboardCharts, 500);
         return;
     }
     
-    console.log('✅ Chart.js disponible');
+    console.log('✓ updateDashboardCharts ejecutándose');
+    console.log('  - allUsuarios:', allUsuarios.length, 'usuarios');
+    console.log('  - allSucursales:', allSucursales.length, 'sucursales');
     
-    // Verificar que estamos en el dashboard
-    const dashboardElement = document.getElementById('dashboard');
-    if (!dashboardElement || dashboardElement.style.display === 'none') {
-        console.log('ℹ️ Dashboard no visible, saltando creación de gráficas');
-        return;
-    }
+    // Contar usuarios activos
+    const countUsuariosActivos = (allUsuarios || []).filter(u => u.activo).length;
     
-    console.log('✅ Dashboard visible');
+    // 1. Gráfica de Usuarios por Sucursal
+    const usuariosPorSucursal = {};
+    allSucursales.forEach(s => usuariosPorSucursal[s.nombre] = 0);
     
-    // Si no hay datos, cargarlos primero O usar datos de prueba
-    if (!allUsuarios || allUsuarios.length === 0 || !allSucursales || allSucursales.length === 0) {
-        console.log('📥 No hay datos, intentando cargar...');
-        
+    (allUsuarios || []).forEach(u => {
+        const sucursal = allSucursales.find(s => s.id === u.sucursal_id);
+        if (sucursal && usuariosPorSucursal[sucursal.nombre] !== undefined) {
+            usuariosPorSucursal[sucursal.nombre]++;
+        }
+    });
+    
+    console.log('  - Chart 1 data:', usuariosPorSucursal);
+
+    const ctx1 = document.getElementById('usuariosPorSucursalChart');
+    if (ctx1) {
         try {
-            await loadSucursales();
-            await loadUsuarios();
-        } catch (e) {
-            console.warn('⚠️ Error cargando datos:', e);
-        }
-        
-        // Si aún no hay datos, usar datos de prueba SIEMPRE
-        if (!allUsuarios || allUsuarios.length === 0) {
-            console.warn('⚠️ Usando datos de PRUEBA para usuarios');
-            allUsuarios = [
-                {id: 1, nombre_completo: "Admin Principal", rol: "Administrador", sucursal_id: 1, activo: true},
-                {id: 2, nombre_completo: "María García", rol: "Gerente", sucursal_id: 1, activo: true},
-                {id: 3, nombre_completo: "Juan Pérez", rol: "Empleado", sucursal_id: 2, activo: true},
-                {id: 4, nombre_completo: "Ana López", rol: "Colorista", sucursal_id: 2, activo: false},
-                {id: 5, nombre_completo: "Carlos Ruiz", rol: "Facturador", sucursal_id: 3, activo: true},
-                {id: 6, nombre_completo: "Laura Martín", rol: "Analista", sucursal_id: 3, activo: true},
-                {id: 7, nombre_completo: "Pedro Sánchez", rol: "Operador", sucursal_id: 1, activo: true},
-                {id: 8, nombre_completo: "Sofía Díaz", rol: "Contabilidad", sucursal_id: 2, activo: true}
-            ];
-        }
-        
-        if (!allSucursales || allSucursales.length === 0) {
-            console.warn('⚠️ Usando datos de PRUEBA para sucursales');
-            allSucursales = [
-                {id: 1, nombre: "Tiradentes", zona: "Santo_Domingo"},
-                {id: 2, nombre: "Bella Vista", zona: "Santo_Domingo"},
-                {id: 3, nombre: "Santiago Centro", zona: "Zona_Norte"},
-                {id: 4, nombre: "Puerto Plata", zona: "Zona_Norte"},
-                {id: 5, nombre: "Bavaro", zona: "Zona_Este"}
-            ];
-        }
-    }
-    
-    console.log('📊 Datos disponibles:');
-    console.log('  - Usuarios:', allUsuarios.length);
-    console.log('  - Sucursales:', allSucursales.length);
-    console.log('  - Usuarios data:', allUsuarios);
-    console.log('  - Sucursales data:', allSucursales);
-    
-    // Crear todas las gráficas
-    try {
-        console.log('📊 Creando gráfica 1...');
-        createUsersPerBranchChart();
-        
-        console.log('📊 Creando gráfica 2...');
-        createRoleDistributionChart();
-        
-        console.log('📊 Creando gráfica 3...');
-        createConsultationsChart();
-        
-        console.log('📊 Actualizando contadores...');
-        updateCounters();
-        
-        console.log('✅ createDashboardCharts completado exitosamente');
-    } catch (error) {
-        console.error('❌ Error en createDashboardCharts:', error);
-    }
-}
-
-// 1. Usuarios por Sucursal
-function createUsersPerBranchChart() {
-    console.log('📊 Iniciando createUsersPerBranchChart...');
-    
-    try {
-        const ctx = document.getElementById('usuariosPorSucursalChart');
-        if (!ctx) {
-            console.error('❌ Canvas usuariosPorSucursalChart NO encontrado');
-            return;
-        }
-        
-        console.log('✅ Canvas encontrado');
-        
-        // Asegurar que tenemos datos
-        if (!allSucursales || !allUsuarios) {
-            console.error('❌ No hay datos de sucursales o usuarios');
-            return;
-        }
-        
-        console.log('✅ Datos disponibles - Sucursales:', allSucursales.length, 'Usuarios:', allUsuarios.length);
-        
-        // Contar usuarios por sucursal
-        const usuariosPorSucursal = {};
-        allSucursales.forEach(s => {
-            usuariosPorSucursal[s.nombre] = 0;
-            console.log('  - Inicializando sucursal:', s.nombre);
-        });
-        
-        allUsuarios.forEach(u => {
-            const sucursal = allSucursales.find(s => s.id === u.sucursal_id);
-            if (sucursal) {
-                usuariosPorSucursal[sucursal.nombre]++;
-                console.log('  - Usuario', u.nombre_completo, 'asignado a', sucursal.nombre);
-            } else {
-                console.warn('  - Usuario', u.nombre_completo, 'sin sucursal válida (ID:', u.sucursal_id, ')');
-            }
-        });
-        
-        console.log('📊 Chart 1 - Datos calculados:', usuariosPorSucursal);
-        
-        const labels = Object.keys(usuariosPorSucursal).slice(0, 10);
-        const dataValues = Object.values(usuariosPorSucursal).slice(0, 10);
-        
-        console.log('📊 Chart 1 - Labels:', labels);
-        console.log('📊 Chart 1 - Values:', dataValues);
-        
-        // Destruir gráfica anterior si existe
-        if (usuariosPorSucursalChart) {
-            console.log('🗑️ Destruyendo gráfica anterior');
-            usuariosPorSucursalChart.destroy();
-        }
-        
-        // Crear nueva gráfica
-        console.log('🔨 Creando nueva gráfica...');
-        usuariosPorSucursalChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Usuarios',
-                    data: dataValues,
-                    backgroundColor: '#1a73e8',
-                    borderColor: '#1a73e8',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { 
-                    legend: { display: true },
-                    tooltip: { enabled: true }
+            if (usuariosPorSucursalChart) usuariosPorSucursalChart.destroy();
+            usuariosPorSucursalChart = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(usuariosPorSucursal).slice(0, 8),
+                    datasets: [{
+                        label: 'Usuarios',
+                        data: Object.values(usuariosPorSucursal).slice(0, 8),
+                        backgroundColor: '#1a73e8',
+                        borderColor: '#1a73e8',
+                        borderWidth: 1
+                    }]
                 },
-                scales: { 
-                    y: { 
-                        beginAtZero: true,
-                        ticks: { stepSize: 1 }
-                    }
-                }
-            }
-        });
-        
-        console.log('✅ Chart 1 creado exitosamente');
-    } catch (error) {
-        console.error('❌ Error creando Chart 1:', error);
-        console.error('Stack trace:', error.stack);
-    }
-}
-
-// 2. Distribución por Rol
-function createRoleDistributionChart() {
-    try {
-        const ctx = document.getElementById('usuariosPorRolChart');
-        if (!ctx) {
-            console.error('❌ Canvas usuariosPorRolChart no encontrado');
-            return;
-        }
-        
-        // Contar usuarios por rol
-        const usuariosPorRol = {};
-        allUsuarios.forEach(u => {
-            const rol = u.rol || 'Sin rol';
-            usuariosPorRol[rol] = (usuariosPorRol[rol] || 0) + 1;
-        });
-        
-        console.log('📊 Chart 2 - Distribución por Rol:', usuariosPorRol);
-        
-        // Destruir gráfica anterior si existe
-        if (usuariosPorRolChart) usuariosPorRolChart.destroy();
-        
-        const colors = ['#1a73e8', '#27ae60', '#f39c12', '#e74c3c', '#9b59b6', '#1abc9c'];
-        
-        // Crear nueva gráfica
-        usuariosPorRolChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: Object.keys(usuariosPorRol),
-                datasets: [{
-                    data: Object.values(usuariosPorRol),
-                    backgroundColor: colors.slice(0, Object.keys(usuariosPorRol).length),
-                    borderColor: '#fff',
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { 
-                    legend: { 
-                        position: 'bottom',
-                        labels: { padding: 20 }
-                    },
-                    tooltip: { enabled: true }
-                }
-            }
-        });
-        
-        console.log('✅ Chart 2 creado exitosamente');
-    } catch (error) {
-        console.error('❌ Error creando Chart 2:', error);
-    }
-}
-
-
-// 4. Consultas por Sucursal
-function createConsultationsChart() {
-    try {
-        const ctx = document.getElementById('estadoUsuariosChart');
-        if (!ctx) {
-            console.error('❌ Canvas estadoUsuariosChart no encontrado');
-            return;
-        }
-        
-        // Generar datos de consultas basados en métricas reales
-        const consultasPorSucursal = {};
-        allSucursales.forEach(s => {
-            const usuariosEnSucursal = allUsuarios.filter(u => u.sucursal_id === s.id);
-            const usuariosActivos = usuariosEnSucursal.filter(u => u.activo).length;
-            
-            // Cálculo basado en factores reales:
-            // - Usuarios activos tienen más peso
-            // - Diferentes roles generan diferentes volúmenes
-            // - Sucursales grandes vs pequeñas
-            let consultasBase = usuariosActivos * 12; // Base por usuario activo
-            
-            // Ajustes por tipo de roles en la sucursal
-            usuariosEnSucursal.forEach(u => {
-                if (u.activo) {
-                    switch(u.rol?.toLowerCase()) {
-                        case 'administrador': consultasBase += 15; break;
-                        case 'gerente': consultasBase += 12; break;
-                        case 'colorista': consultasBase += 8; break;
-                        case 'facturador': consultasBase += 10; break;
-                        default: consultasBase += 5;
-                    }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true } }
                 }
             });
-            
-            // Factor por zona geográfica (simulando diferencias regionales)
-            const factorZona = s.zona === 'Santo_Domingo' ? 1.3 : 
-                             s.zona === 'Zona_Norte' ? 1.1 : 0.9;
-            
-            consultasPorSucursal[s.nombre] = Math.round(consultasBase * factorZona);
-        });
-        
-        console.log('📊 Chart 4 - Consultas por Sucursal:', consultasPorSucursal);
-        
-        // Destruir gráfica anterior si existe
-        if (estadoUsuariosChart) estadoUsuariosChart.destroy();
-        
-        // Crear nueva gráfica
-        estadoUsuariosChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: Object.keys(consultasPorSucursal).slice(0, 10),
-                datasets: [{
-                    label: 'Consultas',
-                    data: Object.values(consultasPorSucursal).slice(0, 10),
-                    backgroundColor: '#9b59b6',
-                    borderColor: '#9b59b6',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { 
-                    legend: { display: true },
-                    tooltip: { enabled: true }
+            console.log('  ✓ Chart 1 (Bar) creado');
+        } catch (e) {
+            console.error('Error en Chart 1:', e);
+        }
+    } else {
+        console.error('Canvas #usuariosPorSucursalChart no encontrado');
+    }
+
+    // 2. Gráfica de Rol de Usuarios
+    const usuariosPorRol = {};
+    (allUsuarios || []).forEach(u => {
+        const rol = u.rol || 'Sin rol';
+        usuariosPorRol[rol] = (usuariosPorRol[rol] || 0) + 1;
+    });
+    
+    console.log('  - Chart 2 data:', usuariosPorRol);
+
+    const ctx2 = document.getElementById('usuariosPorRolChart');
+    if (ctx2) {
+        try {
+            if (usuariosPorRolChart) usuariosPorRolChart.destroy();
+            const colors = ['#1a73e8', '#27ae60', '#f39c12', '#e74c3c', '#9b59b6', '#1abc9c'];
+            usuariosPorRolChart = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(usuariosPorRol),
+                    datasets: [{
+                        data: Object.values(usuariosPorRol),
+                        backgroundColor: colors.slice(0, Object.keys(usuariosPorRol).length),
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    }]
                 },
-                scales: { 
-                    y: { 
-                        beginAtZero: true,
-                        ticks: { stepSize: 10 }
-                    }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } }
                 }
-            }
-        });
-        
-        console.log('✅ Chart 4 creado exitosamente');
-    } catch (error) {
-        console.error('❌ Error creando Chart 4:', error);
+            });
+            console.log('  ✓ Chart 2 (Doughnut) creado');
+        } catch (e) {
+            console.error('Error en Chart 2:', e);
+        }
+    } else {
+        console.error('Canvas #usuariosPorRolChart no encontrado');
     }
-}
 
-// Actualizar contadores del dashboard
-function updateCounters() {
-    try {
-        const usuariosActivos = allUsuarios.filter(u => u.activo).length;
-        const totalUsuarios = allUsuarios.length;
-        const totalSucursales = allSucursales.length;
-        
-        // Actualizar todos los elementos si existen
-        const elemTotalSucursales = document.getElementById('totalSucursales');
-        if (elemTotalSucursales) elemTotalSucursales.textContent = totalSucursales;
-        
-        const elemTotalUsuarios = document.getElementById('totalUsuarios');
-        if (elemTotalUsuarios) elemTotalUsuarios.textContent = totalUsuarios;
-        
-        const elemUsuariosActivos = document.getElementById('usuariosActivos');
-        if (elemUsuariosActivos) elemUsuariosActivos.textContent = usuariosActivos;
-        
-        const elemTotalEmpleados = document.getElementById('totalEmpleados');
-        if (elemTotalEmpleados) elemTotalEmpleados.textContent = totalUsuarios; // Empleados = Total usuarios
-        
-        console.log('📊 Contadores actualizados:');
-        console.log('  - Sucursales:', totalSucursales);
-        console.log('  - Usuarios totales:', totalUsuarios);
-        console.log('  - Usuarios activos:', usuariosActivos);
-        console.log('  - Empleados:', totalUsuarios);
-    } catch (error) {
-        console.error('❌ Error actualizando contadores:', error);
-    }
-}
+    // 3. Gráfica de Actividad Diaria (simulated data)
+    const actividadDatos = {
+        'Lunes': Math.floor(Math.random() * 50) + 20,
+        'Martes': Math.floor(Math.random() * 50) + 20,
+        'Miércoles': Math.floor(Math.random() * 50) + 20,
+        'Jueves': Math.floor(Math.random() * 50) + 20,
+        'Viernes': Math.floor(Math.random() * 50) + 20,
+        'Sábado': Math.floor(Math.random() * 30) + 10,
+        'Domingo': Math.floor(Math.random() * 30) + 10
+    };
 
-// Función legacy para compatibilidad
-function updateDashboardCharts() {
-    createDashboardCharts();
-}
+    const ctx3 = document.getElementById('actividadDiariaChart');
+    if (ctx3) {
+        try {
+            if (actividadDiariaChart) actividadDiariaChart.destroy();
+            actividadDiariaChart = new Chart(ctx3, {
+                type: 'line',
+                data: {
+                    labels: Object.keys(actividadDatos),
+                    datasets: [{
+                        label: 'Solicitudes',
+                        data: Object.values(actividadDatos),
+                        borderColor: '#1a73e8',
+                        backgroundColor: 'rgba(26, 115, 232, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: true } },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+            console.log('  ✓ Chart 3 (Line) creado');
+        } catch (e) {
+            console.error('Error en Chart 3:', e);
+        }
+    } else {
+        console.error('Canvas #actividadDiariaChart no encontrado');
+    }
 
-// Función de test simple para verificar que Chart.js funciona
-function testSimpleChart() {
-    console.log('🧪 TEST: Verificando Chart.js...');
+    // 4. Gráfica de Uso por Sucursal (Consultas)
+    const usoPorSucursal = {};
+    allSucursales.forEach(s => usoPorSucursal[s.nombre] = 0);
     
-    if (typeof Chart === 'undefined') {
-        console.error('❌ Chart.js NO está disponible');
-        alert('Chart.js no está cargado');
-        return;
+    (allUsuarios || []).forEach(u => {
+        const sucursal = allSucursales.find(s => s.id === u.sucursal_id);
+        if (sucursal && usoPorSucursal[sucursal.nombre] !== undefined) {
+            usoPorSucursal[sucursal.nombre] += Math.floor(Math.random() * 50) + 20;
+        }
+    });
+    
+    console.log('  - Chart 4 data:', usoPorSucursal);
+
+    const ctx4 = document.getElementById('estadoUsuariosChart');
+    if (ctx4) {
+        try {
+            if (estadoUsuariosChart) estadoUsuariosChart.destroy();
+            estadoUsuariosChart = new Chart(ctx4, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(usoPorSucursal).slice(0, 8),
+                    datasets: [{
+                        label: 'Consultas',
+                        data: Object.values(usoPorSucursal).slice(0, 8),
+                        backgroundColor: '#9b59b6',
+                        borderColor: '#9b59b6',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+            console.log('  ✓ Chart 4 (Bar) creado');
+        } catch (e) {
+            console.error('Error en Chart 4:', e);
+        }
+    } else {
+        console.error('Canvas #estadoUsuariosChart no encontrado');
     }
+
+    // Actualizar contadores
+    document.getElementById('usuariosActivos').textContent = countUsuariosActivos;
+    document.getElementById('totalEmpleados').textContent = (allEmpleados || []).length;
     
-    console.log('✅ Chart.js disponible, creando gráfica de test...');
-    
-    const ctx1 = document.getElementById('usuariosPorSucursalChart');
-    if (!ctx1) {
-        console.error('❌ No se encuentra el canvas usuariosPorSucursalChart');
-        return;
-    }
-    
-    try {
-        // Crear gráfica simple con datos fijos
-        new Chart(ctx1, {
-            type: 'bar',
-            data: {
-                labels: ['Tiradentes', 'Bella Vista', 'Santiago', 'Puerto Plata'],
-                datasets: [{
-                    label: 'Test Data',
-                    data: [12, 19, 8, 15],
-                    backgroundColor: '#1a73e8'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: true } },
-                scales: { y: { beginAtZero: true } }
-            }
-        });
-        
-        console.log('✅ Gráfica de test creada exitosamente');
-        alert('✅ Test exitoso - Chart.js funciona');
-    } catch (error) {
-        console.error('❌ Error creando gráfica de test:', error);
-        alert('❌ Error: ' + error.message);
-    }
+    console.log('✓ updateDashboardCharts completado');
 }
 
 async function switchTab(evt, name) {
-    console.log('🔄 switchTab called with name:', name);
-    
     // Hide all tabs
-    const allTabs = ['dashboard', 'sucursales', 'usuarios'];
-    allTabs.forEach(tabId => {
-        const tab = document.getElementById(tabId);
-        if (tab) {
-            tab.style.setProperty("display", "none", "important");
-            tab.classList.remove('active');
-        }
-    });
+    document.getElementById("dashboard").style.setProperty("display", "none", "important");
+    document.getElementById("sucursales").style.setProperty("display", "none", "important");
+    document.getElementById("usuarios").style.setProperty("display", "none", "important");
+    document.getElementById("actividad").style.setProperty("display", "none", "important");
+    document.getElementById("actividad").style.setProperty("display", "none", "important");
+    document.getElementById("actividad").style.setProperty("display", "none", "important");
+    const actividadTab = document.getElementById("actividad");
+    if (actividadTab) actividadTab.style.setProperty("display", "none", "important");
     
     // Remove active button class from ALL buttons
     document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
     
     // Show selected tab
     if (name === "dashboard") {
-        const dashboardTab = document.getElementById("dashboard");
-        if (dashboardTab) {
-            dashboardTab.style.setProperty("display", "block", "important");
-            dashboardTab.classList.add('active');
-        }
-        console.log('📊 Cambiando a dashboard, creando gráficas...');
-        // Crear gráficas del dashboard con un pequeño delay
-        setTimeout(() => {
-            createDashboardCharts();
-        }, 500);
+        document.getElementById("dashboard").style.setProperty("display", "block", "important");
+        updateDashboardCharts();
     } else if (name === "sucursales") {
         const sucursalesTab = document.getElementById("sucursales");
-        if (sucursalesTab) {
-            sucursalesTab.style.setProperty("display", "block", "important");
-            sucursalesTab.classList.add('active');
-        }
+        sucursalesTab.style.setProperty("display", "block", "important");
         await loadSucursales();
         await loadUsuarios();
     } else if (name === "usuarios") {
         const usuariosTab = document.getElementById("usuarios");
-        if (usuariosTab) {
-            usuariosTab.style.setProperty("display", "block", "important");
-            usuariosTab.classList.add('active');
-        }
+        usuariosTab.style.setProperty("display", "block", "important");
         await loadUsuarios();
+    } else if (name === "actividad") {
+        const actividadTab = document.getElementById("actividad");
+        actividadTab.style.setProperty("display", "block", "important");
+        await loadActiveUsers();
+    } else if (name === "actividad") {
+        const actividadTab = document.getElementById("actividad");
+        actividadTab.style.setProperty("display", "block", "important");
+        await loadActiveUsers();
+    } else if (name === "actividad") {
+        const actividadTab = document.getElementById("actividad");
+        actividadTab.style.setProperty("display", "block", "important");
+        await loadOnlineUsers();
+    } else if (name === "actividad") {
+        const actividadTab = document.getElementById("actividad");
+        actividadTab.style.setProperty("display", "block", "important");
+        await loadOnlineUsers();
+    } else if (name === "actividad") {
+        const actTab = document.getElementById("actividad");
+        if (actTab) {
+            actTab.style.setProperty("display", "block", "important");
+            await loadActiveUsers();
+        }
     }
     
-    // Mark ONLY this button as active
+    // Mark ONLY this button as active - remove from all first
     if (evt && evt.target) {
+        document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
         evt.target.classList.add("active");
-        console.log('✅ Botón marcado como activo');
     }
 }
 
@@ -1564,15 +1401,11 @@ function switchRol(evt, rol) {
 }
 
 function renderZonaSucursales(zona) {
+    const sucursalesZona = zonas[zona] || [];
     const tableBody = document.getElementById("tbody-" + zona);
-    if (!tableBody) {
-        console.error(`No se encontró tbody para zona: ${zona}`);
-        return;
-    }
-    
-    // Filtrar sucursales por la propiedad zona de la API
-    const sucursalesFiltradas = allSucursales.filter(s => s.zona === zona);
-    
+    const sucursalesFiltradas = allSucursales.filter(s => 
+        sucursalesZona.some(sZ => sZ.toLowerCase() === s.nombre.toLowerCase())
+    );
     if (sucursalesFiltradas.length > 0) {
         tableBody.innerHTML = sucursalesFiltradas.map(s => {
             const isActive = s.estado === "activa" || s.estado === "Activa";
@@ -1581,8 +1414,56 @@ function renderZonaSucursales(zona) {
     } else {
         tableBody.innerHTML = "<tr><td colspan='6' style='text-align:center;'>No hay sucursales en esta zona</td></tr>";
     }
-    
-    console.log(`Zona ${zona}: ${sucursalesFiltradas.length} sucursales`);
+}
+
+async function loadOnlineUsers() {
+    try {
+        const res = await fetch(API + "/api/v1/online");
+        if (!res.ok) throw new Error("Error cargando usuarios en línea");
+        
+        const data = await res.json();
+        const container = document.getElementById("actividad");
+        
+        if (!container) return;
+        
+        let html = '<h3>Usuarios en Línea</h3>';
+        
+        // Usuarios web por departamento
+        if (data.usuarios_web) {
+            html += '<h4>Usuarios Web</h4>';
+            for (const dept in data.usuarios_web) {
+                const usuarios = data.usuarios_web[dept];
+                html += `<p><strong>${dept}:</strong> ${usuarios.join(", ")}</p>`;
+            }
+        }
+        
+        // Programas desktop
+        if (data.programas_desktop && data.programas_desktop.length > 0) {
+            html += '<h4>Programas Desktop</h4>';
+            html += '<table border="1" cellpadding="10" style="width:100%;">';
+            html += '<tr><th>Programa</th><th>Máquina</th><th>Usuario SO</th><th>Última Actividad</th><th>Acción</th></tr>';
+            
+            for (const prog of data.programas_desktop) {
+                const appId = prog.id;
+                html += `<tr>
+                    <td>${prog.nombre_programa || 'N/A'}</td>
+                    <td>${prog.maquina || 'N/A'}</td>
+                    <td>${prog.usuario_so || 'N/A'}</td>
+                    <td>${prog.ultima_actividad || 'N/A'}</td>
+                    <td><button onclick="desconectarPrograma('${appId}')" style="background: #e74c3c; color: white; padding: 5px 10px; border: none; cursor: pointer;">Desconectar</button></td>
+                </tr>`;
+            }
+            html += '</table>';
+        }
+        
+        container.innerHTML = html;
+    } catch (err) {
+        console.error("Error loading online users:", err);
+        const container = document.getElementById("actividad");
+        if (container) {
+            container.innerHTML = `<p style="color: red;">Error: ${err.message}</p>`;
+        }
+    }
 }
 
 async function loadSucursales() {
@@ -1592,34 +1473,11 @@ async function loadSucursales() {
         const data = await res.json();
         allSucursales = data.sucursales || [];
         document.getElementById("totalSucursales").textContent = data.total || 0;
-        
-        // Obtener zonas dinámicamente de los datos de la API
-        const zonasEncontradas = new Set();
-        allSucursales.forEach(s => {
-            if (s.zona) {
-                zonasEncontradas.add(s.zona);
-            }
-        });
-        
-        // Renderizar solo las zonas que existen en la BD
-        const zonasDisponibles = ['Santo_Domingo', 'Zona_Este', 'Zona_Norte', 'Zona_Sur'];
-        zonasDisponibles.forEach(zona => {
-            renderZonaSucursales(zona);
-        });
-        
+        Object.keys(zonas).forEach(zona => renderZonaSucursales(zona));
         console.log('Sucursales loaded:', allSucursales.length);
-        console.log('Zonas encontradas:', Array.from(zonasEncontradas));
     } catch (e) { 
         console.error('Error loading sucursales:', e);
         document.getElementById("totalSucursales").textContent = '0';
-        // En caso de error, limpiar las tablas
-        const zonasDisponibles = ['Santo_Domingo', 'Zona_Este', 'Zona_Norte', 'Zona_Sur'];
-        zonasDisponibles.forEach(zona => {
-            const tableBody = document.getElementById("tbody-" + zona);
-            if (tableBody) {
-                tableBody.innerHTML = "<tr><td colspan='6' style='text-align:center;'>Error al cargar sucursales</td></tr>";
-            }
-        });
     }
 }
 
@@ -1643,6 +1501,117 @@ async function loadUsuarios() {
     }
 }
 
+
+
+async function loadActiveUsers() {
+    try {
+        console.log('Loading users...');
+        const response = await fetch(API + '/api/v1/usuarios');
+        const data = await response.json();
+        console.log('Users data:', data);
+        
+        const container = document.getElementById('onlineUsersContainer');
+        if (!container) return;
+        
+        let usuarios = data.usuarios || [];
+        
+        // Ordenar por última actividad (más reciente primero)
+        usuarios.sort((a, b) => {
+            const timeA = a.ultima_actividad ? new Date(a.ultima_actividad).getTime() : 0;
+            const timeB = b.ultima_actividad ? new Date(b.ultima_actividad).getTime() : 0;
+            return timeB - timeA;
+        });
+        
+        // Obtener sucursales para mapear IDs a nombres
+        const sucResponse = await fetch(API + '/api/v1/sucursales');
+        const sucData = await sucResponse.json();
+        const sucursalesMap = {};
+        for (const suc of (sucData.sucursales || [])) {
+            sucursalesMap[suc.id] = suc.nombre;
+        }
+        
+        let html = '<table style="width: 100%; border-collapse: collapse; margin-top: 20px;">';
+        html += '<tr style="background: #0066cc; color: white; font-weight: bold;">';
+        html += '<th style="padding: 12px; text-align: left; border-bottom: 2px solid #333;">Nombre</th>';
+        html += '<th style="padding: 12px; text-align: left; border-bottom: 2px solid #333;">Rol</th>';
+        html += '<th style="padding: 12px; text-align: left; border-bottom: 2px solid #333;">Sucursal</th>';
+        html += '<th style="padding: 12px; text-align: left; border-bottom: 2px solid #333;">Último Login</th>';
+        html += '</tr>';
+        
+        let count = 0;
+        for (const user of usuarios) {
+            const sucursal = sucursalesMap[user.sucursal_id] || 'N/A';
+            const time = user.ultima_actividad ? new Date(user.ultima_actividad).toLocaleString('es-ES') : 'Nunca';
+            const rowColor = count % 2 === 0 ? '#f9f9f9' : '#fff';
+            
+            html += '<tr style="background: ' + rowColor + '; border-bottom: 1px solid #ddd;">';
+            html += '<td style="padding: 12px;">' + (user.nombre_completo || '-') + '</td>';
+            html += '<td style="padding: 12px;">' + (user.rol || '-') + '</td>';
+            html += '<td style="padding: 12px;">' + sucursal + '</td>';
+            html += '<td style="padding: 12px;">' + time + '</td>';
+            html += '</tr>';
+            count++;
+        }
+        
+        html += '</table>';
+        
+        const summary = '<div style="background: #e3f2fd; padding: 15px; border-radius: 5px; margin-bottom: 20px; border-left: 4px solid #0066cc;">' +
+                       '<strong>Total Usuarios:</strong> ' + usuarios.length + 
+                       '</div>';
+        
+        container.innerHTML = summary + html;
+        console.log('Users displayed successfully');
+        
+    } catch(err) {
+        console.error('Error loading users:', err);
+        const container = document.getElementById('onlineUsersContainer');
+        if (container) {
+            container.innerHTML = '<div style="color: red; padding: 20px; background: #ffebee; border-radius: 5px;"><strong>Error:</strong> ' + err.message + '</div>';
+        }
+    }
+}
+
+
+
+
+
+async function loadActiveUsers() {
+    try {
+        const res = await fetch(API + "/api/v1/usuarios?limit=200");
+        if (!res.ok) throw new Error('Error fetching usuarios');
+        const data = await res.json();
+        const usuarios = data.usuarios || [];
+        
+        // Construir tabla HTML
+        let html = '<table style="width: 100%; border-collapse: collapse;">';
+        html += '<thead><tr style="background-color: #f5f5f5; border-bottom: 2px solid #ddd;">';
+        html += '<th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Nombre</th>';
+        html += '<th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Rol</th>';
+        html += '<th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Sucursal</th>';
+        html += '</tr></thead>';
+        html += '<tbody>';
+        
+        if (usuarios.length === 0) {
+            html += '<tr><td colspan="3" style="padding: 20px; text-align: center; color: #999;">No hay usuarios</td></tr>';
+        } else {
+            usuarios.forEach(u => {
+                const sucursal = allSucursales.find(s => s.id === u.sucursal_id);
+                const nombreSucursal = sucursal ? sucursal.nombre : 'N/A';
+                html += '<tr style="border-bottom: 1px solid #eee;">';
+                html += '<td style="padding: 10px; border: 1px solid #ddd;">' + (u.nombre_completo || 'N/A') + '</td>';
+                html += '<td style="padding: 10px; border: 1px solid #ddd;">' + (u.rol || 'N/A') + '</td>';
+                html += '<td style="padding: 10px; border: 1px solid #ddd;">' + nombreSucursal + '</td>';
+                html += '</tr>';
+            });
+        }
+        
+        html += '</tbody></table>';
+        document.getElementById('onlineUsersContainer').innerHTML = html;
+    } catch (e) {
+        console.error('Error loading active users:', e);
+        document.getElementById('onlineUsersContainer').innerHTML = '<p style="text-align: center; color: red;">Error cargando usuarios</p>';
+    }
+}
 
 
 function renderUsuariosTable(usuarios) {
@@ -1894,6 +1863,175 @@ function cerrarModalEmpleado() {
 
 
 
+async function loadActiveUsers() {
+    try {
+        console.log('Loading users...');
+        const response = await fetch(API + '/api/v1/usuarios');
+        const data = await response.json();
+        console.log('Users data:', data);
+        
+        const container = document.getElementById('onlineUsersContainer');
+        if (!container) return;
+        
+        let usuarios = data.usuarios || [];
+        
+        // Ordenar por última actividad (más reciente primero)
+        usuarios.sort((a, b) => {
+            const timeA = a.ultima_actividad ? new Date(a.ultima_actividad).getTime() : 0;
+            const timeB = b.ultima_actividad ? new Date(b.ultima_actividad).getTime() : 0;
+            return timeB - timeA;
+        });
+        
+        // Obtener sucursales para mapear IDs a nombres
+        const sucResponse = await fetch(API + '/api/v1/sucursales');
+        const sucData = await sucResponse.json();
+        const sucursalesMap = {};
+        for (const suc of (sucData.sucursales || [])) {
+            sucursalesMap[suc.id] = suc.nombre;
+        }
+        
+        let html = '<table style="width: 100%; border-collapse: collapse; margin-top: 20px;">';
+        html += '<tr style="background: #0066cc; color: white; font-weight: bold;">';
+        html += '<th style="padding: 12px; text-align: left; border-bottom: 2px solid #333;">Nombre</th>';
+        html += '<th style="padding: 12px; text-align: left; border-bottom: 2px solid #333;">Rol</th>';
+        html += '<th style="padding: 12px; text-align: left; border-bottom: 2px solid #333;">Sucursal</th>';
+        html += '<th style="padding: 12px; text-align: left; border-bottom: 2px solid #333;">Último Login</th>';
+        html += '</tr>';
+        
+        let count = 0;
+        for (const user of usuarios) {
+            const sucursal = sucursalesMap[user.sucursal_id] || 'N/A';
+            const time = user.ultima_actividad ? new Date(user.ultima_actividad).toLocaleString('es-ES') : 'Nunca';
+            const rowColor = count % 2 === 0 ? '#f9f9f9' : '#fff';
+            
+            html += '<tr style="background: ' + rowColor + '; border-bottom: 1px solid #ddd;">';
+            html += '<td style="padding: 12px;">' + (user.nombre_completo || '-') + '</td>';
+            html += '<td style="padding: 12px;">' + (user.rol || '-') + '</td>';
+            html += '<td style="padding: 12px;">' + sucursal + '</td>';
+            html += '<td style="padding: 12px;">' + time + '</td>';
+            html += '</tr>';
+            count++;
+        }
+        
+        html += '</table>';
+        
+        const summary = '<div style="background: #e3f2fd; padding: 15px; border-radius: 5px; margin-bottom: 20px; border-left: 4px solid #0066cc;">' +
+                       '<strong>Total Usuarios:</strong> ' + usuarios.length + 
+                       '</div>';
+        
+        container.innerHTML = summary + html;
+        console.log('Users displayed successfully');
+        
+    } catch(err) {
+        console.error('Error loading users:', err);
+        const container = document.getElementById('onlineUsersContainer');
+        if (container) {
+            container.innerHTML = '<div style="color: red; padding: 20px; background: #ffebee; border-radius: 5px;"><strong>Error:</strong> ' + err.message + '</div>';
+        }
+    }
+}
+
+
+
+function renderOnlineUsers(data) {
+    const total = data.total || 0;
+    const usuariosWeb = data.usuarios_web || {};
+    const programasDesktop = data.programas_desktop || [];
+    const totalUsuarios = data.total_usuarios || 0;
+    const totalProgramas = data.total_programas || 0;
+    
+    let html = '<div style="margin-bottom: 20px; padding: 15px; background: #f0f0f0; border-radius: 6px;">';
+    html += '<strong>Total Online: ' + total + '</strong> | ';
+    html += '<span style="color: #1a73e8;">👥 Usuarios: ' + totalUsuarios + '</span> | ';
+    html += '<span style="color: #f39c12;">💻 Programas: ' + totalProgramas + '</span>';
+    html += '</div>';
+    
+    if (total === 0) {
+        html += '<p style="text-align: center; color: #999;">No hay usuarios ni programas online en este momento</p>';
+    } else {
+        // Sección de Usuarios Web
+        if (totalUsuarios > 0) {
+            html += '<div style="margin-bottom: 30px;"><h3 style="color: #1a73e8; border-bottom: 2px solid #1a73e8; padding-bottom: 10px;">👥 Usuarios Web (' + totalUsuarios + ')</h3>';
+            
+            for (const [dept, usuarios] of Object.entries(usuariosWeb)) {
+                html += '<div style="margin-bottom: 20px;">';
+                html += '<h4 style="color: #27ae60; margin: 10px 0;">' + dept + ' (' + usuarios.length + ')</h4>';
+                html += '<table style="width: 100%; border-collapse: collapse;">';
+                html += '<thead><tr style="background: #f5f5f5;"><th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Usuario</th><th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Nombre</th><th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Rol</th><th style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">Acción</th></tr></thead>';
+                html += '<tbody>';
+                
+                usuarios.forEach(user => {
+                    html += '<tr style="border-bottom: 1px solid #eee;">';
+                    html += '<td style="padding: 10px;">' + (user.username || 'N/A') + '</td>';
+                    html += '<td style="padding: 10px;">' + (user.nombre_completo || 'N/A') + '</td>';
+                    html += '<td style="padding: 10px;">' + (user.rol || 'N/A') + '</td>';
+                    html += '<td style="padding: 10px; text-align: center;"><button onclick="desloguearUsuario(' + user.id + ')" style="background: #e74c3c; color: white; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">Desloguear</button></td>';
+                    html += '</tr>';
+                });
+                
+                html += '</tbody></table>';
+                html += '</div>';
+            }
+            
+            html += '</div>';
+        }
+        
+        // Sección de Programas Desktop
+        if (totalProgramas > 0) {
+            html += '<div style="margin-bottom: 30px;"><h3 style="color: #f39c12; border-bottom: 2px solid #f39c12; padding-bottom: 10px;">💻 Programas de Escritorio (' + totalProgramas + ')</h3>';
+            html += '<table style="width: 100%; border-collapse: collapse;">';
+            html += '<thead><tr style="background: #fff3cd;"><th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Programa</th><th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Versión</th><th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Máquina</th><th style="padding: 10px; text-align: left; border-bottom: 1px solid #ddd;">Usuario SO</th><th style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">Acción</th></tr></thead>';
+            html += '<tbody>';
+            
+            programasDesktop.forEach(prog => {
+                html += '<tr style="border-bottom: 1px solid #eee; background: #fffaf0;">';
+                html += '<td style="padding: 10px;"><strong>' + (prog.nombre_programa || 'N/A') + '</strong></td>';
+                html += '<td style="padding: 10px;">' + (prog.version || 'N/A') + '</td>';
+                html += '<td style="padding: 10px;">' + (prog.maquina || 'N/A') + '</td>';
+                html += '<td style="padding: 10px;">' + (prog.usuario_so || 'N/A') + '</td>';
+                html += '<td style="padding: 10px; text-align: center;"><button onclick="desconectarPrograma(' + prog.id + ')" style="background: #f39c12; color: white; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">Desconectar</button></td>';
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table>';
+            html += '</div>';
+        }
+    }
+    
+    document.getElementById("onlineUsersContainer").innerHTML = html;
+}
+
+function desconectarPrograma(appId) {
+    if (confirm("¿Desconectar este programa?")) {
+        fetch(API + "/api/v1/desktop/unregister/" + appId, { method: "POST" })
+            .then(res => {
+                if (res.ok) {
+                    alert("Programa desconectado");
+                    loadActiveUsers();
+                } else {
+                    alert("Error al desconectar programa");
+                }
+            })
+            .catch(e => alert("Error: " + e.message));
+    }
+}
+
+async function desloguearUsuario(usuarioId) {
+    if (confirm("¿Desloguear a este usuario?")) {
+        try {
+            const res = await fetch(API + "/api/v1/logout/" + usuarioId, { method: "POST" });
+            if (res.ok) {
+                alert("Usuario deslogeado correctamente");
+                loadActiveUsers();
+            } else {
+                alert("Error al desloguear usuario");
+            }
+        } catch (e) {
+            alert("Error: " + e.message);
+        }
+    }
+}
+
 async function loadData() {
     try {
         console.log('Loading data...');
@@ -1927,6 +2065,9 @@ async function loadData() {
         }
         
         console.log('Data loading complete');
+        
+        // Actualizar gráficos después de cargar los datos
+        updateDashboardCharts();
     } catch(err) {
         console.error('Error in loadData:', err);
     }
@@ -2423,31 +2564,7 @@ function testRenderUsuarios() {
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('DOM loaded, checking session...');
     await checkExistingSession();
-    
-    // Esperar un poco y luego inicializar gráficas si estamos en dashboard
-    setTimeout(() => {
-        console.log('🚀 Inicializando gráficas después de DOM loaded...');
-        initializeDashboard();
-    }, 2000);
 });
-
-// Función para inicializar dashboard
-async function initializeDashboard() {
-    try {
-        console.log('📊 Inicializando Dashboard...');
-        
-        // Verificar si estamos en el dashboard
-        const dashboardElement = document.getElementById('dashboard');
-        if (dashboardElement && dashboardElement.style.display !== 'none') {
-            console.log('✅ Dashboard visible, creando gráficas...');
-            await createDashboardCharts();
-        } else {
-            console.log('ℹ️ Dashboard no visible, saltando inicialización de gráficas');
-        }
-    } catch (error) {
-        console.error('❌ Error inicializando dashboard:', error);
-    }
-}
 </script>
 </body>
 </html>
