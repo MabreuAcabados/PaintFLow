@@ -191,6 +191,7 @@ async def list_empleados(skip: int = 0, limit: int = 200, db=Depends(get_db)):
                 WHEN c.sucursal = 'Test' THEN 'test'
                 WHEN c.sucursal = 'Villamella' THEN 'Villa Mella'
                 WHEN c.sucursal = 'Zonaoriental' THEN 'Zona Oriental'
+                WHEN c.sucursal = 'Bavaro' THEN 'Bavaro'  -- Mapeo explícito sin acento
                 ELSE c.sucursal
             END
             WHERE c.activo = true
