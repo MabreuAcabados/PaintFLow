@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -112,6 +112,23 @@ async def login(username: str, password: str, db=Depends(get_db)):
         # Verificar que sea administrador
         if not rol or rol.lower() != 'administrador':
             raise HTTPException(status_code=403, detail="Acceso restringido a administradores")
+        
+        # Registrar login en login_audits
+        try:
+            # Obtener nombre de sucursal
+            cur2 = db.cursor()
+            cur2.execute("SELECT nombre FROM sucursales WHERE id = %s", (sucursal_id,))
+            sucursal_row = cur2.fetchone()
+            sucursal_nombre = sucursal_row[0] if sucursal_row else ""
+            
+            # Registrar en login_audits
+            cur.execute(
+                "INSERT INTO login_audits (usuario_id, username, nombre_completo, rol, sucursal, fecha_hora_login, created_at) VALUES (%s, %s, %s, %s, %s, NOW(), NOW())",
+                (usuario_id, db_username, nombre_completo, rol, sucursal_nombre)
+            )
+            db.commit()
+        except Exception as log_error:
+            logger.warning(f"Error registering login audit: {log_error}")
         
         # Registrar sesión activa
         ACTIVE_SESSIONS[usuario_id] = {
@@ -648,6 +665,42 @@ async def logout_user(usuario_id: int):
         logger.error(f"Error logging out user: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
+
+
+@app.get("/api/v1/login-activity")
+async def get_login_activity(limit: int = 50, db=Depends(get_db)):
+    """Obtener historial de logins recientes"""
+    try:
+        cur = db.cursor()
+        cur.execute("""
+            SELECT usuario_id, username, nombre_completo, rol, sucursal, fecha_hora_login 
+            FROM login_audits 
+            ORDER BY fecha_hora_login DESC 
+            LIMIT %s
+        """, (limit,))
+        
+        audits = cur.fetchall()
+        
+        result = [
+            {
+                "usuario_id": a[0],
+                "username": a[1],
+                "nombre_completo": a[2],
+                "rol": a[3],
+                "sucursal": a[4],
+                "fecha_hora_login": a[5].isoformat() if a[5] else None
+            }
+            for a in audits
+        ]
+        
+        return {
+            "total": len(result),
+            "logins": result
+        }
+    except Exception as e:
+        logger.error(f"Error getting login activity: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 if __name__ == "__main__":

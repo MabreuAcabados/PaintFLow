@@ -785,6 +785,27 @@
                         <canvas id="estadoUsuariosChart"></canvas>
                     </div>
                 </div>
+
+                <!-- Gráfico de Actividad de Logins (Ancho Completo) -->
+                <div class="dashboard-card" style="padding: 20px; min-height: 400px; display: flex; flex-direction: column; margin-top: 20px;">
+                    <h3 style="margin-bottom: 15px; flex-shrink: 0;">Últimos Logins</h3>
+                    <div style="flex-grow: 1; position: relative; min-height: 320px; overflow-y: auto;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: #f5f5f5; position: sticky; top: 0;">
+                                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: 700;">Usuario</th>
+                                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: 700;">Nombre Completo</th>
+                                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: 700;">Rol</th>
+                                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: 700;">Sucursal</th>
+                                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: 700;">Hora Login</th>
+                                </tr>
+                            </thead>
+                            <tbody id="loginActivityTableBody">
+                                <tr><td colspan="5" style="text-align: center; padding: 20px;">Cargando...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
             <div id="sucursales" class="tab-content">
@@ -1116,6 +1137,7 @@ function handleLogout() {
 let empleadosPorSucursalChart = null;
 let usuariosPorRolChart = null;
 let estadoUsuariosChart = null;
+let loginActivityRefreshInterval = null;  // Intervalo para actualización automática
 
 // Función para actualizar gráficas del dashboard
 function updateDashboardCharts() {
@@ -1179,6 +1201,15 @@ function updateDashboardCharts() {
 
     // 4. Gráfica de Sucursales por Zona
     updateZonaChart();
+    
+    // 5. Tabla de Actividad de Logins - Actualización automática
+    updateLoginActivityChart();
+    
+    // Iniciar actualización automática cada 3 segundos
+    if (loginActivityRefreshInterval) clearInterval(loginActivityRefreshInterval);
+    loginActivityRefreshInterval = setInterval(() => {
+        updateLoginActivityChart();
+    }, 3000);  // 3 segundos
 
     // Actualizar contadores
     document.getElementById('usuariosActivos').textContent = countUsuariosActivos;
@@ -1334,6 +1365,11 @@ function updateZonaChart() {
 }
 
 async function switchTab(evt, name) {
+    // Detener actualización automática de logins si nos vamos del dashboard
+    if (loginActivityRefreshInterval && name !== 'dashboard') {
+        clearInterval(loginActivityRefreshInterval);
+        loginActivityRefreshInterval = null;
+    }
     // Hide all tabs
     document.getElementById("dashboard").style.setProperty("display", "none", "important");
     document.getElementById("sucursales").style.setProperty("display", "none", "important");
@@ -1414,6 +1450,58 @@ function renderZonaSucursales(zona) {
         }).join("");
     } else {
         tableBody.innerHTML = "<tr><td colspan='6' style='text-align:center;'>No hay sucursales en esta zona</td></tr>";
+    }
+}
+
+
+// Función para actualizar tabla de actividad de logins
+async function updateLoginActivityChart() {
+    console.log('✓ updateLoginActivityChart ejecutándose');
+    
+    try {
+        const res = await fetch(API + '/api/v1/login-activity?limit=30');
+        if (!res.ok) throw new Error('Error fetching login activity');
+        
+        const data = await res.json();
+        const logins = data.logins || [];
+        
+        console.log('  - Logins obtenidos:', logins.length);
+        
+        const tbody = document.getElementById('loginActivityTableBody');
+        if (!tbody) {
+            console.error('tbody no encontrado');
+            return;
+        }
+        
+        if (!logins || logins.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px;">Sin logins registrados</td></tr>';
+            return;
+        }
+        
+        // Crear las filas de la tabla
+        const rows = logins.map(login => {
+            // Formatear fecha y hora
+            const fecha = new Date(login.fecha_hora_login);
+            const hora = fecha.toLocaleTimeString('es-DO', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const fecha_str = fecha.toLocaleDateString('es-DO');
+            
+            return '<tr>' +
+                '<td style="padding: 10px; border: 1px solid #ddd;">' + (login.username || 'N/A') + '</td>' +
+                '<td style="padding: 10px; border: 1px solid #ddd;">' + (login.nombre_completo || 'N/A') + '</td>' +
+                '<td style="padding: 10px; border: 1px solid #ddd;">' + (login.rol || 'N/A') + '</td>' +
+                '<td style="padding: 10px; border: 1px solid #ddd;">' + (login.sucursal || 'N/A') + '</td>' +
+                '<td style="padding: 10px; border: 1px solid #ddd; font-weight: 500; color: #1a73e8;">' + fecha_str + ' ' + hora + '</td>' +
+                '</tr>';
+        });
+        
+        tbody.innerHTML = rows.join('');
+        console.log('  ✓ Tabla de actividad actualizada con', logins.length, 'logins');
+    } catch (e) {
+        console.error('Error in updateLoginActivityChart:', e);
+        const tbody = document.getElementById('loginActivityTableBody');
+        if (tbody) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: red; padding: 20px;">Error al cargar los datos</td></tr>';
+        }
     }
 }
 
