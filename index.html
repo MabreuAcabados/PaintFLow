@@ -229,6 +229,20 @@
             color: #1a73e8;
         }
         
+        .dropdown-menu button:nth-child(1) {
+            color: #27ae60;
+            font-weight: 600;
+        }
+
+        .dropdown-menu button:nth-child(1):hover {
+            background: #f0fff0;
+            color: #1e8449;
+        }
+
+        .dropdown-menu button:nth-child(1)[style*="display: none"] {
+            display: none !important;
+        }
+
         .dropdown-menu button:last-child {
             color: #d32f2f;
             border-top: 1px solid #eee;
@@ -325,10 +339,10 @@
         }
         
         .subtab-btn.active { 
-            border-bottom-color: #27ae60; 
+            border-bottom-color: #1e5a96; 
             color: #27ae60; 
             font-weight: 600;
-            background: rgba(39, 174, 96, 0.08);
+            background: rgba(30, 90, 150, 0.08);
         }
         
         .subtab-content { 
@@ -632,9 +646,167 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             transform: translateY(-2px);
         }
-</style>
+
+        .user-dropdown-btn {
+            background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+            color: #fff;
+            padding: 10px 18px;
+            border-radius: 25px;
+            border: 1px solid rgba(26, 115, 232, 0.3);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.25);
+        }
+
+        .user-dropdown-btn:hover {
+            background: linear-gradient(135deg, #0d47a1 0%, #0a2e6b 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(26, 115, 232, 0.35);
+        }
+
+        .user-dropdown-btn::after {
+            content: '▼';
+            font-size: 0.7em;
+            transition: transform 0.3s ease;
+        }
+
+
+        /* Modal de Perfil */
+        #modalPerfil {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #modalPerfil.active {
+            display: flex !important;
+        }
+
+        .perfil-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .perfil-form .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .perfil-form label {
+            font-weight: 600;
+            color: #1e5a96;
+            font-size: 0.9em;
+        }
+
+        .perfil-form input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #f9f9f9;
+            color: #333;
+            font-family: Roboto, sans-serif;
+        }
+
+        .perfil-form input:disabled {
+            opacity: 0.7;
+            cursor: default;
+        }
+
+        .perfil-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+
+        .perfil-buttons button {
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .perfil-buttons .btn-save {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            color: #fff;
+        }
+
+        .perfil-buttons .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+        }
+
+        .perfil-buttons .btn-cancel {
+            background: #ccc;
+            color: #333;
+        }
+
+        .perfil-buttons .btn-cancel:hover {
+            background: #aaa;
+        }
+
+        .user-dropdown-btn.active::after {
+            transform: rotate(180deg);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 16px;
+            font-weight: 700;
+            color: #1a73e8;
+            overflow: hidden;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+
+    </style>
 </head>
 <body>
+
+    <script>
+        // Cargar nombre del usuario inmediatamente desde localStorage
+        try {
+            const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            const nombre = userData.nombre_completo || userData.username || 'Usuario';
+            document.addEventListener('DOMContentLoaded', function() {
+                const nameElement = document.getElementById('adminUserName');
+                if (nameElement) {
+                    nameElement.textContent = nombre;
+                }
+            });
+        } catch(e) {
+            console.error('Error cargando nombre:', e);
+        }
+    </script>
             <div id="loginContainer">
         <div class="login-box">
             <div id="logoContainer" style="display: flex; align-items: center; justify-content: center; width: 100%; margin-bottom: 50px;"><img src="/logo.png" alt="PaintFlow Logo" style="height: 120px; width: auto;"></div>
@@ -650,14 +822,19 @@
 
     <div id="appContainer">
         <div class="navbar">
-            <img src="/logo.png" alt="PaintFlow Logo" style="height: 60px; width: auto; cursor: pointer;" onclick="goToDashboard()">
+            <img src="/logo.png" alt="PaintFlow Logo" style="height: 60px; width: auto; cursor: pointer;" onclick="window.location.href='/'">
             <div class="navbar-tabs">
                 <button class="tab-btn" onclick="switchTab(event, 'sucursales')">SUCURSALES</button>
                 <button class="tab-btn" onclick="switchTab(event, 'usuarios')">USUARIOS</button>
             </div>
             <div class="user-menu-container">
-                <button class="logout-btn" onclick="toggleUserMenu(event)">⋮</button>
+                <button class="user-dropdown-btn" id="userDropdownBtn" onclick="toggleUserDropdown()">
+                    <div class="user-avatar" id="userAvatar">👤</div>
+                    <span id="adminUserName">Usuario</span>
+                </button>
                 <div class="dropdown-menu" id="userDropdown">
+                    <button onclick="goToAnalystView()" style="color: #333; background: none; padding: 12px 16px; border: none; text-align: left; cursor: pointer; font-size: 0.9em;">Analista</button>
+                    <button onclick="abrirModalPerfil()">Perfil</button>
                     <button onclick="handleLogout()">Cerrar Sesión</button>
                 </div>
             </div>
@@ -990,8 +1167,9 @@ const zonas = {
 
 
 // Guardar sesión en localStorage
-function saveSession(usuario) {
-    localStorage.setItem('currentUser', usuario);
+function saveSession(usuarioData) {
+    // Guardar el objeto completo del usuario con su rol
+    localStorage.setItem('currentUser', JSON.stringify(usuarioData));
     localStorage.setItem('sessionActive', 'true');
 }
 
@@ -1026,30 +1204,44 @@ async function checkExistingSession() {
         
         // Cargar datos (which includes switchTab to dashboard)
         await loadData();
+        
+        // Mostrar botón de "Gestión de Empleados" solo para admins
+        const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        
+        // Actualizar nombre del usuario en el navbar
+        const nombre = userData.nombre_completo || userData.username || 'Usuario';
+        const userNameElement = document.getElementById('adminUserName');
+        if (userNameElement) {
+            userNameElement.textContent = nombre;
+        }
+        
+        // Actualizar avatar
+        updateUserAvatarAdmin(userData);
+        
+        const btnAnalystView = document.getElementById('btnAnalystView');
+        if (btnAnalystView) {
+            const userRole = (userData.rol || '').toLowerCase();
+            btnAnalystView.style.display = userRole === 'administrador' ? 'block' : 'none';
+        }
     }
 }
 
 
 function goToDashboard() {
-    // Ocultar todos los tabs
-    const tabs = document.querySelectorAll('.tab-content');
-    tabs.forEach(tab => {
-        tab.style.display = 'none';
-    });
-    
-    // Mostrar dashboard
-    const dashboard = document.getElementById('dashboard');
-    if (dashboard) {
-        dashboard.style.display = 'block';
-    }
-    
-    // Quitar active de todos los botones de tab
-    const tabBtns = document.querySelectorAll('.tab-btn');
-    tabBtns.forEach(btn => btn.classList.remove('active'));
-    
-    // Cargar datos del dashboard
-    loadData();  // Load dashboard data
-}
+        // Verificar rol del usuario
+        const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        const rol = (userData.rol || '').toLowerCase();
+        
+        // Si es analista, redirigir a /employees en lugar del dashboard
+        if (rol === 'analista') {
+            console.log('Usuario analista detectado, redirigiendo a /employees');
+            window.location.href = '/employees';
+            return;
+        }
+        
+        // Si es admin, mostrar dashboard
+        console.log('Usuario admin detectado, mostrando dashboard');
+        document.getElementById("tabs-container").style.display = "flex";}
 
 async function handleLogin(e) {
     e.preventDefault();
@@ -1080,8 +1272,24 @@ async function handleLogin(e) {
         const usuarioData = await res.json();
         console.log('OK Autenticacion exitosa para:', usuario);
         
-        saveSession(usuario);
+        saveSession(usuarioData);
         
+        // Actualizar nombre de usuario en el navbar
+        const nombre = usuarioData.nombre_completo || usuarioData.username || 'Usuario';
+        const userNameElement = document.getElementById('adminUserName');
+        if (userNameElement) {
+            userNameElement.textContent = nombre;
+        }
+        
+        // Si es ANALISTA, redirigir directo sin mostrar dashboard
+        const userRole = (usuarioData.rol || '').toLowerCase();
+        if (userRole === 'analista') {
+            console.log('Usuario analista detectado, redirigiendo a /employees');
+            window.location.href = '/employees';
+            return;
+        }
+        
+        // Si es ADMIN, mostrar dashboard
         const loginContainer = document.getElementById("loginContainer");
         const appContainer = document.getElementById("appContainer");
         
@@ -1095,6 +1303,18 @@ async function handleLogin(e) {
         
         console.log('About to load data...');
         await loadData();
+        
+        // Mostrar botón de "Gestión de Empleados" solo para admins
+        const btnAnalystView = document.getElementById('btnAnalystView');
+        if (btnAnalystView) {
+            const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            const userRole = (userData.rol || '').toLowerCase();
+            if (userRole === 'administrador') {
+                btnAnalystView.style.display = 'block';
+            } else {
+                btnAnalystView.style.display = 'none';
+            }
+        }
         console.log('Data loaded successfully');
         
         goToDashboard();
@@ -1122,6 +1342,35 @@ document.addEventListener("click", function(event) {
         }
     }
 });
+
+
+        function abrirModalPerfil() {
+            // Obtener datos del usuario desde localStorage
+            try {
+                const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                
+                document.getElementById('perfilNombre').value = userData.nombre_completo || 'N/A';
+                document.getElementById('perfilEmail').value = userData.email || 'N/A';
+                document.getElementById('perfilUsername').value = userData.username || 'N/A';
+                document.getElementById('perfilRol').value = userData.rol || 'N/A';
+                
+                document.getElementById('modalPerfil').classList.add('active');
+            } catch(e) {
+                console.error('Error al cargar perfil:', e);
+            }
+        }
+
+        function cerrarModalPerfil() {
+            document.getElementById('modalPerfil').classList.remove('active');
+        }
+
+        // Cerrar modal de perfil al hacer clic afuera
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('modalPerfil');
+            if (modal && e.target === modal) {
+                cerrarModalPerfil();
+            }
+        });
 
 function handleLogout() {
     clearSession();
@@ -2392,6 +2641,54 @@ document.addEventListener('DOMContentLoaded', async function() {
     console.log('DOM loaded, checking session...');
     await checkExistingSession();
 });
-</script>
+
+        function goToAnalystView() {
+            window.location.href = '/employees';
+        }
+
+
+        function toggleUserDropdown() {
+            const btn = document.getElementById('userDropdownBtn');
+            const menu = document.getElementById('userDropdown');
+            
+            btn.classList.toggle('active');
+            menu.classList.toggle('active');
+        }
+
+        // Cerrar dropdown al hacer clic afuera
+        document.addEventListener('click', function(e) {
+            const btn = document.getElementById('userDropdownBtn');
+            const menu = document.getElementById('userDropdown');
+            if (btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) {
+                btn.classList.remove('active');
+                menu.classList.remove('active');
+            }
+        });
+
+    </script>
+
+        <!-- Modal Perfil -->
+        <div id="modalPerfil" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; display: none; align-items: center; justify-content: center;">
+            <div style="background: #fff; width: 95%; max-width: 400px; border-radius: 8px; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+                <h2 style="margin: 0 0 20px 0; color: #1e5a96;">Perfil</h2>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: #333; font-weight: 500;">Nombre Completo</label>
+                    <input type="text" id="perfilNombre" readonly style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; background: #f9f9f9; color: #333;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: #333; font-weight: 500;">Email</label>
+                    <input type="text" id="perfilEmail" readonly style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; background: #f9f9f9; color: #333;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; color: #333; font-weight: 500;">Usuario</label>
+                    <input type="text" id="perfilUsername" readonly style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; background: #f9f9f9; color: #333;">
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 5px; color: #333; font-weight: 500;">Rol</label>
+                    <input type="text" id="perfilRol" readonly style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; background: #f9f9f9; color: #333;">
+                </div>
+                <button onclick="cerrarModalPerfil()" style="width: 100%; background: #1e5a96; color: #fff; padding: 10px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">Cerrar</button>
+            </div>
+        </div>
 </body>
 </html>

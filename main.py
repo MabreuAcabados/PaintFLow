@@ -57,6 +57,24 @@ async def root():
         return FileResponse(html_path, media_type="text/html")
     raise HTTPException(status_code=404, detail="Index not found")
 
+@app.get("/employees")
+async def employees_page():
+    """Servir interfaz de gestión de empleados para analistas"""
+    html_path = os.path.join(os.path.dirname(__file__), "employees.html")
+    if os.path.exists(html_path):
+        return FileResponse(html_path, media_type="text/html")
+    raise HTTPException(status_code=404, detail="Employees page not found")
+
+
+@app.get("/employees")
+async def employees_page():
+    """Servir interfaz de gestión de empleados para analistas"""
+    html_path = os.path.join(os.path.dirname(__file__), "employees.html")
+    if os.path.exists(html_path):
+        return FileResponse(html_path, media_type="text/html")
+    raise HTTPException(status_code=404, detail="Employees page not found")
+
+
 @app.get("/health")
 async def health_check():
     """Estado de la API"""
@@ -109,9 +127,10 @@ async def login(username: str, password: str, db=Depends(get_db)):
         if not activo:
             raise HTTPException(status_code=403, detail="Esta cuenta está inactiva")
         
-        # Verificar que sea administrador
-        if not rol or rol.lower() != 'administrador':
-            raise HTTPException(status_code=403, detail="Acceso restringido a administradores")
+        # Verificar que sea administrador o analista
+        allowed_roles = ['administrador', 'analista']
+        if not rol or rol.lower() not in allowed_roles:
+            raise HTTPException(status_code=403, detail="Acceso restringido a administradores y analistas")
         
         # Registrar login en login_audits
         try:
