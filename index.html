@@ -1197,54 +1197,61 @@ async function checkExistingSession() {
     const sessionActive = localStorage.getItem('sessionActive');
     const currentUser = localStorage.getItem('currentUser');
     
+    // Solo proceder si hay una sesión VÁLIDA y ACTIVA
     if (sessionActive === 'true' && currentUser) {
         console.log('Sesion activa encontrada para:', currentUser);
         
-        // Verificar que el usuario tenga rol de administrador para esta vista
-        const userData = JSON.parse(currentUser);
-        const userRole = (userData.rol || '').toLowerCase();
-        
-        // Si es analista, redirigir a su vista correspondiente
-        if (userRole === 'analista') {
-            console.log('Usuario analista detectado, redirigiendo a /employees');
-            window.location.href = '/employees';
-            return;
-        }
-        
-        // Mostrar app, ocultar login (solo para administradores)
-        const loginContainer = document.getElementById("loginContainer");
-        const appContainer = document.getElementById("appContainer");
-        
-        if (loginContainer) {
-            loginContainer.classList.add("hidden");
-        }
-        
-        if (appContainer) {
-            appContainer.classList.add("active");
-        }
-        
-        // Cargar datos (which includes switchTab to dashboard)
-        await loadData();
-        
-        // Mostrar botón de "Gestión de Empleados" solo para admins
-        const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
-        
-        // Actualizar nombre del usuario en el navbar
-        const nombre = userData.nombre_completo || userData.username || 'Usuario';
-        const userNameElement = document.getElementById('adminUserName');
-        if (userNameElement) {
-            userNameElement.textContent = nombre;
-        }
-        
-        // Actualizar avatar
-        updateUserAvatarAdmin(userData);
-        
-        const btnAnalystView = document.getElementById('btnAnalystView');
-        if (btnAnalystView) {
+        try {
+            // Verificar que el usuario tenga rol de administrador para esta vista
+            const userData = JSON.parse(currentUser);
             const userRole = (userData.rol || '').toLowerCase();
-            btnAnalystView.style.display = userRole === 'administrador' ? 'block' : 'none';
+            
+            // Si es analista CON SESIÓN ACTIVA, redirigir a su vista correspondiente
+            if (userRole === 'analista') {
+                console.log('Usuario analista con sesión activa detectado, redirigiendo a /employees');
+                window.location.href = '/employees';
+                return;
+            }
+            
+            // Solo mostrar dashboard si es administrador con sesión válida
+            if (userRole === 'administrador') {
+                // Mostrar app, ocultar login (solo para administradores)
+                const loginContainer = document.getElementById("loginContainer");
+                const appContainer = document.getElementById("appContainer");
+                
+                if (loginContainer) {
+                    loginContainer.classList.add("hidden");
+                }
+                
+                if (appContainer) {
+                    appContainer.classList.add("active");
+                }
+                
+                // Cargar datos (which includes switchTab to dashboard)
+                await loadData();
+                
+                // Mostrar botón de "Gestión de Empleados" solo para admins
+                const btnAnalystView = document.getElementById('btnAnalystView');
+                if (btnAnalystView) {
+                    btnAnalystView.style.display = 'block';
+                }
+                
+                // Actualizar nombre del usuario en el navbar
+                const nombre = userData.nombre_completo || userData.username || 'Usuario';
+                const userNameElement = document.getElementById('adminUserName');
+                if (userNameElement) {
+                    userNameElement.textContent = nombre;
+                }
+                
+                // Actualizar avatar
+                updateUserAvatarAdmin(userData);
+            }
+        } catch (e) {
+            console.error('Error parsing session data:', e);
+            clearSession(); // Limpiar sesión corrupta
         }
     }
+    // Si no hay sesión activa, mostrar login (comportamiento por defecto)
 }
 
 
