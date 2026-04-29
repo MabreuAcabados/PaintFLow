@@ -39,7 +39,27 @@ ACTIVE_SESSIONS = {}
 
 app = FastAPI(title=settings.API_TITLE, version=settings.API_VERSION, description="API PaintFlow 2")
 
-app.add_middleware(CORSMiddleware, allow_origins=settings.CORS_ORIGINS, allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
+# Dynamic CORS configuration for development and production
+cors_origins = [
+    "http://127.0.0.1:8001",
+    "http://localhost:8001",
+    "https://paintflow.onrender.com",  # Production Render URL
+    "https://paintflow.onrender.com/",
+]
+
+# Add production URL if available via environment variable
+render_url = os.getenv('RENDER_EXTERNAL_URL')
+if render_url and render_url not in cors_origins:
+    cors_origins.append(render_url)
+    if not render_url.endswith('/'):
+        cors_origins.append(render_url + '/')
+
+app.add_middleware(CORSMiddleware, 
+    allow_origins=cors_origins,
+    allow_credentials=True, 
+    allow_methods=["*"], 
+    allow_headers=["*"]
+)
 
 # Servir archivos estáticos con ruta absoluta
 static_dir = os.path.join(os.path.dirname(__file__), "static")

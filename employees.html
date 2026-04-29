@@ -793,11 +793,14 @@
     </div>
 
     <script>
-        const API = 'http://localhost:8001';
+        const API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? 'http://localhost:8001'
+            : 'https://paintflow.onrender.com';
         let allEmpleados = [];
         let allSucursales = [];
         let sucursalesUnicas = [];
         let empleadoAEliminar = null; // Para el modal de confirmación
+        let activeSucursal = 'Alameda'; // Para guardar la sucursal activa
         
         function fmt(posicion) {
             const map = {
@@ -888,7 +891,7 @@
                 
                 const div = document.createElement('div');
                 div.id = 'sucursal-' + sucursal.replace(/\s+/g, '-');
-                div.className = 'subtab-content' + (index === 0 ? ' active' : '');
+                div.className = 'subtab-content' + (sucursal === activeSucursal ? ' active' : '');
                 
                 const table = document.createElement('table');
                 
@@ -951,6 +954,7 @@
         }
         
         function switchSucursal(event, sucursal) {
+            activeSucursal = sucursal; // Guardar sucursal activa
             document.querySelectorAll('.subtab-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
@@ -960,6 +964,27 @@
                 content.classList.remove('active');
             });
             document.getElementById('sucursal-' + sucursal.replace(/\s+/g, '-')).classList.add('active');
+        }
+        
+        function restoreSucursal() {
+            // Restaurar la sucursal activa después de recargar datos
+            if (activeSucursal && sucursalesUnicas.includes(activeSucursal)) {
+                document.querySelectorAll('.subtab-btn').forEach(btn => {
+                    if (btn.textContent === activeSucursal) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+                
+                document.querySelectorAll('.subtab-content').forEach(content => {
+                    if (content.id === 'sucursal-' + activeSucursal.replace(/\s+/g, '-')) {
+                        content.classList.add('active');
+                    } else {
+                        content.classList.remove('active');
+                    }
+                });
+            }
         }
         
         function abrirModalEmpleado(id = null) {
@@ -985,6 +1010,7 @@
                 if (empleado) {
                     document.getElementById('editingEmpleadoId').value = id;
                     document.getElementById('inputNombreEmpleado').value = empleado.nombre_completo || empleado.nombre || '';
+                    document.getElementById('inputCodigoEmpleado').value = empleado.codigo_empleado || '';
                     document.getElementById('inputEmailEmpleado').value = empleado.email || '';
                     document.getElementById('inputPosicionEmpleado').value = empleado.posicion || empleado.rol || 'colorista';
                     document.getElementById('inputSucursalEmpleado').value = empleado.sucursal_id || '';
@@ -994,6 +1020,7 @@
             } else {
                 document.getElementById('editingEmpleadoId').value = '';
                 document.getElementById('inputNombreEmpleado').value = '';
+                document.getElementById('inputCodigoEmpleado').value = '';
                 document.getElementById('inputEmailEmpleado').value = '';
                 document.getElementById('inputPosicionEmpleado').value = 'colorista';
                 document.getElementById('inputTelefonoEmpleado').value = '';
@@ -1045,6 +1072,8 @@
                 if (res.ok) {
                     cerrarModalEmpleado();
                     loadData();
+                    // Restore active sucursal after loadData
+                    setTimeout(() => restoreSucursal(), 100);
                 } else {
                     const errorText = await res.text();
                     alert('Error: ' + errorText);
@@ -1098,9 +1127,32 @@
         }
         
         function abrirModalPerfil() {
-            alert('Perfil - Funcionalidad pendiente');
-            toggleUserDropdown();
+            // Obtener datos del usuario desde localStorage
+            try {
+                const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                
+                document.getElementById('perfilNombre').value = userData.nombre_completo || 'N/A';
+                document.getElementById('perfilEmail').value = userData.email || 'N/A';
+                document.getElementById('perfilUsername').value = userData.username || 'N/A';
+                document.getElementById('perfilRol').value = userData.rol || 'N/A';
+                
+                document.getElementById('modalPerfil').classList.add('active');
+            } catch(e) {
+                console.error('Error al cargar perfil:', e);
+            }
         }
+
+        function cerrarModalPerfil() {
+            document.getElementById('modalPerfil').classList.remove('active');
+        }
+
+        // Cerrar modal de perfil al hacer clic afuera
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('modalPerfil');
+            if (modal && e.target === modal) {
+                cerrarModalPerfil();
+            }
+        });
         
         function handleLogout() {
             if (confirm('¿Deseas cerrar sesión?')) {
@@ -1118,7 +1170,52 @@
             }
         });
         
-        window.addEventListener('DOMContentLoaded', loadData);
+        // Update user name in header
+        function actualizarNombreUsuario() {
+            try {
+                const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                const nombreUsuario = userData.nombre_completo || userData.username || 'Usuario';
+                const userNameSpan = document.getElementById('adminUserName');
+                if (userNameSpan) {
+                    userNameSpan.textContent = nombreUsuario;
+                }
+            } catch(e) {
+                console.error('Error al actualizar nombre de usuario:', e);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            actualizarNombreUsuario();
+        });
     </script>
+    <div id="modalPerfil" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; display: none; align-items: center; justify-content: center; flex-direction: column;">
+        <style>
+            #modalPerfil.active {
+                display: flex !important;
+            }
+        </style>
+        <div style="background: #fff; width: 95%; max-width: 400px; border-radius: 8px; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+            <h2 style="margin: 0 0 20px 0; color: #1e5a96;">Perfil</h2>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; color: #333; font-weight: 500;">Nombre Completo</label>
+                <input type="text" id="perfilNombre" readonly style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; background: #f9f9f9; color: #333;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; color: #333; font-weight: 500;">Email</label>
+                <input type="text" id="perfilEmail" readonly style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; background: #f9f9f9; color: #333;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; color: #333; font-weight: 500;">Usuario</label>
+                <input type="text" id="perfilUsername" readonly style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; background: #f9f9f9; color: #333;">
+            </div>
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 5px; color: #333; font-weight: 500;">Rol</label>
+                <input type="text" id="perfilRol" readonly style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; background: #f9f9f9; color: #333;">
+            </div>
+            <button onclick="cerrarModalPerfil()" style="width: 100%; background: #1e5a96; color: #fff; padding: 10px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">Cerrar</button>
+        </div>
+    </div>
+
 </body>
 </html>
