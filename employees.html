@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMPLEADOS - PaintFlow</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Roboto, sans-serif; background: #f5f5f5; color: #333; }
+        
+        .navbar { 
+            background: #fff; 
+            padding: 15px 40px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border: none;
+            gap: 30px;
+        }
+        
+        .navbar img { 
+            height: 60px; 
+            width: auto;
+            flex-shrink: 0;
+        }
+        
+        .navbar h1 { 
+            color: #1a73e8; 
+            font-size: 1.5em; 
+            margin: 0;
+            font-weight: 600;
+            flex: 1;
+        }
+        
+        .user-menu-container {
+            position: relative;
+        }
+        
+        .user-dropdown-btn {
+            background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+            color: #fff;
+            padding: 10px 18px;
+            border-radius: 25px;
+            border: 1px solid rgba(26, 115, 232, 0.3);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.25);
+        }
+
+        .user-dropdown-btn:hover {
+            background: linear-gradient(135deg, #0d47a1 0%, #0a2e6b 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(26, 115, 232, 0.35);
+        }
+
+        .user-dropdown-btn::after {
+            content: '▼';
+            font-size: 0.7em;
+            transition: transform 0.3s ease;
+        }
+
+        .user-dropdown-btn.active::after {
+            transform: rotate(180deg);
+        }
+        
+        .user-avatar {
+            font-size: 1.2em;
+        }
+        
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            min-width: 200px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: none;
+            flex-direction: column;
+            z-index: 1000;
+            margin-top: 8px;
+        }
+        
+        .dropdown-menu.active {
+            display: flex;
+        }
+        
+        .dropdown-menu button {
+            padding: 12px 20px;
+            border: none;
+            background: none;
+            text-align: left;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.95em;
+            width: 100%;
+        }
+        
+        .dropdown-menu button:hover {
+            background: #f5f5f5;
+            color: #1a73e8;
+        }
+
+        .dropdown-menu button:last-child {
+            color: #d32f2f;
+            border-top: 1px solid #eee;
+        }
+        
+        .dropdown-menu button:last-child:hover {
+            background: #ffebee;
+        }
+        
+        .main-content { 
+            padding: 35px 40px; 
+            background: #fff;
+            margin: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+        
+        .section-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .section-header h2 { 
+            background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.6em;
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .btn-agregar { 
+            background: linear-gradient(135deg, #4CAF50 0%, #388e3c 100%);
+            color: white; 
+            padding: 12px 24px; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.25);
+            font-size: 1em;
+        }
+        
+        .btn-agregar:hover { 
+            background: linear-gradient(135deg, #388e3c 0%, #1b5e20 100%);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.35);
+            transform: translateY(-2px);
+        }
+        
+        .subtabs-container {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .subtab-btn {
+            padding: 10px 20px;
+            border: none;
+            background: #f5f5f5;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+            border: 2px solid transparent;
+        }
+        
+        .subtab-btn:hover {
+            color: #1a73e8;
+            background: #e8f0fe;
+            border-color: #1a73e8;
+            transform: translateY(-2px);
+        }
+        
+        .subtab-btn.active {
+            color: #fff;
+            background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+            border-color: #1a73e8;
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+        }
+        
+        .subtab-content {
+            display: none;
+        }
+        
+        .subtab-content.active {
+            display: block;
+        }
+        
+        table { 
+            width: 100%; 
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: none;
+        }
+        
+        th { 
+            background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+            padding: 16px 14px; 
+            text-align: left; 
+            font-weight: 700;
+            color: #fff;
+            font-size: 0.95em;
+            letter-spacing: 0.5px;
+        }
+        
+        td { 
+            padding: 14px; 
+            text-align: left; 
+            border: none;
+            border-bottom: 1px solid #f0f0f0;
+            color: #555;
+            font-size: 0.95em;
+        }
+        
+        tbody tr { 
+            transition: all 0.2s ease;
+        }
+        
+        tbody tr:hover { 
+            background: #f8f9ff;
+            box-shadow: inset 0 0 8px rgba(26, 115, 232, 0.05);
+        }
+        
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .btn-action { 
+            padding: 8px 14px; 
+            margin: 0 4px; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .btn-edit { 
+            background: linear-gradient(135deg, #2196F3 0%, #1565c0 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(33, 150, 243, 0.2);
+        }
+        
+        .btn-edit:hover { 
+            background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%);
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.35);
+            transform: translateY(-2px);
+        }
+        
+        .btn-delete { 
+            background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 6px 12px;
+            line-height: 1;
+            box-shadow: 0 2px 8px rgba(244, 67, 54, 0.2);
+        }
+        
+        .btn-delete:hover { 
+            background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%);
+            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.35);
+            transform: translateY(-2px);
+        }
+        
+        .modal { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.5); 
+            align-items: center; 
+            justify-content: center; 
+            z-index: 1000;
+            animation: fadeIn 0.3s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal.active { display: flex; }
+        
+        .modal-content { 
+            background: white; 
+            padding: 40px; 
+            border-radius: 12px; 
+            max-width: 500px; 
+            width: 90%;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { 
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to { 
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .modal-content h2 {
+            margin-bottom: 20px;
+            color: #1a73e8;
+            font-size: 1.3em;
+        }
+        
+        .form-group { 
+            margin-bottom: 15px; 
+        }
+        
+        .form-group label { 
+            display: block; 
+            margin-bottom: 6px; 
+            font-weight: 600;
+            color: #333;
+            font-size: 0.95em;
+        }
+        
+        .form-group input, 
+        .form-group select { 
+            width: 100%; 
+            padding: 12px 14px; 
+            border: 2px solid #e0e0e0; 
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            background: #f9f9f9;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #1a73e8;
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(26, 115, 232, 0.1);
+        }
+        
+        .form-group input::placeholder {
+            color: #999;
+        }
+        
+        .modal-buttons { 
+            display: flex; 
+            gap: 10px; 
+            justify-content: flex-end; 
+            margin-top: 25px;
+        }
+        
+        .modal-buttons button { 
+            padding: 12px 28px; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            font-size: 1em;
+        }
+        
+        .btn-cancel { 
+            background: #e0e0e0; 
+            color: #333;
+        }
+        
+        .btn-cancel:hover { 
+            background: #bdbdbd;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .btn-save { 
+            background: linear-gradient(135deg, #4CAF50 0%, #388e3c 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.25);
+        }
+        
+        .btn-save:hover { 
+            background: linear-gradient(135deg, #388e3c 0%, #1b5e20 100%);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.35);
+            transform: translateY(-2px);
+        }
+        
+        /* Estilos para estados vacíos */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        
+        .empty-state-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+        
+        .empty-state p {
+            font-size: 1.1em;
+            margin: 10px 0;
+        }
+        
+        /* Mejoras de body y overall */
+        body {
+            background: linear-gradient(135deg, #f5f5f5 0%, #fafafa 100%);
+            min-height: 100vh;
+        }
+        
+        /* Animaciones suaves */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .main-content {
+            animation: fadeInUp 0.5s ease-out;
+        }
+        
+        /* Mejorar label de checkbox */
+        .form-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .form-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #1a73e8;
+        }
+        
+        /* Estilo para estados de carga */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #1a73e8;
+            font-weight: 600;
+        }
+        
+        .loading::after {
+            content: '';
+            display: inline-block;
+            animation: spin 1s linear infinite;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #1a73e8;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Responsivo */
+        @media (max-width: 1024px) {
+            .navbar {
+                padding: 12px 20px;
+                gap: 15px;
+            }
+            
+            .navbar h1 {
+                font-size: 1.2em;
+            }
+            
+            .main-content {
+                padding: 25px 20px;
+            }
+            
+            .subtabs-container {
+                gap: 8px;
+            }
+            
+            .subtab-btn {
+                padding: 8px 16px;
+                font-size: 0.85em;
+            }
+            
+            table {
+                font-size: 0.9em;
+            }
+            
+            th, td {
+                padding: 10px 8px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                flex-wrap: wrap;
+                padding: 10px 15px;
+            }
+            
+            .navbar h1 {
+                flex: 1 0 100%;
+                text-align: center;
+                font-size: 1.1em;
+                order: 2;
+            }
+            
+            .navbar img {
+                height: 50px;
+                order: 1;
+            }
+            
+            .user-menu-container {
+                order: 3;
+                margin-top: 10px;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .btn-agregar {
+                width: 100%;
+                padding: 14px;
+            }
+            
+            table {
+                font-size: 0.85em;
+            }
+            
+            .btn-action {
+                padding: 6px 8px;
+                font-size: 0.8em;
+            }
+            
+            .modal-content {
+                width: 95%;
+            }
+        }
+        
+        /* Scroll personalizado */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #1a73e8;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0d47a1;
+        }
+
+        
+        /* Confirm Modal Personalizado */
+        .confirm-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            animation: fadeIn 0.2s ease-out;
+        }
+        
+        .confirm-modal.active {
+            display: flex;
+        }
+        
+        .confirm-modal-content {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 12px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .confirm-modal-icon {
+            font-size: 3.5em;
+            margin-bottom: 15px;
+            animation: bounce 0.6s ease-out;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .confirm-modal-content h3 {
+            color: #d32f2f;
+            font-size: 1.3em;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+        
+        .confirm-modal-content p {
+            color: #666;
+            font-size: 0.95em;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+        
+        .confirm-modal-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        
+        .btn-confirm-cancel {
+            background: linear-gradient(135deg, #e0e0e0 0%, #bdbdbd 100%);
+            color: #333;
+            padding: 12px 28px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-confirm-cancel:hover {
+            background: linear-gradient(135deg, #bdbdbd 0%, #9e9e9e 100%);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .btn-confirm-delete {
+            background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+            color: white;
+            padding: 12px 28px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.25);
+        }
+        
+        .btn-confirm-delete:hover {
+            background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%);
+            box-shadow: 0 6px 20px rgba(244, 67, 54, 0.35);
+            transform: translateY(-2px);
+        }
+        
+        .btn-confirm-delete:active {
+            transform: translateY(-1px);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <img src="/logo.png" alt="PaintFlow Logo" style="height: 60px; width: auto; cursor: pointer;">
+        <h1>EMPLEADOS</h1>
+        <div class="user-menu-container">
+            <button class="user-dropdown-btn" id="userDropdownBtn" onclick="toggleUserDropdown()">
+                <div class="user-avatar" id="userAvatar">👤</div>
+                <span id="adminUserName">Usuario</span>
+            </button>
+            <div class="dropdown-menu" id="userDropdown">
+                <button onclick="abrirModalPerfil()" style="color: #333; background: none; padding: 12px 16px; border: none; text-align: left; cursor: pointer; font-size: 0.9em;">Perfil</button>
+                <button onclick="handleLogout()" style="color: #d32f2f; background: none; padding: 12px 16px; border-top: 1px solid #eee; border: none; text-align: left; cursor: pointer; font-size: 0.9em;">Cerrar Sesión</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="section-header">
+            <h2>Gestión de Empleados</h2>
+            <button class="btn-agregar" onclick="abrirModalEmpleado()">+ Agregar Empleado</button>
+        </div>
+
+        <div class="subtabs-container" id="subtabsContainer"></div>
+
+        <div id="tablasContainer"></div>
+    </div>
+
+    <div id="confirmModal" class="confirm-modal">
+        <div class="confirm-modal-content">
+            <div class="confirm-modal-icon">⚠️</div>
+            <h3 id="confirmTitle">¿Confirmar acción?</h3>
+            <p id="confirmMessage">¿Estás seguro de que deseas eliminar este empleado?</p>
+            <div class="confirm-modal-buttons">
+                <button class="btn-confirm-cancel" onclick="closeConfirmModal()">Cancelar</button>
+                <button class="btn-confirm-delete" onclick="confirmAction()">Eliminar</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="modalEmpleado" class="modal">
+        <div class="modal-content">
+            <h2 id="modalTitle">Agregar Empleado</h2>
+            <input type="hidden" id="editingEmpleadoId">
+            <div class="form-group">
+                <label>Nombre Completo *</label>
+                <input type="text" id="inputNombreEmpleado">
+            </div>
+            <div class="form-group">
+                <label>Código de Empleado</label>
+                <input type="text" id="inputCodigoEmpleado">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="inputEmailEmpleado">
+            </div>
+            <div class="form-group">
+                <label>Posición *</label>
+                <select id="inputPosicionEmpleado">
+                    <option value="colorista">Colorista</option>
+                    <option value="facturador">Facturador</option>
+                    <option value="encargado">Encargado</option>
+                    <option value="auxiliar_almacen">Auxiliar de Almacén</option>
+                    <option value="auxiliar_tienda">Auxiliar de tienda</option>
+                    <option value="encargado_interino">Encargado interino</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Sucursal *</label>
+                <select id="inputSucursalEmpleado"></select>
+            </div>
+            <div class="form-group">
+                <label>Teléfono</label>
+                <input type="text" id="inputTelefonoEmpleado">
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="inputActivoEmpleado" checked> Empleado Activo
+                </label>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-cancel" onclick="cerrarModalEmpleado()">Cancelar</button>
+                <button class="btn-save" onclick="guardarEmpleado()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? 'http://localhost:8001'
+            : 'https://paintflow.onrender.com';
+        let allEmpleados = [];
+        let allSucursales = [];
+        let sucursalesUnicas = [];
+        let empleadoAEliminar = null; // Para el modal de confirmación
+        let activeSucursal = 'Alameda'; // Para guardar la sucursal activa
+        
+        function fmt(posicion) {
+            const map = {
+                'colorista': 'Colorista',
+                'facturador': 'Facturador',
+                'encargado': 'Encargado',
+                'auxiliar_almacen': 'Auxiliar de Almacén',
+                'auxiliar_tienda': 'Auxiliar de tienda',
+                'encargado_interino': 'Encargado interino'
+            };
+            return map[posicion] || posicion;
+        }
+        
+        async function loadData() {
+            try {
+                const resEmpleados = await fetch(API + '/api/v1/empleados');
+                const resSucursales = await fetch(API + '/api/v1/sucursales');
+                
+                if (resEmpleados.ok) {
+                    const data = await resEmpleados.json();
+                    allEmpleados = data.empleados || (Array.isArray(data) ? data : []);
+                } else {
+                    console.error('Error fetching empleados');
+                }
+                
+                if (resSucursales.ok) {
+                    const data = await resSucursales.json();
+                    // El API devuelve {total: number, sucursales: [...]}
+                    allSucursales = data.sucursales || (Array.isArray(data) ? data : (data.data || []));
+                }
+                
+                extraerSucursalesUnicas();
+                renderSubtabs();
+                renderEmpleadosPorSucursal();
+            } catch (err) {
+                console.error('Error loading data:', err);
+            }
+        }
+        
+        function extraerSucursalesUnicas() {
+            // LISTA BLANCA: Solo tiendas reales
+            const tiendas_validas = [
+                'Alameda', 'Arroyo Hondo', 'Bani', 'Bavaro', 'Bella Vista', 'Churchill', 'La Vega', 'Luperon',
+                'Puerto Plata', 'Punta Cana', 'Rafael Vidal', 'Romana', 'San Francisco',
+                'San Isidro', 'San Martin', 'Santiago Bartolome Colon', 'Terrenas', 'Tiradentes',
+                'Villa Mella', 'Zona Oriental'
+            ];
+            
+            // Si tenemos sucursales del API, usarlas todas
+            if (allSucursales && allSucursales.length > 0) {
+                // Extraer nombres de las sucursales del API (solo tiendas válidas)
+                sucursalesUnicas = allSucursales
+                    .map(s => s.nombre || s.sucursal_nombre || s.name)
+                    .filter(Boolean)
+                    .filter(nombre => tiendas_validas.includes(nombre))  // FILTRO: solo tiendas válidas
+                    .sort();
+            } else {
+                // Fallback: extraer de empleados si no tenemos el API
+                const sucursalesSet = new Set();
+                allEmpleados.forEach(e => {
+                    if (e.sucursal_nombre && tiendas_validas.includes(e.sucursal_nombre)) {
+                        sucursalesSet.add(e.sucursal_nombre);
+                    }
+                });
+                sucursalesUnicas = Array.from(sucursalesSet).sort();
+            }
+        }
+        
+        function renderSubtabs() {
+            const container = document.getElementById('subtabsContainer');
+            container.innerHTML = '';
+            
+            sucursalesUnicas.forEach((sucursal, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'subtab-btn' + (index === 0 ? ' active' : '');
+                btn.textContent = sucursal;
+                btn.onclick = () => switchSucursal(event, sucursal);
+                container.appendChild(btn);
+            });
+        }
+        
+        function renderEmpleadosPorSucursal() {
+            const container = document.getElementById('tablasContainer');
+            container.innerHTML = '';
+            
+            sucursalesUnicas.forEach((sucursal, index) => {
+                const empleadosSucursal = allEmpleados.filter(e => e.sucursal_nombre === sucursal);
+                
+                const div = document.createElement('div');
+                div.id = 'sucursal-' + sucursal.replace(/\s+/g, '-');
+                div.className = 'subtab-content' + (sucursal === activeSucursal ? ' active' : '');
+                
+                const table = document.createElement('table');
+                
+                const thead = document.createElement('thead');
+                const headerRow = document.createElement('tr');
+                headerRow.style.background = '#f5f5f5';
+                ['Codigo', 'Nombre', 'Email', 'Sucursal', 'Posición', 'Teléfono', 'Estado', 'Acciones']
+                    .forEach(col => {
+                        const th = document.createElement('th');
+                        th.style.padding = '12px';
+                        th.style.textAlign = 'left';
+                        th.style.border = '1px solid #ddd';
+                        th.textContent = col;
+                        headerRow.appendChild(th);
+                    });
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
+                
+                const tbody = document.createElement('tbody');
+                
+                if (empleadosSucursal.length === 0) {
+                    const tr = document.createElement('tr');
+                    const td = document.createElement('td');
+                    td.colSpan = 8;
+                    td.style.textAlign = 'center';
+                    td.textContent = 'Sin empleados';
+                    tr.appendChild(td);
+                    tbody.appendChild(tr);
+                } else {
+                    empleadosSucursal.forEach(e => {
+                        const tr = document.createElement('tr');
+                        const estado = (e.activo === true || e.activo === 1) ? 'Activo' : 'Inactivo';
+                        const nombreEmpleado = e.nombre_completo || e.nombre || 'N/A';
+                        const email = e.email || 'N/A';
+                        const posicion = fmt(e.posicion || e.rol || 'N/A');
+                        const telefono = e.telefono || 'N/A';
+                        
+                        const codigoEmpleado = e.codigo_empleado || 'N/A';
+                        tr.innerHTML = `
+                            <td>${codigoEmpleado}</td>
+                            <td>${nombreEmpleado}</td>
+                            <td>${email}</td>
+                            <td>${sucursal}</td>
+                            <td>${posicion}</td>
+                            <td>${telefono}</td>
+                            <td>${estado}</td>
+                            <td>
+                                <button class="btn-action btn-edit" onclick="abrirModalEmpleado(${e.id})">Editar</button>
+                                <button class="btn-action btn-delete" onclick="eliminarEmpleado(${e.id})" title="Eliminar">&times;</button>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                }
+                
+                table.appendChild(tbody);
+                div.appendChild(table);
+                container.appendChild(div);
+            });
+        }
+        
+        function switchSucursal(event, sucursal) {
+            activeSucursal = sucursal; // Guardar sucursal activa
+            document.querySelectorAll('.subtab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            document.querySelectorAll('.subtab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById('sucursal-' + sucursal.replace(/\s+/g, '-')).classList.add('active');
+        }
+        
+        function restoreSucursal() {
+            // Restaurar la sucursal activa después de recargar datos
+            if (activeSucursal && sucursalesUnicas.includes(activeSucursal)) {
+                document.querySelectorAll('.subtab-btn').forEach(btn => {
+                    if (btn.textContent === activeSucursal) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+                
+                document.querySelectorAll('.subtab-content').forEach(content => {
+                    if (content.id === 'sucursal-' + activeSucursal.replace(/\s+/g, '-')) {
+                        content.classList.add('active');
+                    } else {
+                        content.classList.remove('active');
+                    }
+                });
+            }
+        }
+        
+        function abrirModalEmpleado(id = null) {
+            document.getElementById('modalTitle').textContent = id ? 'Editar Empleado' : 'Agregar Empleado';
+            
+            const sel = document.getElementById('inputSucursalEmpleado');
+            sel.innerHTML = '<option value="">-- Selecciona una sucursal --</option>';
+            
+            // Usar sucursalesUnicas que se extrae de los empleados reales
+            if (sucursalesUnicas && sucursalesUnicas.length > 0) {
+                sucursalesUnicas.forEach((sucursal, index) => {
+                    const option = document.createElement('option');
+                    // Buscar el ID de la sucursal en los empleados
+                    const empleadoEnSucursal = allEmpleados.find(e => e.sucursal_nombre === sucursal);
+                    option.value = empleadoEnSucursal ? empleadoEnSucursal.sucursal_id : index;
+                    option.textContent = sucursal;
+                    sel.appendChild(option);
+                });
+            }
+            
+            if (id) {
+                const empleado = allEmpleados.find(x => x.id === id);
+                if (empleado) {
+                    document.getElementById('editingEmpleadoId').value = id;
+                    document.getElementById('inputNombreEmpleado').value = empleado.nombre_completo || empleado.nombre || '';
+                    document.getElementById('inputCodigoEmpleado').value = empleado.codigo_empleado || '';
+                    document.getElementById('inputEmailEmpleado').value = empleado.email || '';
+                    document.getElementById('inputPosicionEmpleado').value = empleado.posicion || empleado.rol || 'colorista';
+                    document.getElementById('inputSucursalEmpleado').value = empleado.sucursal_id || '';
+                    document.getElementById('inputTelefonoEmpleado').value = empleado.telefono || '';
+                    document.getElementById('inputActivoEmpleado').checked = (empleado.activo === true || empleado.activo === 1);
+                }
+            } else {
+                document.getElementById('editingEmpleadoId').value = '';
+                document.getElementById('inputNombreEmpleado').value = '';
+                document.getElementById('inputCodigoEmpleado').value = '';
+                document.getElementById('inputEmailEmpleado').value = '';
+                document.getElementById('inputPosicionEmpleado').value = 'colorista';
+                document.getElementById('inputTelefonoEmpleado').value = '';
+                document.getElementById('inputActivoEmpleado').checked = true;
+            }
+            
+            document.getElementById('modalEmpleado').classList.add('active');
+        }
+        
+        function cerrarModalEmpleado() {
+            document.getElementById('modalEmpleado').classList.remove('active');
+        }
+        
+        async function guardarEmpleado() {
+            const id = document.getElementById('editingEmpleadoId').value;
+            const nombre = document.getElementById('inputNombreEmpleado').value;
+            const email = document.getElementById('inputEmailEmpleado').value;
+            const posicion = document.getElementById('inputPosicionEmpleado').value;
+            const sucursal_id = parseInt(document.getElementById('inputSucursalEmpleado').value);
+            const telefono = document.getElementById('inputTelefonoEmpleado').value;
+            const activo = document.getElementById('inputActivoEmpleado').checked;
+            
+            if (!nombre || !sucursal_id) {
+                alert('Campos requeridos: Nombre y Sucursal');
+                return;
+            }
+            
+            const codigo_empleado = document.getElementById("inputCodigoEmpleado").value;
+            const payload = {
+                nombre_completo: nombre,
+                email: email,
+                rol: posicion,
+                sucursal_id: sucursal_id,
+                telefono: telefono,
+                codigo_empleado: codigo_empleado,
+                activo: activo
+            };
+            
+            try {
+                const method = id ? 'PUT' : 'POST';
+                const url = id ? API + '/api/v1/empleados/' + id : API + '/api/v1/empleados';
+                
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (res.ok) {
+                    cerrarModalEmpleado();
+                    loadData();
+                    // Restore active sucursal after loadData
+                    setTimeout(() => restoreSucursal(), 100);
+                } else {
+                    const errorText = await res.text();
+                    alert('Error: ' + errorText);
+                }
+            } catch (err) {
+                alert('Error: ' + err);
+            }
+        }
+        
+        async function eliminarEmpleado(id) {
+            empleadoAEliminar = id;
+            showConfirmModal('Eliminar empleado', '¿Estás seguro de que deseas eliminar este empleado?');
+        }
+        
+        function showConfirmModal(title, message) {
+            document.getElementById('confirmTitle').textContent = title;
+            document.getElementById('confirmMessage').textContent = message;
+            document.getElementById('confirmModal').classList.add('active');
+        }
+        
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').classList.remove('active');
+            empleadoAEliminar = null;
+        }
+        
+        async function confirmAction() {
+            if (!empleadoAEliminar) return;
+            const id = empleadoAEliminar;
+            closeConfirmModal();
+            
+            try {
+                const res = await fetch(API + '/api/v1/empleados/' + id, {
+                    method: 'DELETE'
+                });
+                
+                if (res.ok) {
+                    loadData();
+                } else {
+                    alert('Error al eliminar empleado');
+                }
+            } catch (err) {
+                alert('Error: ' + err);
+            }
+        }
+        
+        function toggleUserDropdown() {
+            const userDropdown = document.getElementById('userDropdown');
+            const userDropdownBtn = document.getElementById('userDropdownBtn');
+            userDropdown.classList.toggle('active');
+            userDropdownBtn.classList.toggle('active');
+        }
+        
+        function abrirModalPerfil() {
+            // Obtener datos del usuario desde localStorage
+            try {
+                const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                
+                document.getElementById('perfilNombre').value = userData.nombre_completo || 'N/A';
+                document.getElementById('perfilEmail').value = userData.email || 'N/A';
+                document.getElementById('perfilUsername').value = userData.username || 'N/A';
+                document.getElementById('perfilRol').value = userData.rol || 'N/A';
+                
+                document.getElementById('modalPerfil').classList.add('active');
+            } catch(e) {
+                console.error('Error al cargar perfil:', e);
+            }
+        }
+
+        function cerrarModalPerfil() {
+            document.getElementById('modalPerfil').classList.remove('active');
+        }
+
+        // Cerrar modal de perfil al hacer clic afuera
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('modalPerfil');
+            if (modal && e.target === modal) {
+                cerrarModalPerfil();
+            }
+        });
+        
+        function handleLogout() {
+            if (confirm('¿Deseas cerrar sesión?')) {
+                window.location.href = '/';
+            }
+        }
+        
+        // Cerrar dropdown al hacer clic fuera
+        document.addEventListener('click', (e) => {
+            const userDropdown = document.getElementById('userDropdown');
+            const userDropdownBtn = document.getElementById('userDropdownBtn');
+            if (!e.target.closest('.user-menu-container')) {
+                userDropdown.classList.remove('active');
+                userDropdownBtn.classList.remove('active');
+            }
+        });
+        
+        // Update user name in header
+        function actualizarNombreUsuario() {
+            try {
+                const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                const nombreUsuario = userData.nombre_completo || userData.username || 'Usuario';
+                const userNameSpan = document.getElementById('adminUserName');
+                if (userNameSpan) {
+                    userNameSpan.textContent = nombreUsuario;
+                }
+            } catch(e) {
+                console.error('Error al actualizar nombre de usuario:', e);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            actualizarNombreUsuario();
+        });
+    </script>
+    <div id="modalPerfil" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; display: none; align-items: center; justify-content: center; flex-direction: column;">
+        <style>
+            #modalPerfil.active {
+                display: flex !important;
+            }
+        </style>
+        <div style="background: #fff; width: 95%; max-width: 400px; border-radius: 8px; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+            <h2 style="margin: 0 0 20px 0; color: #1e5a96;">Perfil</h2>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; color: #333; font-weight: 500;">Nombre Completo</label>
+                <input type="text" id="perfilNombre" readonly style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; background: #f9f9f9; color: #333;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; color: #333; font-weight: 500;">Email</label>
+                <input type="text" id="perfilEmail" readonly style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; background: #f9f9f9; color: #333;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; color: #333; font-weight: 500;">Usuario</label>
+                <input type="text" id="perfilUsername" readonly style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; background: #f9f9f9; color: #333;">
+            </div>
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 5px; color: #333; font-weight: 500;">Rol</label>
+                <input type="text" id="perfilRol" readonly style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; background: #f9f9f9; color: #333;">
+            </div>
+            <button onclick="cerrarModalPerfil()" style="width: 100%; background: #1e5a96; color: #fff; padding: 10px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">Cerrar</button>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -16,6 +16,15 @@ class SucursalUpdate(BaseModel):
     direccion: str = ""
     telefono: str = ""
 
+class EmpleadoUpdate(BaseModel):
+    nombre_completo: str = None
+    email: str = None
+    rol: str = None
+    sucursal_id: int = None
+    telefono: str = None
+    codigo_empleado: str = None
+    activo: bool = True
+
 from config import settings
 from database import DatabasePool, get_db
 import bcrypt
@@ -30,7 +39,27 @@ ACTIVE_SESSIONS = {}
 
 app = FastAPI(title=settings.API_TITLE, version=settings.API_VERSION, description="API PaintFlow 2")
 
-app.add_middleware(CORSMiddleware, allow_origins=settings.CORS_ORIGINS, allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
+# Dynamic CORS configuration for development and production
+cors_origins = [
+    "http://127.0.0.1:8001",
+    "http://localhost:8001",
+    "https://paintflow.onrender.com",  # Production Render URL
+    "https://paintflow.onrender.com/",
+]
+
+# Add production URL if available via environment variable
+render_url = os.getenv('RENDER_EXTERNAL_URL')
+if render_url and render_url not in cors_origins:
+    cors_origins.append(render_url)
+    if not render_url.endswith('/'):
+        cors_origins.append(render_url + '/')
+
+app.add_middleware(CORSMiddleware, 
+    allow_origins=cors_origins,
+    allow_credentials=True, 
+    allow_methods=["*"], 
+    allow_headers=["*"]
+)
 
 # Servir archivos estáticos con ruta absoluta
 static_dir = os.path.join(os.path.dirname(__file__), "static")
@@ -56,6 +85,23 @@ async def root():
     if os.path.exists(html_path):
         return FileResponse(html_path, media_type="text/html")
     raise HTTPException(status_code=404, detail="Index not found")
+
+@app.get("/employees")
+async def employees_page():
+    """Servir interfaz de gestión de empleados para analistas"""
+    html_path = os.path.join(os.path.dirname(__file__), "employees.html")
+    if os.path.exists(html_path):
+        return FileResponse(html_path, media_type="text/html")
+    raise HTTPException(status_code=404, detail="Employees page not found")
+
+@app.get("/employees.html")
+async def employees_html():
+    """Alias para acceso directo a employees.html"""
+    html_path = os.path.join(os.path.dirname(__file__), "employees.html")
+    if os.path.exists(html_path):
+        return FileResponse(html_path, media_type="text/html")
+    raise HTTPException(status_code=404, detail="Employees page not found")
+
 
 @app.get("/health")
 async def health_check():
@@ -109,9 +155,10 @@ async def login(username: str, password: str, db=Depends(get_db)):
         if not activo:
             raise HTTPException(status_code=403, detail="Esta cuenta está inactiva")
         
-        # Verificar que sea administrador
-        if not rol or rol.lower() != 'administrador':
-            raise HTTPException(status_code=403, detail="Acceso restringido a administradores")
+        # Verificar que sea administrador o analista
+        allowed_roles = ['administrador', 'analista']
+        if not rol or rol.lower() not in allowed_roles:
+            raise HTTPException(status_code=403, detail="Acceso restringido a administradores y analistas")
         
         # Registrar login en login_audits
         try:
@@ -183,65 +230,105 @@ async def list_roles(db=Depends(get_db)):
 
 @app.get("/api/v1/empleados")
 async def list_empleados(skip: int = 0, limit: int = 200, db=Depends(get_db)):
-    """Listar empleados desde tabla coloristas con mapeo inteligente de sucursales"""
+    """Listar empleados desde tablas coloristas y encargados"""
     try:
         cur = db.cursor()
-        # Consultar tabla coloristas con mapeo de nombres de sucursales
+        
+        # Mapeo de sucursales
+        mapeo_sucursal = {
+            'Arroyohondo': 'Arroyo Hondo',
+            'Bellavista': 'Bella Vista',
+            'Puertoplata': 'Puerto Plata',
+            'Puntacana': 'Punta Cana',
+            'Rafaelvidal': 'Rafael Vidal',
+            'Sanfrancisco': 'San Francisco',
+            'Sanmartin': 'San Martin',
+            'Santiago1': 'Santiago Bartolome Colon',
+            'Test': 'test',
+            'Villamella': 'Villa Mella',
+            'Zonaoriental': 'Zona Oriental',
+            'Bavaro': 'Bavaro'
+        }
+        
+        # Consultar coloristas
         cur.execute("""
             SELECT 
                 c.id, 
                 c.nombre, 
-                c.codigo_empleado, 
                 c.sucursal, 
-                s.id as sucursal_id,
-                c.activo
+                c.activo,
+                c.rol,
+                u.email,
+                u.telefono,
+                c.codigo_empleado
             FROM coloristas c
-            LEFT JOIN sucursales s ON s.nombre = CASE 
-                WHEN c.sucursal = 'Arroyohondo' THEN 'Arroyo Hondo'
-                WHEN c.sucursal = 'Bellavista' THEN 'Bella Vista'
-                WHEN c.sucursal = 'Puertoplata' THEN 'Puerto Plata'
-                WHEN c.sucursal = 'Puntacana' THEN 'Punta Cana'
-                WHEN c.sucursal = 'Rafaelvidal' THEN 'Rafael Vidal'
-                WHEN c.sucursal = 'Sanfrancisco' THEN 'San Francisco'
-                WHEN c.sucursal = 'Sanmartin' THEN 'San Martin'
-                WHEN c.sucursal = 'Santiago1' THEN 'Santiago Bartolome Colon'
-                WHEN c.sucursal = 'Test' THEN 'test'
-                WHEN c.sucursal = 'Villamella' THEN 'Villa Mella'
-                WHEN c.sucursal = 'Zonaoriental' THEN 'Zona Oriental'
-                WHEN c.sucursal = 'Bavaro' THEN 'Bavaro'  -- Mapeo explícito sin acento
-                ELSE c.sucursal
-            END
+            LEFT JOIN usuarios u ON u.id = c.id
             WHERE c.activo = true
             ORDER BY c.nombre
-            LIMIT %s OFFSET %s
-        """, (limit, skip))
-        empleados = cur.fetchall()
+        """)
+        coloristas = cur.fetchall()
+        
+        # Consultar encargados
+        cur.execute("""
+            SELECT 
+                e.id, 
+                e.nombre, 
+                e.sucursal, 
+                e.activo,
+                e.rol,
+                NULL as email,
+                NULL as telefono,
+                NULL as codigo_empleado
+            FROM encargados e
+            WHERE e.activo = true
+            ORDER BY e.nombre
+        """)
+        encargados = cur.fetchall()
+        
+        # Combinar resultados
+        todos = list(coloristas) + list(encargados)
+        
+        # Ordenar por nombre
+        todos.sort(key=lambda x: x[1] if x[1] else "")
+        
+        # Aplicar LIMIT y OFFSET después de combinar
+        todos_paginados = todos[skip:skip + limit]
+
+        # OPTIMIZACIÓN: Cargar todas las sucursales UNA SOLA VEZ
+        cur.execute("SELECT id, nombre FROM sucursales")
+        all_sucursales = cur.fetchall()
+        sucursal_dict = {s[1]: s[0] for s in all_sucursales}
         
         result = []
-        for e in empleados:
+        for e in todos_paginados:
+            sucursal_nombre = e[2] or ""
+            # Mapear nombre de sucursal
+            sucursal_mapped = mapeo_sucursal.get(sucursal_nombre, sucursal_nombre)
+            
+            # OPTIMIZACIÓN: Lookup en diccionario
+            sucursal_id = sucursal_dict.get(sucursal_mapped, None)
+            
             result.append({
                 "id": e[0],
                 "nombre_completo": e[1] or "",
-                "email": "",  # No disponible en coloristas
-                "rol": "Colorista",  # Rol por defecto
-                "sucursal_id": e[4] if e[4] else None,
-                "sucursal_nombre": e[3] or "",
-                "telefono": "",  # No disponible en coloristas
-                "activo": e[5] if e[5] is not None else True,
-                "codigo_empleado": e[2] or ""
+                "email": e[5] or "",
+                "posicion": e[4] or "colorista",
+                "sucursal_id": sucursal_id,
+                "sucursal_nombre": sucursal_mapped,
+                "telefono": e[6] or "",
+                "codigo_empleado": e[7] or "",
+                "activo": e[3] if e[3] is not None else True
             })
+        
+        logger.info(f"[GET EMPLEADOS] Retrieved {len(result)} empleados from coloristas and encargados tables")
         
         return {
             "total": len(result),
             "empleados": result
         }
     except Exception as e:
-        logger.error(f"Error listing empleados from coloristas: {str(e)}")
+        logger.error(f"Error listing empleados: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
-
-# ============================================================
-# SUCURSALES ENDPOINTS
-# ============================================================
 
 @app.get("/api/v1/sucursales")
 async def list_sucursales(skip: int = 0, limit: int = 200, activo: Optional[bool] = None, db=Depends(get_db)):
@@ -459,64 +546,171 @@ async def toggle_usuario_estado(usuario_id: int, activo: bool, db=Depends(get_db
 # EMPLEADOS ENDPOINTS (Using usuarios table)
 # ============================================================
 
-@app.post("/api/v1/empleados")
-async def create_empleado(nombre_completo: str, email: str, rol: str, sucursal_id: int = 1, telefono: str = "", codigo_empleado: str = "", password: str = None, db=Depends(get_db)):
-    """Crear empleado con usuario y contraseña"""
+@app.get("/api/v1/debug/empleados")
+async def debug_empleados(db=Depends(get_db)):
+    """DEBUG: Ver todos los empleados en BD sin filtro"""
     try:
-        # Generar contraseña temporal si no se proporciona
-        if not password:
-            password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
-        
         cur = db.cursor()
-        username = email.split('@')[0] if email else f"emp_{sucursal_id}"
+        cur.execute("""
+            SELECT id, nombre_completo, rol, sucursal_id, email
+            FROM usuarios
+            WHERE rol IN ('colorista', 'facturador', 'encargado', 'operador', 'auxiliar_almacen', 'administrador', 'analista')
+            ORDER BY id
+            LIMIT 50
+        """)
+        empleados = cur.fetchall()
+        return {
+            "total": len(empleados),
+            "empleados": [
+                {
+                    "id": e[0],
+                    "nombre_completo": e[1],
+                    "rol": e[2],
+                    "sucursal_id": e[3],
+                    "email": e[4]
+                }
+                for e in empleados
+            ]
+        }
+    except Exception as e:
+        logger.error(f"Debug error: {e}")
+        return {"error": str(e)}
+
+@app.post("/api/v1/empleados")
+async def create_empleado(data: EmpleadoUpdate, db=Depends(get_db)):
+    """Crear empleado en coloristas"""
+    try:
+        cur = db.cursor()
         
-        # Hash usando SHA256
-        password_hash = hashlib.sha256(password.encode()).hexdigest()
+        mapeo_inverso = {
+            "Arroyo Hondo": "Arroyohondo",
+            "Bella Vista": "Bellavista",
+            "Puerto Plata": "Puertoplata",
+            "Punta Cana": "Puntacana",
+            "Rafael Vidal": "Rafaelvidal",
+            "San Francisco": "Sanfrancisco",
+            "San Martin": "Sanmartin",
+            "Santiago Bartolome Colon": "Santiago1",
+            "test": "Test",
+            "Villa Mella": "Villamella",
+            "Zona Oriental": "Zonaoriental",
+            "Bavaro": "Bavaro"
+        }
         
-        # Insertar empleado con username y password_hash
+        sucursal_nombre = ""
+        if data.sucursal_id:
+            cur.execute("SELECT nombre FROM sucursales WHERE id = %s", (data.sucursal_id,))
+            sucursal_row = cur.fetchone()
+            if sucursal_row:
+                sucursal_nombre = sucursal_row[0]
+        
+        sucursal_code = mapeo_inverso.get(sucursal_nombre, sucursal_nombre)
+        
+        codigo_empleado = data.codigo_empleado or data.nombre_completo.replace(" ", "_").lower()
         cur.execute(
-            "INSERT INTO usuarios (username, password_hash, nombre_completo, email, rol, sucursal_id, telefono, codigo_empleado, activo, fecha_creacion) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, true, NOW()) RETURNING id",
-            (username, password_hash, nombre_completo, email, rol, sucursal_id, telefono, codigo_empleado if codigo_empleado else None)
+            "INSERT INTO coloristas (nombre, sucursal, rol, activo, creado_en, codigo_empleado) VALUES (%s, %s, %s, true, NOW(), %s) RETURNING id",
+            (data.nombre_completo, sucursal_code, data.rol or "colorista", codigo_empleado)
         )
         empleado_id = cur.fetchone()[0]
         db.commit()
-        return {"id": empleado_id, "nombre_completo": nombre_completo, "email": email, "rol": rol, "sucursal_id": sucursal_id, "codigo_empleado": codigo_empleado, "username": username, "temporal_password": password, "message": "Empleado creado"}
+        
+        logger.info(f"[CREATE EMPLEADO] ID={empleado_id}, Nombre={data.nombre_completo}")
+        
+        return {
+            "id": empleado_id,
+            "nombre_completo": data.nombre_completo,
+            "email": data.email or "",
+            "posicion": data.rol or "colorista",
+            "sucursal_id": data.sucursal_id,
+            "sucursal_nombre": sucursal_nombre,
+            "telefono": data.telefono or "",
+            "activo": True,
+            "message": "Empleado creado exitosamente"
+        }
     except Exception as e:
         logger.error(f"Error creating empleado: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
 @app.put("/api/v1/empleados/{empleado_id}")
-async def update_empleado(empleado_id: int, nombre_completo: str = None, email: str = None, rol: str = None, sucursal_id: int = None, telefono: str = None, codigo_empleado: str = None, db=Depends(get_db)):
-    """Actualizar empleado"""
+async def update_empleado(empleado_id: int, data: EmpleadoUpdate, db=Depends(get_db)):
+    """Actualizar empleado en coloristas"""
     try:
         cur = db.cursor()
-        updates = []
-        params = []
         
-        if nombre_completo:
-            updates.append("nombre_completo = %s")
-            params.append(nombre_completo)
-        if email:
-            updates.append("email = %s")
-            params.append(email)
-        if rol:
-            updates.append("rol = %s")
-            params.append(rol)
-        if sucursal_id:
-            updates.append("sucursal_id = %s")
-            params.append(sucursal_id)
-        if telefono is not None:
-            updates.append("telefono = %s")
-            params.append(telefono)
-        if codigo_empleado is not None:
-            updates.append("codigo_empleado = %s")
-            params.append(codigo_empleado)
+        # Actualizar coloristas (nombre, sucursal, rol)
+        coloristas_updates = []
+        coloristas_params = []
         
-        if updates:
-            updates.append("fecha_modificacion = NOW()")
-            params.append(empleado_id)
-            query = "UPDATE usuarios SET " + ", ".join(updates) + " WHERE id = %s"
-            cur.execute(query, params)
+        if data.nombre_completo:
+            coloristas_updates.append("nombre = %s")
+            coloristas_params.append(data.nombre_completo)
+        
+        if data.sucursal_id:
+            # Obtener nombre de sucursal
+            cur.execute("SELECT nombre FROM sucursales WHERE id = %s", (data.sucursal_id,))
+            sucursal_row = cur.fetchone()
+            if sucursal_row:
+                sucursal_nombre = sucursal_row[0]
+                # Aplicar mapeo inverso
+                mapeo_inverso = {
+                    "Arroyo Hondo": "Arroyohondo",
+                    "Bella Vista": "Bellavista",
+                    "Puerto Plata": "Puertoplata",
+                    "Punta Cana": "Puntacana",
+                    "Rafael Vidal": "Rafaelvidal",
+                    "San Francisco": "Sanfrancisco",
+                    "San Martin": "Sanmartin",
+                    "Santiago Bartolome Colon": "Santiago1",
+                    "test": "Test",
+                    "Villa Mella": "Villamella",
+                    "Zona Oriental": "Zonaoriental",
+                    "Bavaro": "Bavaro"
+                }
+                sucursal_code = mapeo_inverso.get(sucursal_nombre, sucursal_nombre)
+                coloristas_updates.append("sucursal = %s")
+                coloristas_params.append(sucursal_code)
+        
+        # Agregar rol a coloristas
+        if data.rol:
+            coloristas_updates.append("rol = %s")
+            coloristas_params.append(data.rol)
+        
+        # Agregar codigo_empleado a coloristas
+        if data.codigo_empleado:
+            coloristas_updates.append("codigo_empleado = %s")
+            coloristas_params.append(data.codigo_empleado)
+        
+        # Ejecutar actualización en coloristas
+        if coloristas_updates:
+            coloristas_params.append(empleado_id)
+            coloristas_query = "UPDATE coloristas SET " + ", ".join(coloristas_updates) + " WHERE id = %s"
+            logger.info(f"[UPDATE COLORISTAS] ID={empleado_id}, Query={coloristas_query}")
+            cur.execute(coloristas_query, coloristas_params)
             db.commit()
+            logger.info(f"[UPDATE COLORISTAS] OK - {cur.rowcount} filas actualizadas")
+        
+        # Actualizar usuarios si existe (email, telefono, sucursal_id) - sincronización opcional
+        usuarios_updates = []
+        usuarios_params = []
+        
+        if data.email:
+            usuarios_updates.append("email = %s")
+            usuarios_params.append(data.email)
+        if data.telefono is not None:
+            usuarios_updates.append("telefono = %s")
+            usuarios_params.append(data.telefono)
+        if data.sucursal_id:
+            usuarios_updates.append("sucursal_id = %s")
+            usuarios_params.append(data.sucursal_id)
+        
+        if usuarios_updates:
+            usuarios_params.append(empleado_id)
+            usuarios_query = "UPDATE usuarios SET " + ", ".join(usuarios_updates) + " WHERE id = %s"
+            logger.info(f"[SYNC USUARIOS] ID={empleado_id}")
+            cur.execute(usuarios_query, usuarios_params)
+            db.commit()
+        
+        return {"id": empleado_id, "message": "Empleado actualizado"}
         
         return {"id": empleado_id, "message": "Empleado actualizado"}
     except Exception as e:
@@ -525,11 +719,19 @@ async def update_empleado(empleado_id: int, nombre_completo: str = None, email: 
 
 @app.delete("/api/v1/empleados/{empleado_id}")
 async def delete_empleado(empleado_id: int, db=Depends(get_db)):
-    """Eliminar empleado"""
+    """Eliminar empleado de coloristas o encargados"""
     try:
         cur = db.cursor()
-        cur.execute("DELETE FROM usuarios WHERE id = %s", (empleado_id,))
+        # Intenta eliminar de coloristas primero
+        cur.execute("DELETE FROM coloristas WHERE id = %s", (empleado_id,))
+        deleted_from_coloristas = cur.rowcount > 0
+        
+        # Si no estaba en coloristas, intenta de encargados
+        if not deleted_from_coloristas:
+            cur.execute("DELETE FROM encargados WHERE id = %s", (empleado_id,))
+        
         db.commit()
+        logger.info(f"[DELETE EMPLEADO] ID={empleado_id}")
         return {"id": empleado_id, "message": "Empleado eliminado"}
     except Exception as e:
         logger.error(f"Error deleting empleado: {e}")

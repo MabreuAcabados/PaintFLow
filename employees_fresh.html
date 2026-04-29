@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PaintFlow - Empleados</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <style>
+        body { font-family: Arial; background: #f5f5f5; margin: 0; }
+        .header { background: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .tabs { display: flex; gap: 20px; }
+        .tab-btn { background: none; border: none; cursor: pointer; padding: 10px; border-bottom: 3px solid transparent; }
+        .tab-btn.active { border-bottom: 3px solid #1e5a96; color: #1e5a96; }
+        #content { padding: 30px; }
+        #dashboard { display: none; }
+        #empleados { display: none; }
+        #dashboard.active, #empleados.active { display: block; }
+        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin: 20px 0; }
+        .stat { background: white; padding: 20px; border-radius: 8px; text-align: center; }
+        .stat-number { font-size: 32px; font-weight: bold; color: #1e5a96; }
+        .btn { background: #1e5a96; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; background: white; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #f0f0f0; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
+        .modal.active { display: flex; align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 30px; border-radius: 8px; max-width: 500px; }
+        input, select { width: 100%; padding: 8px; margin: 8px 0; border: 1px solid #ddd; border-radius: 4px; }
+        label { display: block; margin-top: 10px; font-weight: bold; }
+        .chart-box { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>PaintFlow</h1>
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('dashboard')">Dashboard</button>
+            <button class="tab-btn" onclick="switchTab('empleados')">Empleados</button>
+        </div>
+
+
+            <div class="form-group">
+
+                <label><input type="checkbox" id="inputActivoEmpleado" checked> Empleado Activo</label>
+
+            </div>
+    </div>
+
+    <div id="content">
+        <div id="dashboard" class="active">
+            <h2>Dashboard</h2>
+            <div class="chart-box">
+                <canvas id="chart"></canvas>
+            </div>
+            <div class="stats">
+                <div class="stat"><div class="stat-number" id="total">0</div>Total</div>
+                <div class="stat"><div class="stat-number" id="activos">0</div>Activos</div>
+                <div class="stat"><div class="stat-number" id="inactivos">0</div>Inactivos</div>
+                <div class="stat"><div class="stat-number" id="puestos">0</div>Puestos</div>
+            </div>
+        </div>
+
+        <div id="empleados">
+            <button class="btn" onclick="openModal()">+ Agregar</button>
+            <table style="margin-top:20px">
+                <thead><tr><th>Nombre</th><th>Email</th><th>Sucursal</th><th>Posicion</th><th>Estado</th><th>Accion</th></tr></thead>
+                <tbody id="tbody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <h2 id="mtitle">Agregar</h2>
+            <input type="hidden" id="mid">
+            <label>Nombre</label><input type="text" id="nombre">
+            <label>Email</label><input type="email" id="email">
+            <label>Posicion</label><select id="pos"><option value="colorista">Colorista</option><option value="facturador">Facturador</option><option value="encargado">Encargado</option><option value="auxiliar_almacen">Auxiliar</option></select>
+            <label>Sucursal</label><select id="suc"></select>
+            <label><input type="checkbox" id="activo" checked> Activo</label>
+            <div style="margin-top:20px">
+                <button class="btn" onclick="save()">Guardar</button>
+                <button style="background:#999" onclick="closeModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let data=[];
+        let suc=[];
+        const API='http://localhost:8001';
+
+        async function load(){
+            try {
+                let r = await fetch(API+'/api/v1/empleados').then(r=>r.json());
+                data = r.empleados || r;
+                suc = await fetch(API+'/api/v1/sucursales').then(r=>r.json());
+                update();
+            } catch(e) { console.log("Error:", e); }
+        }
+
+        function fmt(p){
+            const m={'colorista':'Colorista','facturador':'Facturador','encargado':'Encargado','auxiliar_almacen':'Auxiliar'};
+            return m[p]||p;
+        }
+
+        function update(){
+            document.getElementById('total').textContent = data.length;
+            let a = data.filter(x=>x.activo==true||x.activo==1).length;
+            document.getElementById('activos').textContent = a;
+            document.getElementById('inactivos').textContent = data.length-a;
+            document.getElementById('puestos').textContent = new Set(data.map(x=>x.posicion)).size;
+
+            let pos={};
+            data.forEach(x=>{pos[x.posicion]=(pos[x.posicion]||0)+1});
+            let labels = Object.keys(pos).map(fmt);
+            let vals = Object.values(pos);
+            let total = vals.reduce((a,b)=>a+b,0);
+            new Chart(document.getElementById('chart'),{
+                type:'doughnut',
+                data:{
+                    labels: labels.map((l,i)=>l+' ('+(vals[i]/total*100).toFixed(1)+'%)'),
+                    datasets:[{data:vals, backgroundColor:['#e74c3c','#f39c12','#9b59b6','#3eb8cc']}]
+                }
+            });
+
+            let tb = document.getElementById('tbody');
+            tb.innerHTML='';
+            data.forEach(x=>{
+                let r=tb.insertRow();
+                r.innerHTML='<td>'+x.nombre_completo+'</td><td>'+(x.email||'N/A')+'</td><td>'+x.sucursal_nombre+'</td><td>'+fmt(x.posicion)+'</td><td>'+((x.activo==true||x.activo==1)?'Activo':'Inactivo')+'</td><td><button class="btn" onclick="edit('+x.id+')">Editar</button></td>';
+            });
+        }
+
+        function openModal(id){
+            document.getElementById('mtitle').textContent = id?'Editar':'Agregar';
+            let sel = document.getElementById('suc');
+            sel.innerHTML='';
+            suc.forEach(s=>{
+                let o = document.createElement('option');
+                o.value=s.id;
+                o.textContent=s.nombre;
+                sel.appendChild(o);
+            });
+
+            if(id){
+                let x = data.find(e=>e.id==id);
+                if(x){
+                    document.getElementById('mid').value=id;
+                    document.getElementById('nombre').value=x.nombre_completo;
+                    document.getElementById('email').value=x.email||'';
+                    document.getElementById('pos').value=x.posicion;
+                    document.getElementById('suc').value=x.sucursal_id;
+                    document.getElementById('activo').checked=(x.activo==true||x.activo==1);
+                }
+            } else {
+                document.getElementById('mid').value='';
+                document.getElementById('nombre').value='';
+                document.getElementById('email').value='';
+                document.getElementById('pos').value='colorista';
+                document.getElementById('activo').checked=true;
+            }
+            document.getElementById('modal').classList.add('active');
+        }
+
+        function closeModal(){
+            document.getElementById('modal').classList.remove('active');
+        }
+
+        async function save(){
+            let id = document.getElementById('mid').value;
+            let p = {
+                nombre_completo: document.getElementById('nombre').value,
+                email: document.getElementById('email').value,
+                rol: document.getElementById('pos').value,
+                sucursal_id: parseInt(document.getElementById('suc').value),
+                activo: document.getElementById('activo').checked
+            };
+            if(!p.nombre_completo) { alert('Nombre requerido'); return; }
+            try {
+                let res = await fetch(id?API+'/api/v1/empleados/'+id:API+'/api/v1/empleados', {
+                    method: id?'PUT':'POST',
+                    headers: {'Content-Type':'application/json'},
+                    body: JSON.stringify(p)
+                });
+                if(res.ok){ closeModal(); load(); } else { alert('Error'); }
+            } catch(e){ alert('Error: '+e); }
+        }
+
+        function edit(id){ openModal(id); }
+
+        function switchTab(t){
+            document.getElementById('dashboard').classList.remove('active');
+            document.getElementById('empleados').classList.remove('active');
+            document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+            if(t=='dashboard'){
+                document.getElementById('dashboard').classList.add('active');
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+            } else {
+                document.getElementById('empleados').classList.add('active');
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+            }
+        }
+
+        load();
+    </script>
+</body>
+</html>
+
+
+
+
+
