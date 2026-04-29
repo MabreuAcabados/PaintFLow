@@ -1193,11 +1193,19 @@ async function checkExistingSession() {
         return; // No restaurar sesión, mostrar login
     }
     
+    // Verificar si se está forzando logout (Ctrl+Click en logo o doble escape)
+    if (urlParams.get('force_logout') === 'true') {
+        console.log('Logout forzado detectado');
+        clearSession();
+        window.history.replaceState({}, document.title, window.location.pathname);
+        return;
+    }
+    
     const sessionActive = localStorage.getItem('sessionActive');
     const currentUser = localStorage.getItem('currentUser');
     
     // Solo proceder si hay una sesión VÁLIDA y ACTIVA
-    if (sessionActive === 'true' && currentUser) {
+    if (sessionActive === 'true' && currentUser && currentUser !== 'null') {
         console.log('Sesion activa encontrada para:', currentUser);
         
         try {
@@ -2667,6 +2675,21 @@ function testRenderUsuarios() {
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('DOM loaded, checking session...');
     await checkExistingSession();
+    
+    // Agregar funcionalidad de logout forzado (Ctrl+Click en logo)
+    const logo = document.querySelector('img[alt*="Logo"], img[src*="logo"]');
+    if (logo) {
+        logo.addEventListener('click', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                e.preventDefault();
+                console.log('Logout forzado activado');
+                clearSession();
+                window.location.href = '/?force_logout=true';
+            }
+        });
+        logo.style.cursor = 'pointer';
+        logo.title = 'Ctrl+Click para logout forzado';
+    }
 });
 
         function goToAnalystView() {

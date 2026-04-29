@@ -1153,9 +1153,17 @@
                 cerrarModalPerfil();
             }
         });
+
+        // Limpiar sesión
+        function clearSession() {
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('sessionActive');
+        }
         
         function handleLogout() {
             if (confirm('¿Deseas cerrar sesión?')) {
+                clearSession();
+                // Redirigir al login sin parámetros especiales
                 window.location.href = '/';
             }
         }
@@ -1187,6 +1195,21 @@
         window.addEventListener('DOMContentLoaded', () => {
             loadData();
             actualizarNombreUsuario();
+            
+            // Agregar funcionalidad de logout forzado (Ctrl+Click en logo)
+            const logo = document.querySelector('img[alt*="Logo"], img[src*="logo"]');
+            if (logo) {
+                logo.addEventListener('click', function(e) {
+                    if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        console.log('Logout forzado desde employees');
+                        clearSession();
+                        window.location.href = '/?force_logout=true';
+                    }
+                });
+                logo.style.cursor = 'pointer';
+                logo.title = 'Ctrl+Click para logout forzado';
+            }
         });
     </script>
     <div id="modalPerfil" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; display: none; align-items: center; justify-content: center; flex-direction: column;">
