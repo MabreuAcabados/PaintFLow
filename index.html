@@ -1184,13 +1184,34 @@ async function checkExistingSession() {
     if (sessionChecked) return;  // Already checked, skip
     sessionChecked = true;
     
+    // Verificar si viene de un logout (analista cerrando sesión)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('logout') === 'true') {
+        console.log('Logout detectado, limpiando sesión y mostrando login');
+        clearSession();
+        // Limpiar URL sin recargar la página
+        window.history.replaceState({}, document.title, window.location.pathname);
+        return; // No restaurar sesión, mostrar login
+    }
+    
     const sessionActive = localStorage.getItem('sessionActive');
     const currentUser = localStorage.getItem('currentUser');
     
     if (sessionActive === 'true' && currentUser) {
         console.log('Sesion activa encontrada para:', currentUser);
         
-        // Mostrar app, ocultar login
+        // Verificar que el usuario tenga rol de administrador para esta vista
+        const userData = JSON.parse(currentUser);
+        const userRole = (userData.rol || '').toLowerCase();
+        
+        // Si es analista, redirigir a su vista correspondiente
+        if (userRole === 'analista') {
+            console.log('Usuario analista detectado, redirigiendo a /employees');
+            window.location.href = '/employees';
+            return;
+        }
+        
+        // Mostrar app, ocultar login (solo para administradores)
         const loginContainer = document.getElementById("loginContainer");
         const appContainer = document.getElementById("appContainer");
         
