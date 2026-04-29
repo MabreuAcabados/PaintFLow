@@ -1153,18 +1153,10 @@
                 cerrarModalPerfil();
             }
         });
-
-        // Limpiar sesión
-        function clearSession() {
-            localStorage.removeItem('currentUser');
-            localStorage.removeItem('sessionActive');
-        }
         
         function handleLogout() {
             if (confirm('¿Deseas cerrar sesión?')) {
-                clearSession();
-                // Redirigir al login sin mostrar vista de admin
-                window.location.href = '/?logout=true';
+                window.location.href = '/';
             }
         }
         
