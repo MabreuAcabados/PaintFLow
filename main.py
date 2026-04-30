@@ -500,7 +500,8 @@ async def update_usuario(usuario_id: int, nombre_completo: str = "", email: str 
             updates.append("sucursal_id = %s")
             values.append(sucursal_id)
         if password:
-            password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+            # Usar SHA256 (consistente con login y creación)
+            password_hash = hashlib.sha256(password.encode()).hexdigest()
             updates.append("password_hash = %s")
             values.append(password_hash)
         
