@@ -567,17 +567,94 @@
                 padding: 14px;
             }
             
+            .main-content {
+                padding: 15px;
+                margin: 10px;
+            }
+            
             table {
+                font-size: 0.8em;
+                width: 100%;
+                border-radius: 6px;
+            }
+            
+            th, td {
+                padding: 8px 4px;
                 font-size: 0.85em;
+                word-wrap: break-word;
+            }
+            
+            th:first-child, td:first-child {
+                width: 15%;
+            }
+            
+            th:nth-child(2), td:nth-child(2) {
+                width: 25%;
+            }
+            
+            th:nth-child(3), td:nth-child(3) {
+                width: 20%;
+            }
+            
+            th:nth-child(4), td:nth-child(4) {
+                width: 15%;
+            }
+            
+            th:nth-child(5), td:nth-child(5) {
+                width: 10%;
+            }
+            
+            th:last-child, td:last-child {
+                width: 15%;
             }
             
             .btn-action {
-                padding: 6px 8px;
-                font-size: 0.8em;
+                padding: 4px 6px;
+                font-size: 0.75em;
+                margin: 0 2px;
+                display: block;
+                width: 100%;
+                margin-bottom: 2px;
+            }
+            
+            .subtabs-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .subtab-btn {
+                width: 100%;
+                text-align: center;
+                margin-bottom: 5px;
             }
             
             .modal-content {
                 width: 95%;
+                padding: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .navbar h1 {
+                font-size: 1em;
+            }
+            
+            table {
+                font-size: 0.75em;
+            }
+            
+            th, td {
+                padding: 6px 2px;
+                font-size: 0.8em;
+            }
+            
+            .btn-action {
+                font-size: 0.7em;
+                padding: 3px 4px;
+            }
+            
+            .section-header h2 {
+                font-size: 1.3em;
             }
         }
         
@@ -898,7 +975,7 @@
                 const thead = document.createElement('thead');
                 const headerRow = document.createElement('tr');
                 headerRow.style.background = '#f5f5f5';
-                ['Codigo', 'Nombre', 'Email', 'Sucursal', 'Posición', 'Teléfono', 'Estado', 'Acciones']
+                ['Codigo', 'Nombre', 'Sucursal', 'Posición', 'Estado', 'Acciones']
                     .forEach(col => {
                         const th = document.createElement('th');
                         th.style.padding = '12px';
@@ -915,7 +992,7 @@
                 if (empleadosSucursal.length === 0) {
                     const tr = document.createElement('tr');
                     const td = document.createElement('td');
-                    td.colSpan = 8;
+                    td.colSpan = 6;
                     td.style.textAlign = 'center';
                     td.textContent = 'Sin empleados';
                     tr.appendChild(td);
@@ -933,10 +1010,8 @@
                         tr.innerHTML = `
                             <td>${codigoEmpleado}</td>
                             <td>${nombreEmpleado}</td>
-                            <td>${email}</td>
                             <td>${sucursal}</td>
                             <td>${posicion}</td>
-                            <td>${telefono}</td>
                             <td>${estado}</td>
                             <td>
                                 <button class="btn-action btn-edit" onclick="abrirModalEmpleado(${e.id})">Editar</button>
