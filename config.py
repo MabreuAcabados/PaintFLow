@@ -6,7 +6,7 @@ class Settings(BaseModel):
     API_HOST: str = os.getenv('API_HOST', '0.0.0.0')  # Changed to 0.0.0.0 for production
     API_PORT: int = int(os.getenv('PORT', 8001))
     API_DEBUG: bool = os.getenv('API_DEBUG', 'False').lower() == 'true'
-    API_TITLE: str = "PaintFlow 2 API"
+    API_TITLE: str = "PaintFlow API"
     API_VERSION: str = "2.0.0"
     
     # Database Configuration

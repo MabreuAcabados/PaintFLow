@@ -5,48 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EMPLEADOS - PaintFlow</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script>
+        // Verificar que Chart.js se carga correctamente
+        console.log('Iniciando carga de Chart.js...');
+        window.addEventListener('load', function() {
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js no se pudo cargar');
+            } else {
+                console.log('Chart.js cargado correctamente');
+            }
+        });
+    </script>
     <style>
-        body {
-            font-family: Roboto, sans-serif;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Roboto, sans-serif; background: #f5f5f5; color: #333; }
+        
+        .navbar { 
+            background: #fff; 
+            padding: 15px 40px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border: none;
+            gap: 30px;
+        }
+        
+        .navbar img { 
+            height: 60px; 
+            width: auto;
+            flex-shrink: 0;
+        }
+        
+        .navbar h1 { 
+            color: #1a73e8; 
+            font-size: 1.5em; 
             margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
-            color: #333;
-            min-height: 100vh;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
-            color: white;
-            padding: 25px 35px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            position: relative;
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .logo {
-            width: 50px;
-            height: 50px;
-            cursor: pointer;
-        }
-
-        .title {
-            font-size: 1.8em;
-            font-weight: 700;
-            margin: 0;
+            font-weight: 600;
+            flex: 1;
         }
         
         .user-menu-container {
@@ -161,61 +158,17 @@
             margin: 0;
         }
         
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
+        .btn-agregar { 
+            background: linear-gradient(135deg, #4CAF50 0%, #388e3c 100%);
+            color: white; 
+            padding: 12px 24px; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: 700;
             transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            position: relative;
-            overflow: hidden;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(26, 115, 232, 0.3);
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #0d47a1 0%, #1a73e8 100%);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(26, 115, 232, 0.4);
-        }
-
-        .btn-secondary {
-            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
-        }
-
-        .btn-secondary:hover {
-            background: linear-gradient(135deg, #495057 0%, #6c757d 100%);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(108, 117, 125, 0.4);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.25);
+            font-size: 1em;
         }
         
         .header-buttons {
@@ -292,32 +245,6 @@
         
         .subtab-content.active {
             display: block;
-        }
-
-        .no-results {
-            background: white;
-            border-radius: 12px;
-            margin-top: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        }
-
-        .status-badge {
-            padding: 4px 12px;
-            border-radius: 15px;
-            font-size: 0.8em;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .status-badge.active {
-            background: linear-gradient(135deg, #4CAF50 0%, #388e3c 100%);
-            color: white;
-        }
-
-        .status-badge.inactive {
-            background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
-            color: white;
         }
         
         table { 
@@ -891,178 +818,340 @@
             transform: translateY(-1px);
         }
 
-        /* Estilos del contenedor principal */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 40px 35px;
-        }
-
-        .content-card {
+        /* Dashboard Styles */
+        .dashboard-container {
             background: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
             overflow: hidden;
         }
 
-        .controls {
-            padding: 35px 40px;
-            border-bottom: 1px solid #e0e6ed;
-            background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
-        }
-
-        .search-section {
+        .dashboard-header {
+            background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+            color: white;
+            padding: 20px 25px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 25px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
         }
 
-        .search-group {
+        .dashboard-header h3 {
+            margin: 0;
+            font-size: 1.3em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dashboard-toggle {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dashboard-toggle:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.05);
+        }
+
+        .dashboard-toggle .arrow {
+            transition: transform 0.3s ease;
+        }
+
+        .dashboard-toggle.collapsed .arrow {
+            transform: rotate(-90deg);
+        }
+
+        .dashboard-content {
+            padding: 25px;
+            transition: all 0.3s ease;
+            max-height: 1000px;
+            overflow: hidden;
+        }
+
+        .dashboard-content.collapsed {
+            max-height: 0;
+            padding: 0 25px;
+        }
+
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-color: #1a73e8;
+        }
+
+        .stat-icon {
+            font-size: 2.5em;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5em;
+        }
+
+        .stat-info h4 {
+            font-size: 2em;
+            font-weight: 700;
+            color: #1a73e8;
+            margin: 0;
+        }
+
+        .stat-info p {
+            color: #6c757d;
+            font-size: 0.9em;
+            margin: 5px 0 0 0;
+            font-weight: 500;
+        }
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .chart-card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f8f9fa;
+        }
+
+        .chart-header h4 {
+            color: #1a73e8;
+            font-size: 1.1em;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .chart-legend {
             display: flex;
             gap: 15px;
-            align-items: center;
-            flex: 1;
         }
 
-        .search-label {
-            font-weight: 600;
-            color: #333;
-            font-size: 15px;
-            white-space: nowrap;
+        .legend-item {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 5px;
+            font-size: 0.85em;
+            color: #6c757d;
         }
 
-        .search-input {
-            padding: 14px 22px;
-            border: 2px solid #e0e6ed;
-            border-radius: 25px;
-            font-size: 15px;
-            width: 350px;
-            transition: all 0.3s ease;
-            background: white;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            font-family: inherit;
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
         }
 
-        .search-input:focus {
-            outline: none;
-            border-color: #1a73e8;
-            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.15), 0 4px 12px rgba(0,0,0,0.1);
-            transform: translateY(-1px);
+        .legend-item.colorista .legend-color {
+            background: #4CAF50;
         }
 
-        .search-input::placeholder {
-            color: #a0a6b1;
-            font-style: italic;
+        .legend-item.facturador .legend-color {
+            background: #1a73e8;
         }
 
-        /* Mejorar botón éxito */
-        .btn.btn-success {
-            background: linear-gradient(135deg, #4CAF50 0%, #388e3c 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
-            padding: 14px 28px;
-            font-size: 15px;
-            border-radius: 25px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            white-space: nowrap;
+        .legend-item.administrador .legend-color {
+            background: #FF5722;
+        }
+
+        .legend-item.analista .legend-color {
+            background: #9C27B0;
+        }
+
+        .legend-item.encargado .legend-color {
+            background: #607D8B;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
         }
 
-        .btn.btn-success:hover {
-            background: linear-gradient(135deg, #388e3c 0%, #4CAF50 100%);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+        .chart-container canvas {
+            max-height: 100% !important;
         }
 
-        /* Mejorar botón secundario */
-        .btn.btn-secondary {
-            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
-            padding: 12px 20px;
-            font-size: 14px;
-            border-radius: 20px;
-            font-weight: 600;
-        }
-
-        .btn.btn-secondary:hover {
-            background: linear-gradient(135deg, #495057 0%, #6c757d 100%);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(108, 117, 125, 0.4);
-        }
-
-        /* Responsive design */
+        /* Responsive */
         @media (max-width: 768px) {
-            .search-section {
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-cards {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+            
+            .chart-header {
                 flex-direction: column;
-                align-items: stretch;
-                gap: 15px;
-            }
-            
-            .search-group {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .search-input {
-                width: 100%;
-            }
-            
-            .container {
-                padding: 20px 15px;
-            }
-            
-            .controls {
-                padding: 25px 20px;
+                align-items: flex-start;
+                gap: 10px;
             }
         }
 
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="header-content">
-            <div class="logo-section">
-                <img src="/logo.png" alt="PaintFlow Logo" class="logo">
-                <h1 class="title">EMPLEADOS</h1>
-            </div>
-            <div class="user-menu">
-                <div class="user-menu-container">
-                    <button class="user-dropdown-btn" id="userDropdownBtn" onclick="toggleUserDropdown()">
-                        <div class="user-avatar" id="userAvatar">👤</div>
-                        <span id="adminUserName">Usuario</span>
-                    </button>
-                    <div class="dropdown-menu" id="userDropdown">
-                        <!-- El contenido se genera dinámicamente según el rol -->
-                    </div>
-                </div>
+    <div class="navbar">
+        <img src="/logo.png" alt="PaintFlow Logo" style="height: 60px; width: auto; cursor: pointer;">
+        <h1>EMPLEADOS</h1>
+        <div class="user-menu-container">
+            <button class="user-dropdown-btn" id="userDropdownBtn" onclick="toggleUserDropdown()">
+                <div class="user-avatar" id="userAvatar">👤</div>
+                <span id="adminUserName">Usuario</span>
+            </button>
+            <div class="dropdown-menu" id="userDropdown">
+                <!-- El contenido se genera dinámicamente según el rol -->
             </div>
         </div>
     </div>
 
-    <div class="container">
-        <div class="content-card">
-            <div class="controls">
-                <div class="search-section">
-                    <div class="search-group">
-                        <input type="text" class="search-input" placeholder="Nombre o código del empleado..." id="searchInput" oninput="filterEmployees()">
-                        <button class="btn btn-secondary" onclick="clearSearch()">✕ Limpiar</button>
-                    </div>
-                    <button class="btn btn-success" onclick="abrirModalEmpleado()">👥 Agregar Empleado</button>
-                </div>
-                <div class="subtabs-container" id="subtabsContainer"></div>
+    <div class="main-content">
+        <div class="section-header">
+            <h2>Gestión de Empleados</h2>
+            <div class="header-buttons">
+                <button class="btn-agregar" onclick="abrirModalEmpleado()">+ Agregar Empleado</button>
             </div>
-            <div id="tablasContainer"></div>
         </div>
+
+        <!-- Dashboard de Estadísticas -->
+        <div class="dashboard-container">
+            <div class="dashboard-header">
+                <h3><i class="icon">📊</i> Dashboard de Empleados</h3>
+                <button class="dashboard-toggle" onclick="toggleDashboard()" id="dashboardToggle">
+                    <span>Ocultar</span> <i class="arrow">▼</i>
+                </button>
+            </div>
+            <div class="dashboard-content" id="dashboardContent">
+                <!-- Tarjetas de estadísticas rápidas -->
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-info">
+                            <h4 id="totalEmpleados">-</h4>
+                            <p>Total Empleados</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🏢</div>
+                        <div class="stat-info">
+                            <h4 id="totalSucursales">-</h4>
+                            <p>Sucursales Activas</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🎨</div>
+                        <div class="stat-info">
+                            <h4 id="totalColoristas">-</h4>
+                            <p>Coloristas</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">�</div>
+                        <div class="stat-info">
+                            <h4 id="totalFacturadores">-</h4>
+                            <p>Facturadores</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🔑</div>
+                        <div class="stat-info">
+                            <h4 id="totalAdministradores">-</h4>
+                            <p>Administradores</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-info">
+                            <h4 id="totalAnalistas">-</h4>
+                            <p>Analistas</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gráficos -->
+                <div class="charts-container">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h4>Empleados por Rol</h4>
+                            <div class="chart-legend">
+                                <span class="legend-item colorista"><span class="legend-color"></span> Coloristas</span>
+                                <span class="legend-item facturador"><span class="legend-color"></span> Facturadores</span>
+                                <span class="legend-item administrador"><span class="legend-color"></span> Administradores</span>
+                                <span class="legend-item analista"><span class="legend-color"></span> Analistas</span>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <div class="css-donut-chart">
+                                <div class="donut-segment colorista-segment" id="coloristaSegment"></div>
+                                <div class="donut-segment encargado-segment" id="encargadoSegment"></div>
+                                <div class="donut-center">
+                                    <span id="totalRolEmpleados">70</span>
+                                    <small>Total</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h4>Top 8 Sucursales</h4>
+                        </div>
+                        <div class="chart-container">
+                            <div class="css-bar-chart" id="branchBars"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="subtabs-container" id="subtabsContainer"></div>
+
+        <div id="tablasContainer"></div>
     </div>
 
     <div id="confirmModal" class="confirm-modal">
@@ -1126,7 +1215,7 @@
 
     <script>
         const API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-            ? `http://${window.location.hostname}:8002`
+            ? `http://${window.location.hostname}:${window.location.port}`
             : 'https://paintflow.onrender.com';
         let allEmpleados = [];
         let allSucursales = [];
@@ -1658,115 +1747,6 @@
             }
         }
 
-        // Funciones de búsqueda y filtrado
-        function filterEmployees() {
-            const searchInput = document.getElementById('searchInput');
-            const searchTerm = searchInput.value.toLowerCase().trim();
-            
-            if (searchTerm === '') {
-                // Si no hay término de búsqueda, mostrar todos los empleados agrupados
-                loadData();
-                return;
-            }
-            
-            // Filtrar empleados que coincidan con el término de búsqueda
-            const filteredEmployees = allEmpleados.filter(empleado => {
-                const nombre = (empleado.nombre_completo || '').toLowerCase();
-                const codigo = (empleado.codigo_empleado || '').toString().toLowerCase();
-                const sucursal = (empleado.sucursal || '').toLowerCase();
-                const posicion = (empleado.posicion || '').toLowerCase();
-                
-                return nombre.includes(searchTerm) || 
-                       codigo.includes(searchTerm) || 
-                       sucursal.includes(searchTerm) || 
-                       posicion.includes(searchTerm);
-            });
-            
-            // Mostrar resultados de búsqueda
-            displaySearchResults(filteredEmployees, searchTerm);
-        }
-        
-        function clearSearch() {
-            document.getElementById('searchInput').value = '';
-            loadData(); // Recargar vista normal agrupada por sucursal
-        }
-        
-        function displaySearchResults(empleados, searchTerm) {
-            const container = document.getElementById('tablasContainer');
-            const subtabsContainer = document.getElementById('subtabsContainer');
-            
-            // Limpiar subtabs cuando se busca
-            subtabsContainer.innerHTML = '';
-            
-            if (empleados.length === 0) {
-                container.innerHTML = `
-                    <div class="no-results">
-                        <div style="text-align: center; padding: 40px; color: #666;">
-                            <div style="font-size: 3em; margin-bottom: 10px;">🔍</div>
-                            <h3>No se encontraron empleados</h3>
-                            <p>No hay empleados que coincidan con "${searchTerm}"</p>
-                            <button class="btn btn-primary" onclick="clearSearch()">Mostrar todos</button>
-                        </div>
-                    </div>
-                `;
-                return;
-            }
-            
-            // Crear tabla única con todos los resultados
-            const div = document.createElement('div');
-            div.className = 'subtab-content active';
-            
-            const table = document.createElement('table');
-            const thead = document.createElement('thead');
-            const tbody = document.createElement('tbody');
-            
-            // Encabezados
-            thead.innerHTML = `
-                <tr>
-                    <th>Codigo</th>
-                    <th>Nombre</th>
-                    <th>Sucursal</th>
-                    <th>Posición</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-            `;
-            
-            // Filas de empleados
-            empleados.forEach(empleado => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${empleado.codigo_empleado}</td>
-                    <td>${empleado.nombre_completo}</td>
-                    <td>${empleado.sucursal}</td>
-                    <td>${empleado.posicion}</td>
-                    <td><span class="status-badge ${empleado.activo ? 'active' : 'inactive'}">${empleado.activo ? 'Activo' : 'Inactivo'}</span></td>
-                    <td>
-                        <button class="btn-action btn-edit" onclick="editarEmpleado(${empleado.id_empleado})">Editar</button>
-                        <button class="btn-action btn-delete" onclick="confirmarEliminacion(${empleado.id_empleado})">×</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-            
-            table.appendChild(thead);
-            table.appendChild(tbody);
-            div.appendChild(table);
-            
-            // Mostrar título de resultados
-            const title = document.createElement('div');
-            title.innerHTML = `
-                <div style="padding: 20px; background: #f8f9ff; border-bottom: 1px solid #e0e6ed;">
-                    <h3 style="margin: 0; color: #1a73e8;">📋 Resultados de búsqueda: ${empleados.length} empleado(s) encontrado(s)</h3>
-                    <p style="margin: 5px 0 0 0; color: #666;">Búsqueda: "${searchTerm}"</p>
-                </div>
-            `;
-            
-            container.innerHTML = '';
-            container.appendChild(title);
-            container.appendChild(div);
-        }
-
         function actualizarNombreUsuario() {
             try {
                 const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
@@ -1802,6 +1782,302 @@
                 logo.title = 'Ctrl+Click para logout forzado';
             }
         });
+
+        // ============================================================
+        // DASHBOARD FUNCTIONALITY
+        // ============================================================
+
+        let roleChart = null;
+        let branchChart = null;
+
+        // Toggle dashboard visibility
+        function toggleDashboard() {
+            const content = document.getElementById('dashboardContent');
+            const toggle = document.getElementById('dashboardToggle');
+            
+            content.classList.toggle('collapsed');
+            toggle.classList.toggle('collapsed');
+            
+            const isCollapsed = content.classList.contains('collapsed');
+            toggle.querySelector('span').textContent = isCollapsed ? 'Mostrar' : 'Ocultar';
+        }
+
+        // Load dashboard data
+        async function loadDashboardData() {
+            console.log('Iniciando carga de datos del dashboard...');
+            
+            try {
+                // Cargar estadísticas de empleados
+                console.log('Cargando estadísticas de empleados...');
+                const empleadosUrl = '/api/v1/estadisticas/empleados';
+                console.log('URL empleados:', empleadosUrl);
+                
+                const empleadosResponse = await fetch(empleadosUrl);
+                console.log('Respuesta empleados:', empleadosResponse.status);
+                
+                if (!empleadosResponse.ok) {
+                    throw new Error(`Error ${empleadosResponse.status}: ${empleadosResponse.statusText}`);
+                }
+                
+                const empleadosData = await empleadosResponse.json();
+                console.log('Datos empleados:', empleadosData);
+                
+                // Cargar estadísticas de sucursales
+                console.log('Cargando estadísticas de sucursales...');
+                const sucursalesUrl = '/api/v1/estadisticas/sucursales';
+                console.log('URL sucursales:', sucursalesUrl);
+                
+                const sucursalesResponse = await fetch(sucursalesUrl);
+                console.log('Respuesta sucursales:', sucursalesResponse.status);
+                
+                if (!sucursalesResponse.ok) {
+                    throw new Error(`Error ${sucursalesResponse.status}: ${sucursalesResponse.statusText}`);
+                }
+                
+                const sucursalesData = await sucursalesResponse.json();
+                console.log('Datos sucursales:', sucursalesData);
+                
+                // Actualizar tarjetas de estadísticas
+                console.log('Actualizando tarjetas...');
+                updateStatsCards(empleadosData, sucursalesData);
+                
+                // Crear gráficos solo si Chart está disponible
+                if (typeof Chart !== 'undefined') {
+                    console.log('Creando gráficos...');
+                    createRoleChart(empleadosData.empleados_por_rol);
+                    createBranchChart(empleadosData.empleados_por_sucursal);
+                } else {
+                    console.warn('Chart.js no está disponible, saltando gráficos');
+                }
+                
+            } catch (error) {
+                console.error('Error cargando datos del dashboard:', error);
+                // Mostrar datos de ejemplo en caso de error
+                console.log('Usando datos de respaldo...');
+                updateStatsCards({
+                    total_empleados: 0,
+                    empleados_por_rol: []
+                }, {
+                    total_sucursales: 0
+                });
+            }
+        }
+
+        // Update statistics cards
+        function updateStatsCards(empleadosData, sucursalesData) {
+            document.getElementById('totalEmpleados').textContent = empleadosData.total_empleados || 0;
+            document.getElementById('totalSucursales').textContent = sucursalesData.total_sucursales || 0;
+            
+            // Inicializar contadores
+            let totalColoristas = 0;
+            let totalFacturadores = 0;
+            let totalAdministradores = 0;
+            let totalAnalistas = 0;
+            
+            // Calcular totales por rol
+            empleadosData.empleados_por_rol.forEach(rol => {
+                switch(rol.rol) {
+                    case 'Colorista':
+                        totalColoristas = rol.cantidad;
+                        break;
+                    case 'Facturador':
+                        totalFacturadores = rol.cantidad;
+                        break;
+                    case 'Administrador':
+                        totalAdministradores = rol.cantidad;
+                        break;
+                    case 'Analista':
+                        totalAnalistas = rol.cantidad;
+                        break;
+                }
+            });
+            
+            document.getElementById('totalColoristas').textContent = totalColoristas;
+            document.getElementById('totalFacturadores').textContent = totalFacturadores;
+            document.getElementById('totalAdministradores').textContent = totalAdministradores;
+            document.getElementById('totalAnalistas').textContent = totalAnalistas;
+        }
+
+        // Create role distribution chart (Donut)
+        function createRoleChart(data) {
+            const ctx = document.getElementById('roleChart').getContext('2d');
+            
+            if (roleChart) {
+                roleChart.destroy();
+            }
+            
+            const labels = data.map(item => item.rol);
+            const values = data.map(item => item.cantidad);
+            const colors = ['#4CAF50', '#1a73e8']; // Verde para coloristas, azul para encargados
+            
+            roleChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: colors,
+                        borderColor: colors.map(color => color + '50'),
+                        borderWidth: 2,
+                        hoverOffset: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false // Usamos nuestra propia leyenda
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: 'white',
+                            bodyColor: 'white',
+                            borderColor: '#1a73e8',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: function(context) {
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((context.parsed * 100) / total).toFixed(1);
+                                    return `${context.label}: ${context.parsed} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '60%',
+                    animation: {
+                        animateRotate: true,
+                        duration: 1000
+                    }
+                }
+            });
+        }
+
+        // Create branch distribution chart (Bar)
+        function createBranchChart(data) {
+            const ctx = document.getElementById('branchChart').getContext('2d');
+            
+            if (branchChart) {
+                branchChart.destroy();
+            }
+            
+            const labels = data.map(item => item.sucursal);
+            const values = data.map(item => item.cantidad);
+            
+            branchChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Empleados',
+                        data: values,
+                        backgroundColor: '#1a73e8',
+                        borderColor: '#0d47a1',
+                        borderWidth: 1,
+                        borderRadius: 4,
+                        borderSkipped: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: 'white',
+                            bodyColor: 'white',
+                            borderColor: '#1a73e8',
+                            borderWidth: 1,
+                            cornerRadius: 8
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1,
+                                color: '#6c757d'
+                            },
+                            grid: {
+                                color: '#e9ecef'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#6c757d',
+                                maxRotation: 45,
+                                minRotation: 0
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeOutBounce'
+                    }
+                }
+            });
+        }
+
+        // Load dashboard when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM cargado');
+            // Cargar datos inmediatamente sin esperar Chart.js
+            loadDashboardDataSimple();
+            
+            // Cargar dashboard después de un delay para asegurar que todo esté listo
+            setTimeout(function() {
+                if (typeof Chart !== 'undefined') {
+                    console.log('Chart.js disponible, creando gráficos');
+                    loadDashboardData();
+                } else {
+                    console.log('Chart.js no disponible, solo datos');
+                    loadDashboardDataSimple();
+                }
+            }, 2000);
+        });
+        
+        // Función simple que solo carga datos
+        async function loadDashboardDataSimple() {
+            try {
+                const empleadosResponse = await fetch('/api/v1/estadisticas/empleados');
+                const empleadosData = await empleadosResponse.json();
+                
+                const sucursalesResponse = await fetch('/api/v1/estadisticas/sucursales');
+                const sucursalesData = await sucursalesResponse.json();
+                
+                // Actualizar tarjetas
+                document.getElementById('totalEmpleados').textContent = empleadosData.total_empleados;
+                document.getElementById('totalSucursales').textContent = sucursalesData.total_sucursales;
+                
+                // Inicializar contadores
+                let coloristas = 0, facturadores = 0, administradores = 0, analistas = 0;
+                
+                empleadosData.empleados_por_rol.forEach(rol => {
+                    switch(rol.rol) {
+                        case 'Colorista': coloristas = rol.cantidad; break;
+                        case 'Facturador': facturadores = rol.cantidad; break;
+                        case 'Administrador': administradores = rol.cantidad; break;
+                        case 'Analista': analistas = rol.cantidad; break;
+                    }
+                });
+                
+                document.getElementById('totalColoristas').textContent = coloristas;
+                document.getElementById('totalFacturadores').textContent = facturadores;
+                document.getElementById('totalAdministradores').textContent = administradores;
+                document.getElementById('totalAnalistas').textContent = analistas;
+                
+                updateStatsCards(empleadosData, sucursalesData);
+            } catch (error) {
+                console.error('Error cargando datos:', error);
+            }
+        }
     </script>
     <div id="modalPerfil" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; flex-direction: column; backdrop-filter: blur(5px);">
         <style>

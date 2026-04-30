@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from fastapi import FastAPI, HTTPException, Depends, Request
+from fastapi import FastAPI, HTTPException, Depends, Request, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -9,6 +9,27 @@ import time
 import os
 from typing import Optional
 from pydantic import BaseModel
+
+class FormulaNormalCreate(BaseModel):
+    codigo_color: str
+    id_colorante: str
+    oz: float = 0
+    x32s: float = 0
+    x64s: float = 0
+    x128s: float = 0
+    tipo: str = "galon"
+
+    class Config:
+        # Permitir alias para campos que empiezan con números
+        allow_population_by_field_name = True
+        
+        schema_extra = {
+            "properties": {
+                "_32s": {"type": "number", "default": 0},
+                "_64s": {"type": "number", "default": 0}, 
+                "_128s": {"type": "number", "default": 0}
+            }
+        }
 
 # Modelos Pydantic
 class SucursalUpdate(BaseModel):
@@ -37,7 +58,7 @@ logger = logging.getLogger(__name__)
 # Sesiones activas: {usuario_id: {"username": "", "nombre": "", "rol": "", "departamento": "", "ultima_actividad": timestamp}}
 ACTIVE_SESSIONS = {}
 
-app = FastAPI(title=settings.API_TITLE, version=settings.API_VERSION, description="API PaintFlow 2")
+app = FastAPI(title=settings.API_TITLE, version=settings.API_VERSION, description="API PaintFlow")
 
 # Dynamic CORS configuration for development and production
 cors_origins = [
@@ -61,6 +82,20 @@ app.add_middleware(CORSMiddleware,
     allow_headers=["*"]
 )
 
+# Middleware para logging de peticiones
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    if request.method == "POST" and "formulas-normales" in str(request.url):
+        try:
+            body = await request.body()
+            logger.info(f"POST formulas-normales - Raw body: {body}")
+            logger.info(f"POST formulas-normales - Headers: {dict(request.headers)}")
+        except Exception as e:
+            logger.error(f"Error reading request body: {e}")
+    
+    response = await call_next(request)
+    return response
+
 # Servir archivos estáticos con ruta absoluta
 static_dir = os.path.join(os.path.dirname(__file__), "static")
 if os.path.exists(static_dir):
@@ -70,12 +105,12 @@ else:
 
 @app.on_event("startup")
 async def startup_event():
-    logger.info("Starting PaintFlow 2 API...")
+    logger.info("Starting PaintFlow API...")
     DatabasePool.init_pool()
 
 @app.on_event("shutdown")
 async def shutdown_event():
-    logger.info("Shutting down PaintFlow 2 API...")
+    logger.info("Shutting down PaintFlow API...")
     DatabasePool.close_pool()
 
 @app.get("/")
@@ -203,6 +238,65 @@ async def login(username: str, password: str, db=Depends(get_db)):
     except Exception as e:
         logger.error(f"Error in login: {e}")
         raise HTTPException(status_code=500, detail="Error de autenticacion")
+
+# ============================================================
+# CHANGE PASSWORD ENDPOINT
+# ============================================================
+
+class ChangePasswordRequest(BaseModel):
+    user_id: int
+    username: str
+    current_password: str
+    new_password: str
+
+@app.post("/api/v1/change-password")
+async def change_password(request: ChangePasswordRequest, db=Depends(get_db)):
+    try:
+        cur = db.cursor()
+        
+        # Verificar que el usuario existe y obtener la contraseña actual
+        cur.execute(
+            "SELECT id, password_hash, activo FROM usuarios WHERE id = %s AND username = %s",
+            (request.user_id, request.username)
+        )
+        usuario = cur.fetchone()
+        
+        if not usuario:
+            raise HTTPException(status_code=404, detail="Usuario no encontrado")
+        
+        usuario_id, current_password_hash, activo = usuario
+        
+        if not activo:
+            raise HTTPException(status_code=403, detail="Esta cuenta está inactiva")
+        
+        # Verificar contraseña actual con SHA256
+        current_password_check = hashlib.sha256(request.current_password.encode()).hexdigest()
+        if current_password_check != current_password_hash:
+            raise HTTPException(status_code=401, detail="Contraseña actual incorrecta")
+        
+        # Validar nueva contraseña
+        if len(request.new_password) < 6:
+            raise HTTPException(status_code=400, detail="La nueva contraseña debe tener al menos 6 caracteres")
+        
+        # Hash de la nueva contraseña
+        new_password_hash = hashlib.sha256(request.new_password.encode()).hexdigest()
+        
+        # Actualizar contraseña en la base de datos
+        cur.execute(
+            "UPDATE usuarios SET password_hash = %s, updated_at = NOW() WHERE id = %s",
+            (new_password_hash, usuario_id)
+        )
+        db.commit()
+        
+        logger.info(f"Password changed successfully for user: {request.username}")
+        
+        return {"message": "Contraseña cambiada exitosamente"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error changing password: {e}")
+        raise HTTPException(status_code=500, detail="Error al cambiar contraseña")
 
 # ============================================================
 # ROLES ENDPOINTS
@@ -906,5 +1000,288 @@ async def get_login_activity(limit: int = 50, db=Depends(get_db)):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# ============================================================
+# FORMULAS ENDPOINTS
+# ============================================================
+
+@app.get("/formulas")
+async def formulas_page():
+    """Servir interfaz de gestión de fórmulas para analistas"""
+    html_path = os.path.join(os.path.dirname(__file__), "formulas.html")
+    if os.path.exists(html_path):
+        return FileResponse(html_path, media_type="text/html")
+    raise HTTPException(status_code=404, detail="Formulas page not found")
+
+@app.get("/api/v1/colorantes")
+async def list_colorantes(skip: int = 0, limit: int = 200, db=Depends(get_db)):
+    """Listar colorantes disponibles"""
+    try:
+        cur = db.cursor()
+        cur.execute("SELECT id, nombre FROM colorante ORDER BY nombre LIMIT %s OFFSET %s", (limit, skip))
+        colorantes = cur.fetchall()
+        return {
+            "total": len(colorantes),
+            "colorantes": [{"id": c[0], "nombre": c[1]} for c in colorantes]
+        }
+    except Exception as e:
+        logger.error(f"Error listing colorantes: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/formulas-normales")
+async def list_formulas_normales(codigo: str = None, tipo: str = "galon", skip: int = 0, limit: int = 100, db=Depends(get_db)):
+    """Listar fórmulas normales (tabla presentacion)"""
+    try:
+        cur = db.cursor()
+        
+        # Query base con JOIN a colorante (presentacion no tiene columna id)
+        base_query = """
+            SELECT p.id_pintura, p.id_colorante, c.nombre as colorante_nombre, 
+                   p.oz, p._32s, p._64s, p._128s, p.tipo
+            FROM presentacion p
+            LEFT JOIN colorante c ON p.id_colorante = c.id
+            WHERE p.tipo = %s
+        """
+        params = [tipo]
+        
+        # Agregar filtro de código si se proporciona
+        if codigo:
+            codigo_busqueda = codigo.replace('-', ' ').replace('_', ' ')
+            base_query += " AND UPPER(p.id_pintura) LIKE UPPER(%s)"
+            params.append(f"%{codigo_busqueda}%")
+        
+        base_query += " ORDER BY p.id_pintura, p.id_colorante LIMIT %s OFFSET %s"
+        params.extend([limit, skip])
+        
+        cur.execute(base_query, params)
+        formulas = cur.fetchall()
+        
+        result = [
+            {
+                "id": f"{f[0]}|{f[1]}",  # clave compuesta como string
+                "codigo_color": f[0],
+                "id_colorante": f[1],
+                "colorante_nombre": f[2] or f[1],
+                "oz": f[3],
+                "_32s": f[4], 
+                "_64s": f[5],
+                "_128s": f[6],
+                "tipo": f[7]
+            }
+            for f in formulas
+        ]
+        
+        return {
+            "total": len(result),
+            "formulas": result
+        }
+    except Exception as e:
+        logger.error(f"Error listing formulas normales: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/v1/formulas-cce")
+async def list_formulas_cce(codigo: str = None, tipo: str = "galon", skip: int = 0, limit: int = 100, db=Depends(get_db)):
+    """Listar fórmulas CCE según tipo (galon, cubeta, cuarto)"""
+    try:
+        cur = db.cursor()
+        
+        # Mapear tipo a tabla
+        table_map = {
+            "galon": "formulas_cce_g",
+            "cubeta": "formulas_cce_c", 
+            "cuarto": "formulas_cce_qt"
+        }
+        
+        if tipo not in table_map:
+            raise HTTPException(status_code=400, detail="Tipo debe ser: galon, cubeta, cuarto")
+        
+        table = table_map[tipo]
+        
+        # Query con JOIN a colorante
+        base_query = f"""
+            SELECT f.id, f.id_pintura, f.id_colorante, c.nombre as colorante_nombre,
+                   f.oz, f._32s, f._64s, f._128s
+            FROM {table} f
+            LEFT JOIN colorante c ON f.id_colorante = c.id
+        """
+        params = []
+        
+        # Agregar filtro de código si se proporciona
+        if codigo:
+            codigo_busqueda = codigo.replace('-', ' ').replace('_', ' ')
+            base_query += " WHERE UPPER(f.id_pintura) LIKE UPPER(%s)"
+            params.append(f"%{codigo_busqueda}%")
+        
+        base_query += " ORDER BY f.id_pintura, f.id_colorante LIMIT %s OFFSET %s"
+        params.extend([limit, skip])
+        
+        cur.execute(base_query, params)
+        formulas = cur.fetchall()
+        
+        result = [
+            {
+                "id": f[0],
+                "codigo_color": f[1],
+                "id_colorante": f[2], 
+                "colorante_nombre": f[3] or f[2],
+                "oz": f[4],
+                "_32s": f[5],
+                "_64s": f[6], 
+                "_128s": f[7],
+                "tipo": tipo
+            }
+            for f in formulas
+        ]
+        
+        return {
+            "total": len(result),
+            "formulas": result
+        }
+    except Exception as e:
+        logger.error(f"Error listing formulas CCE: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/v1/formulas-normales")
+async def create_formula_normal(formula: FormulaNormalCreate, db=Depends(get_db)):
+    """Crear fórmula normal en tabla presentacion"""
+    print(f"DEBUG - Received formula data: {formula}")
+    print(f"DEBUG - Raw data: codigo_color={formula.codigo_color}, id_colorante={formula.id_colorante}, oz={formula.oz}, x32s={formula.x32s}, x64s={formula.x64s}, x128s={formula.x128s}, tipo={formula.tipo}")
+    try:
+        cur = db.cursor()
+        cur.execute(
+            "INSERT INTO presentacion (id_pintura, id_colorante, oz, _32s, _64s, _128s, tipo) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+            (formula.codigo_color, formula.id_colorante, formula.oz or None, formula.x32s or None, formula.x64s or None, formula.x128s or None, formula.tipo)
+        )
+        db.commit()
+        
+        return {
+            "id": f"{formula.codigo_color}|{formula.id_colorante}",  # clave compuesta como string
+            "codigo_color": formula.codigo_color,
+            "id_colorante": formula.id_colorante,
+            "oz": formula.oz,
+            "_32s": formula.x32s,
+            "_64s": formula.x64s, 
+            "_128s": formula.x128s,
+            "tipo": formula.tipo,
+            "message": "Fórmula creada exitosamente"
+        }
+    except Exception as e:
+        logger.error(f"Error creating formula normal: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/v1/formulas-cce")
+async def create_formula_cce(codigo_color: str, id_colorante: str, oz: float = 0, _32s: float = 0, _64s: float = 0, _128s: float = 0, tipo: str = "galon", db=Depends(get_db)):
+    """Crear fórmula CCE en tabla correspondiente"""
+    try:
+        cur = db.cursor()
+        
+        # Mapear tipo a tabla
+        table_map = {
+            "galon": "formulas_cce_g",
+            "cubeta": "formulas_cce_c",
+            "cuarto": "formulas_cce_qt"
+        }
+        
+        if tipo not in table_map:
+            raise HTTPException(status_code=400, detail="Tipo debe ser: galon, cubeta, cuarto")
+        
+        table = table_map[tipo]
+        
+        query = f"INSERT INTO {table} (id_pintura, id_colorante, oz, _32s, _64s, _128s) VALUES (%s, %s, %s, %s, %s, %s) RETURNING id"
+        cur.execute(query, (codigo_color, id_colorante, oz or None, _32s or None, _64s or None, _128s or None))
+        formula_id = cur.fetchone()[0]
+        db.commit()
+        
+        return {
+            "id": formula_id,
+            "codigo_color": codigo_color,
+            "id_colorante": id_colorante,
+            "oz": oz,
+            "_32s": _32s,
+            "_64s": _64s,
+            "_128s": _128s, 
+            "tipo": tipo,
+            "message": "Fórmula CCE creada exitosamente"
+        }
+    except Exception as e:
+        logger.error(f"Error creating formula CCE: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.put("/api/v1/formulas-normales/{id_pintura}/{id_colorante}")
+async def update_formula_normal(id_pintura: str, id_colorante: str, codigo_color: str = None, nuevo_colorante: str = None, oz: float = None, _32s: float = None, _64s: float = None, _128s: float = None, db=Depends(get_db)):
+    """Actualizar fórmula normal usando clave compuesta"""
+    try:
+        cur = db.cursor()
+        updates = []
+        values = []
+        
+        if codigo_color is not None:
+            updates.append("id_pintura = %s")
+            values.append(codigo_color)
+        if nuevo_colorante is not None:
+            updates.append("id_colorante = %s") 
+            values.append(nuevo_colorante)
+        if oz is not None:
+            updates.append("oz = %s")
+            values.append(oz)
+        if _32s is not None:
+            updates.append("_32s = %s")
+            values.append(_32s)
+        if _64s is not None:
+            updates.append("_64s = %s")
+            values.append(_64s)
+        if _128s is not None:
+            updates.append("_128s = %s")
+            values.append(_128s)
+        
+        if updates:
+            values.extend([id_pintura, id_colorante])
+            query = f"UPDATE presentacion SET {', '.join(updates)} WHERE id_pintura = %s AND id_colorante = %s"
+            cur.execute(query, values)
+            db.commit()
+        
+        return {"id": f"{id_pintura}|{id_colorante}", "message": "Fórmula actualizada"}
+    except Exception as e:
+        logger.error(f"Error updating formula normal: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/api/v1/formulas-normales/{id_pintura}/{id_colorante}")
+async def delete_formula_normal(id_pintura: str, id_colorante: str, db=Depends(get_db)):
+    """Eliminar fórmula normal usando clave compuesta"""
+    try:
+        cur = db.cursor()
+        cur.execute("DELETE FROM presentacion WHERE id_pintura = %s AND id_colorante = %s", (id_pintura, id_colorante))
+        db.commit()
+        return {"id": f"{id_pintura}|{id_colorante}", "message": "Fórmula eliminada"}
+    except Exception as e:
+        logger.error(f"Error deleting formula normal: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.delete("/api/v1/formulas-cce/{formula_id}")
+async def delete_formula_cce(formula_id: int, tipo: str = "galon", db=Depends(get_db)):
+    """Eliminar fórmula CCE"""
+    try:
+        cur = db.cursor()
+        
+        # Mapear tipo a tabla
+        table_map = {
+            "galon": "formulas_cce_g",
+            "cubeta": "formulas_cce_c",
+            "cuarto": "formulas_cce_qt"
+        }
+        
+        if tipo not in table_map:
+            raise HTTPException(status_code=400, detail="Tipo debe ser: galon, cubeta, cuarto")
+        
+        table = table_map[tipo]
+        query = f"DELETE FROM {table} WHERE id = %s"
+        cur.execute(query, (formula_id,))
+        db.commit()
+        
+        return {"id": formula_id, "message": "Fórmula CCE eliminada"}
+    except Exception as e:
+        logger.error(f"Error deleting formula CCE: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8001)
+    uvicorn.run(app, host="127.0.0.1", port=8002)

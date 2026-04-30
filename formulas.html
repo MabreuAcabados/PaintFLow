@@ -1,0 +1,2130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FÓRMULAS - PaintFlow</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700" rel="stylesheet">
+    <style>
+        body {
+            font-family: Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+            color: white;
+            padding: 25px 35px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            position: relative;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+        }
+
+        .title {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-menu-container {
+            position: relative;
+        }
+        
+        .user-dropdown-btn {
+            background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+            color: #fff;
+            padding: 10px 18px;
+            border-radius: 25px;
+            border: 1px solid rgba(26, 115, 232, 0.3);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .user-dropdown-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3);
+        }
+        
+        .user-dropdown-btn::after {
+            content: "▼";
+            font-size: 0.8em;
+            transition: transform 0.3s ease;
+        }
+        
+        .user-dropdown-btn.active::after {
+            transform: rotate(180deg);
+        }
+        
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            margin-top: 5px;
+        }
+        
+        .dropdown-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .dropdown-menu a, .dropdown-menu button {
+            display: block;
+            width: 100%;
+            padding: 12px 16px;
+            text-decoration: none;
+            color: #333;
+            background: none;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.2s ease;
+        }
+        
+        .dropdown-menu a:hover, .dropdown-menu button:hover {
+            background: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 30px;
+        }
+
+        .tabs {
+            display: flex;
+            background: white;
+            border-radius: 15px 15px 0 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 0;
+            overflow: hidden;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 18px 30px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: #666;
+            border-bottom: 4px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(26, 115, 232, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .tab:hover::before {
+            left: 100%;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, white 0%, #f8f9ff 100%);
+            color: #1a73e8;
+            border-bottom: 4px solid #1a73e8;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(26, 115, 232, 0.2);
+        }
+
+        .tab:first-child {
+            border-radius: 15px 0 0 0;
+        }
+
+        .tab:last-child {
+            border-radius: 0 15px 0 0;
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .controls {
+            padding: 30px 35px;
+            border-bottom: 1px solid #e0e6ed;
+            background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+            border-radius: 0 0 0 0;
+        }
+
+        .search-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .search-input {
+            padding: 12px 18px;
+            border: 2px solid #e0e6ed;
+            border-radius: 12px;
+            font-size: 14px;
+            width: 220px;
+            transition: all 0.3s ease;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #1a73e8;
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1), 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-1px);
+        }
+
+        .search-input::placeholder {
+            color: #a0a6b1;
+            font-style: italic;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(26, 115, 232, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #0d47a1 0%, #1a73e8 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(26, 115, 232, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #495057 0%, #6c757d 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(108, 117, 125, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #20c997 0%, #28a745 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #c82333 0%, #dc3545 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
+        }
+
+        .filter-section {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            border: 2px solid #e0e6ed;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .radio-group:hover {
+            border-color: #1a73e8;
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.1);
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .radio-item:hover {
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .radio-item input[type="radio"] {
+            margin: 0;
+            transform: scale(1.2);
+            accent-color: #1a73e8;
+        }
+
+        .table-container {
+            padding: 0;
+            overflow-x: auto;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .table th {
+            background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+            color: white;
+            padding: 18px 15px;
+            text-align: left;
+            font-weight: 600;
+            white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.85em;
+            position: relative;
+        }
+
+        .table th:first-child {
+            border-radius: 12px 0 0 0;
+            padding-left: 20px;
+        }
+
+        .table th:last-child {
+            border-radius: 0 12px 0 0;
+            padding-right: 20px;
+        }
+
+        .table th::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1), rgba(255,255,255,0.3));
+        }
+
+        .table td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: middle;
+            position: relative;
+        }
+
+        .table td:first-child {
+            padding-left: 20px;
+            font-weight: 600;
+            color: #1a73e8;
+        }
+
+        .table td:last-child {
+            padding-right: 20px;
+        }
+
+        .table tbody tr {
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .table tbody tr:hover {
+            background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.1);
+        }
+
+        .table tbody tr:nth-child(even) {
+            background: #fafbff;
+        }
+
+        .table tbody tr:nth-child(even):hover {
+            background: linear-gradient(135deg, #f5f7ff 0%, #eef2ff 100%);
+        }
+
+        .table tbody tr:last-child td:first-child {
+            border-radius: 0 0 0 12px;
+        }
+
+        .table tbody tr:last-child td:last-child {
+            border-radius: 0 0 12px 0;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-sm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            padding: 25px 30px;
+            border-bottom: 1px solid #e0e6ed;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+            color: white;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .modal-title {
+            margin: 0;
+            color: white;
+            font-size: 1.3em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+            margin-left: auto;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #1a73e8;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .modal-footer {
+            padding: 20px 25px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            background: #f8f9fa;
+            border-radius: 0 0 10px 10px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px 15px;
+            border-radius: 6px;
+            border-left: 4px solid #dc3545;
+            margin-bottom: 15px;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px 15px;
+            border-radius: 6px;
+            border-left: 4px solid #28a745;
+            margin-bottom: 15px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state h3 {
+            margin: 0 0 10px 0;
+            color: #999;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .search-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+            
+            .filter-section {
+                justify-content: center;
+            }
+            
+            .table-container {
+                font-size: 12px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <img src="logo.png" alt="PaintFlow Logo" class="logo" onclick="window.location.href='/'">
+                <h1 class="title">FÓRMULAS</h1>
+            </div>
+            <div class="user-menu">
+                <div class="user-menu-container">
+                    <button class="user-dropdown-btn" id="userDropdownBtn" onclick="toggleUserDropdown()">
+                        <div class="user-avatar" id="userAvatar">👤</div>
+                        <span id="userName">Usuario</span>
+                    </button>
+                    <div class="dropdown-menu" id="userDropdown">
+                        <!-- El contenido se genera dinámicamente según el rol -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('normales')">🟢 Fórmulas Normales</div>
+            <div class="tab" onclick="switchTab('cce')">🔵 Fórmulas CCE</div>
+        </div>
+
+        <!-- TAB FÓRMULAS NORMALES -->
+        <div id="tab-normales" class="tab-content active">
+            <div class="controls">
+                <div class="search-section">
+                    <div class="search-group">
+                        <label><strong>Código Color:</strong></label>
+                        <input type="text" id="searchNormales" class="search-input" placeholder="Ej: SW-7009" onkeypress="handleEnterKey(event, searchFormulasNormales)">
+                        <button class="btn btn-primary" onclick="searchFormulasNormales()">🔍 Buscar</button>
+                        <button class="btn btn-secondary" onclick="clearSearchNormales()">✕ Limpiar</button>
+                    </div>
+                </div>
+                
+                <div class="filter-section">
+                    <label><strong>Presentación:</strong></label>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" name="tipoNormales" value="galon" id="galon-normal" checked onchange="clearTableNormales()">
+                            <label for="galon-normal">GALÓN</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" name="tipoNormales" value="cubeta" id="cubeta-normal" onchange="clearTableNormales()">
+                            <label for="cubeta-normal">CUBETA</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" name="tipoNormales" value="cuarto" id="cuarto-normal" onchange="clearTableNormales()">
+                            <label for="cuarto-normal">CUARTO</label>
+                        </div>
+                    </div>
+                    
+                    <div class="button-group" style="display: flex; gap: 10px; align-items: center;">
+                        <button class="btn btn-success" onclick="openModalNormales()">+ Agregar Fórmula</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Código Color</th>
+                            <th>Colorante</th>
+                            <th>OZ</th>
+                            <th>32s</th>
+                            <th>64s</th>
+                            <th>128s</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaNormales">
+                        <tr>
+                            <td colspan="7" class="loading">Cargando fórmulas...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="colorante-add-section" style="margin-top: 15px; text-align: center;">
+                <button class="btn btn-info" onclick="openModalAgregarColorante('normales')" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); font-weight: bold; display: none;" id="btnAgregarColoranteNormal">+ Agregar Colorante</button>
+            </div>
+        </div>
+
+        <!-- TAB FÓRMULAS CCE -->
+        <div id="tab-cce" class="tab-content">
+            <div class="controls">
+                <div class="search-section">
+                    <div class="search-group">
+                        <label><strong>Código Color:</strong></label>
+                        <input type="text" id="searchCCE" class="search-input" placeholder="Ej: SW-7009" onkeypress="handleEnterKey(event, searchFormulasCCE)">
+                        <button class="btn btn-primary" onclick="searchFormulasCCE()">🔍 Buscar</button>
+                        <button class="btn btn-secondary" onclick="clearSearchCCE()">✕ Limpiar</button>
+                    </div>
+                </div>
+                
+                <div class="filter-section">
+                    <label><strong>Presentación:</strong></label>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" name="tipoCCE" value="galon" id="galon-cce" checked onchange="loadFormulasCCE()">
+                            <label for="galon-cce">GALÓN</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" name="tipoCCE" value="cubeta" id="cubeta-cce" onchange="loadFormulasCCE()">
+                            <label for="cubeta-cce">CUBETA</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" name="tipoCCE" value="cuarto" id="cuarto-cce" onchange="loadFormulasCCE()">
+                            <label for="cuarto-cce">CUARTO</label>
+                        </div>
+                    </div>
+                    
+                    <div class="button-group" style="display: flex; gap: 10px; align-items: center;">
+                        <button class="btn btn-success" onclick="openModalCCE()">+ Agregar Fórmula CCE</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Código Color</th>
+                            <th>Colorante</th>
+                            <th>OZ</th>
+                            <th>32s</th>
+                            <th>64s</th>
+                            <th>128s</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaCCE">
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                <h3>Tabla vacía</h3>
+                                <p>Ingresa un código para buscar fórmulas CCE</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="colorante-add-section" style="margin-top: 15px; text-align: center;">
+                <button class="btn btn-info" onclick="openModalAgregarColorante('cce')" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); font-weight: bold; display: none;" id="btnAgregarColoranteCCE">+ Agregar Colorante</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL FÓRMULAS NORMALES -->
+    <div id="modalNormales" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalNormalesTitle">Agregar Fórmula Normal</h2>
+                <button class="modal-close" onclick="closeModalNormales()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="modalNormalesError" class="error-message" style="display: none;"></div>
+                
+                <div class="form-group">
+                    <label>Código Color *</label>
+                    <input type="text" id="codigoNormal" placeholder="Ej: SW-7009">
+                </div>
+                
+                <div class="form-group">
+                    <label>Colorante *</label>
+                    <select id="coloranteNormal">
+                        <option value="">-- Seleccionar Colorante --</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Tipo *</label>
+                    <select id="tipoNormal">
+                        <option value="galon">Galón</option>
+                        <option value="cubeta">Cubeta</option>
+                        <option value="cuarto">Cuarto</option>
+                    </select>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>OZ</label>
+                        <input type="number" id="ozNormal" step="0.001" placeholder="0.000">
+                    </div>
+                    <div class="form-group">
+                        <label>32s</label>
+                        <input type="number" id="32sNormal" step="0.001" placeholder="0.000">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>64s</label>
+                        <input type="number" id="64sNormal" step="0.001" placeholder="0.000">
+                    </div>
+                    <div class="form-group">
+                        <label>128s</label>
+                        <input type="number" id="128sNormal" step="0.001" placeholder="0.000">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModalNormales()">Cancelar</button>
+                <button class="btn btn-primary" onclick="saveFormulaNormal()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL FÓRMULAS CCE -->
+    <div id="modalCCE" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalCCETitle">Agregar Fórmula CCE</h2>
+                <button class="modal-close" onclick="closeModalCCE()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="modalCCEError" class="error-message" style="display: none;"></div>
+                
+                <div class="form-group">
+                    <label>Código Color *</label>
+                    <input type="text" id="codigoCCE" placeholder="Ej: SW-7009">
+                </div>
+                
+                <div class="form-group">
+                    <label>Colorante *</label>
+                    <select id="coloranteCCE">
+                        <option value="">-- Seleccionar Colorante --</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Tipo *</label>
+                    <select id="tipoCCE">
+                        <option value="galon">Galón</option>
+                        <option value="cubeta">Cubeta</option>
+                        <option value="cuarto">Cuarto</option>
+                    </select>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>OZ</label>
+                        <input type="number" id="ozCCE" step="0.001" placeholder="0.000">
+                    </div>
+                    <div class="form-group">
+                        <label>32s</label>
+                        <input type="number" id="32sCCE" step="0.001" placeholder="0.000">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>64s</label>
+                        <input type="number" id="64sCCE" step="0.001" placeholder="0.000">
+                    </div>
+                    <div class="form-group">
+                        <label>128s</label>
+                        <input type="number" id="128sCCE" step="0.001" placeholder="0.000">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModalCCE()">Cancelar</button>
+                <button class="btn btn-primary" onclick="saveFormulaCCE()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL AGREGAR COLORANTE -->
+    <div id="modalAgregarColorante" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalColoranteTitle">Agregar Colorante</h2>
+                <button class="modal-close" onclick="closeModalAgregarColorante()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="modalColoranteError" class="error-message" style="display: none;"></div>
+                
+                <div class="form-group">
+                    <label>Código Color *</label>
+                    <input type="text" id="codigoColorante" readonly style="background-color: #f5f5f5;">
+                </div>
+                
+                <div class="form-group">
+                    <label>Colorante *</label>
+                    <select id="coloranteSeleccionado">
+                        <option value="">-- Seleccionar Colorante --</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Tipo *</label>
+                    <select id="tipoColorante">
+                        <option value="galon">Galón</option>
+                        <option value="cubeta">Cubeta</option>
+                        <option value="cuarto">Cuarto</option>
+                    </select>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>OZ</label>
+                        <input type="number" id="ozColorante" step="0.001" placeholder="0.000">
+                    </div>
+                    <div class="form-group">
+                        <label>32s</label>
+                        <input type="number" id="32sColorante" step="0.001" placeholder="0.000">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>64s</label>
+                        <input type="number" id="64sColorante" step="0.001" placeholder="0.000">
+                    </div>
+                    <div class="form-group">
+                        <label>128s</label>
+                        <input type="number" id="128sColorante" step="0.001" placeholder="0.000">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModalAgregarColorante()">Cancelar</button>
+                <button class="btn btn-primary" onclick="saveColoranteAFormula()">Agregar Colorante</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuración de API
+        const API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? `http://${window.location.hostname}:8002`
+            : 'https://paintflow.onrender.com';
+
+        // Variables globales
+        let currentTabNormales = 'normales';
+        let editingFormulaId = null;
+        let editingFormulaTipo = null;
+        let allColorantes = [];
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+            loadColorantes();
+            updateUserInfo(); // Actualizar información del usuario y dropdown
+            // No cargar fórmulas automáticamente - esperar a que el usuario filtre
+            clearTableNormales();
+        });
+
+        function checkAuth() {
+            const sessionActive = localStorage.getItem('sessionActive');
+            const currentUser = localStorage.getItem('currentUser');
+            
+            if (!sessionActive || !currentUser) {
+                console.log('No hay sesión activa, redirigiendo a login');
+                window.location.href = '/';
+                return false;
+            }
+            
+            try {
+                const userData = JSON.parse(currentUser);
+                console.log('Datos de usuario:', userData);
+                
+                if (!userData.username || !userData.rol) {
+                    console.log('Datos de usuario incompletos:', userData);
+                    window.location.href = '/';
+                    return false;
+                }
+                
+                // Solo permitir acceso a administradores y analistas
+                if (userData.rol !== 'administrador' && userData.rol !== 'analista') {
+                    alert('Acceso restringido a administradores y analistas');
+                    window.location.href = '/';
+                    return false;
+                }
+
+                // Mostrar nombre del usuario si hay un elemento para eso
+                const userNameElement = document.getElementById('userName');
+                if (userNameElement) {
+                    userNameElement.textContent = userData.username;
+                }
+                
+                console.log('✅ Autenticación exitosa para:', userData.username, 'Rol:', userData.rol);
+                return true;
+            } catch (e) {
+                console.error('Error parsing user data:', e);
+                window.location.href = '/';
+                return false;
+            }
+        }
+
+        function updateUserInfo() {
+            try {
+                const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                const nombreUsuario = userData.nombre_completo || userData.username || 'Usuario';
+                const userNameSpan = document.getElementById('userName');
+                if (userNameSpan) {
+                    userNameSpan.textContent = nombreUsuario;
+                }
+                
+                // Actualizar dropdown del perfil basado en el rol
+                updateUserDropdown();
+            } catch(e) {
+                console.error('Error al actualizar información de usuario:', e);
+            }
+        }
+
+        function updateUserDropdown() {
+            try {
+                const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                const userRole = userData.rol;
+                const dropdown = document.getElementById('userDropdown');
+                
+                if (!dropdown) return;
+                
+                let dropdownContent = '';
+                
+                if (userRole === 'administrador') {
+                    // Administrador tiene acceso a las 3 vistas
+                    dropdownContent = `
+                        <button onclick="window.location.href='/'" style="color: #333; background: none; padding: 12px 16px; border: none; text-align: left; cursor: pointer; font-size: 0.9em;">🏠 Dashboard</button>
+                        <button onclick="window.location.href='/employees'" style="color: #333; background: none; padding: 12px 16px; border: none; text-align: left; cursor: pointer; font-size: 0.9em;">👥 Gestión Empleados</button>
+                        <button onclick="window.location.href='/formulas'" style="color: #333; background: none; padding: 12px 16px; border: none; text-align: left; cursor: pointer; font-size: 0.9em;">🧪 Gestión Fórmulas</button>
+                        <button onclick="logout()" style="color: #d32f2f; background: none; padding: 12px 16px; border-top: 1px solid #eee; border: none; text-align: left; cursor: pointer; font-size: 0.9em;">Cerrar Sesión</button>
+                    `;
+                } else if (userRole === 'analista') {
+                    // Analista solo tiene empleados y fórmulas
+                    dropdownContent = `
+                        <button onclick="window.location.href='/employees'" style="color: #333; background: none; padding: 12px 16px; border: none; text-align: left; cursor: pointer; font-size: 0.9em;">👥 Gestión Empleados</button>
+                        <button onclick="window.location.href='/formulas'" style="color: #333; background: none; padding: 12px 16px; border: none; text-align: left; cursor: pointer; font-size: 0.9em;">🧪 Gestión Fórmulas</button>
+                        <button onclick="abrirModalPerfil()" style="color: #333; background: none; padding: 12px 16px; border: none; text-align: left; cursor: pointer; font-size: 0.9em;">Perfil</button>
+                        <button onclick="logout()" style="color: #d32f2f; background: none; padding: 12px 16px; border-top: 1px solid #eee; border: none; text-align: left; cursor: pointer; font-size: 0.9em;">Cerrar Sesión</button>
+                    `;
+                } else {
+                    // Rol por defecto
+                    dropdownContent = `
+                        <button onclick="logout()" style="color: #d32f2f; background: none; padding: 12px 16px; border: none; text-align: left; cursor: pointer; font-size: 0.9em;">Cerrar Sesión</button>
+                    `;
+                }
+                
+                dropdown.innerHTML = dropdownContent;
+            } catch(e) {
+                console.error('Error al actualizar dropdown:', e);
+            }
+        }
+
+        function toggleUserDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            const btn = document.getElementById('userDropdownBtn');
+            
+            dropdown.classList.toggle('active');
+            btn.classList.toggle('active');
+            
+            // Cerrar dropdown si se hace clic fuera de él
+            document.addEventListener('click', function closeDropdown(e) {
+                if (!btn.contains(e.target) && !dropdown.contains(e.target)) {
+                    dropdown.classList.remove('active');
+                    btn.classList.remove('active');
+                    document.removeEventListener('click', closeDropdown);
+                }
+            });
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = '/';
+        }
+
+        // Cerrar modales al hacer clic afuera
+        document.addEventListener('click', function(e) {
+            const modalPerfil = document.getElementById('modalPerfil');
+            const modalPassword = document.getElementById('modalPassword');
+            
+            if (modalPerfil && e.target === modalPerfil) {
+                cerrarModalPerfil();
+            }
+            
+            if (modalPassword && e.target === modalPassword) {
+                cerrarModalPassword();
+            }
+        });
+
+        function cerrarModalPerfil() {
+            document.getElementById('modalPerfil').classList.remove('active');
+        }
+
+        function abrirModalPassword() {
+            document.getElementById('modalPassword').classList.add('active');
+        }
+
+        function cerrarModalPassword() {
+            document.getElementById('modalPassword').classList.remove('active');
+            // Limpiar campos de contraseña
+            document.getElementById('passwordActual').value = '';
+            document.getElementById('passwordNueva').value = '';
+            document.getElementById('passwordConfirmar').value = '';
+            document.getElementById('errorPassword').style.display = 'none';
+            document.getElementById('successPassword').style.display = 'none';
+        }
+
+        // Funciones del modal de perfil
+        function abrirModalPerfil() {
+            const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            
+            document.getElementById('perfilNombre').value = userData.nombre_completo || '';
+            document.getElementById('perfilEmail').value = userData.email || '';
+            document.getElementById('perfilUsername').value = userData.username || '';
+            document.getElementById('perfilRol').value = userData.role || '';
+            
+            document.getElementById('modalPerfil').classList.add('active');
+        }
+
+        // Cerrar modales al hacer clic afuera
+        document.addEventListener('click', function(e) {
+            const modalPerfil = document.getElementById('modalPerfil');
+            const modalPassword = document.getElementById('modalPassword');
+            
+            if (modalPerfil && e.target === modalPerfil) {
+                cerrarModalPerfil();
+            }
+            
+            if (modalPassword && e.target === modalPassword) {
+                cerrarModalPassword();
+            }
+        });
+
+        // Cerrar modales con tecla Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const modalPerfil = document.getElementById('modalPerfil');
+                const modalPassword = document.getElementById('modalPassword');
+                
+                if (modalPassword && modalPassword.classList.contains('active')) {
+                    cerrarModalPassword();
+                } else if (modalPerfil && modalPerfil.classList.contains('active')) {
+                    cerrarModalPerfil();
+                }
+            }
+        });
+
+        // Cerrar modales con tecla Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const modalPerfil = document.getElementById('modalPerfil');
+                const modalPassword = document.getElementById('modalPassword');
+                
+                if (modalPassword && modalPassword.classList.contains('active')) {
+                    cerrarModalPassword();
+                } else if (modalPerfil && modalPerfil.classList.contains('active')) {
+                    cerrarModalPerfil();
+                }
+            }
+        });
+
+        async function cambiarPassword() {
+            const passwordActual = document.getElementById('passwordActual').value;
+            const passwordNueva = document.getElementById('passwordNueva').value;
+            const passwordConfirmar = document.getElementById('passwordConfirmar').value;
+            const errorDiv = document.getElementById('errorPassword');
+            const successDiv = document.getElementById('successPassword');
+
+            // Limpiar mensajes anteriores
+            errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+
+            // Validaciones
+            if (!passwordActual || !passwordNueva || !passwordConfirmar) {
+                errorDiv.textContent = 'Todos los campos son obligatorios';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (passwordNueva !== passwordConfirmar) {
+                errorDiv.textContent = 'Las nuevas contraseñas no coinciden';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (passwordNueva.length < 6) {
+                errorDiv.textContent = 'La nueva contraseña debe tener al menos 6 caracteres';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            try {
+                const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                const response = await fetch(`${API}/api/v1/change-password`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_id: userData.id,
+                        username: userData.username,
+                        current_password: passwordActual,
+                        new_password: passwordNueva
+                    })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    successDiv.textContent = 'Contraseña cambiada exitosamente';
+                    successDiv.style.display = 'block';
+                    // Limpiar campos
+                    document.getElementById('passwordActual').value = '';
+                    document.getElementById('passwordNueva').value = '';
+                    document.getElementById('passwordConfirmar').value = '';
+                    
+                    // Cerrar el modal de contraseña después de 2 segundos
+                    setTimeout(() => {
+                        cerrarModalPassword();
+                    }, 2000);
+                } else {
+                    errorDiv.textContent = result.detail || 'Error al cambiar contraseña';
+                    errorDiv.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                errorDiv.textContent = 'Error de conexión al cambiar contraseña';
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        // Manejo de tabs
+        function switchTab(tab) {
+            // Remover active de tabs
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            // Activar tab seleccionado
+            if (tab === 'normales') {
+                document.querySelector('.tab:first-child').classList.add('active');
+                document.getElementById('tab-normales').classList.add('active');
+                currentTabNormales = 'normales';
+                clearTableNormales();
+            } else if (tab === 'cce') {
+                document.querySelector('.tab:last-child').classList.add('active');
+                document.getElementById('tab-cce').classList.add('active');
+                currentTabNormales = 'cce';
+                // Las CCE se cargan solo con búsqueda
+                clearTableCCE();
+            }
+        }
+
+        // Cargar colorantes
+        async function loadColorantes() {
+            try {
+                const response = await fetch(`${API}/api/v1/colorantes?limit=500`);
+                if (response.ok) {
+                    const data = await response.json();
+                    allColorantes = data.colorantes || [];
+                    populateColoranteSelects();
+                    console.log(`✅ Cargados ${allColorantes.length} colorantes`);
+                } else {
+                    console.error('Error cargando colorantes:', response.status);
+                    showError('Error cargando colorantes');
+                }
+            } catch (error) {
+                console.error('Error en loadColorantes:', error);
+                showError('Error de conexión al cargar colorantes');
+            }
+        }
+
+        function populateColoranteSelects() {
+            const selects = ['coloranteNormal', 'coloranteCCE', 'coloranteSeleccionado'];
+            selects.forEach(selectId => {
+                const select = document.getElementById(selectId);
+                if (select) {
+                    select.innerHTML = '<option value="">-- Seleccionar Colorante --</option>';
+                    allColorantes.forEach(colorante => {
+                        const option = document.createElement('option');
+                        option.value = colorante.id;
+                        option.textContent = colorante.nombre;
+                        select.appendChild(option);
+                    });
+                }
+            });
+        }
+
+        // Funciones de fórmulas normales
+        async function loadFormulasNormales() {
+            const tipo = document.querySelector('input[name="tipoNormales"]:checked').value;
+            const codigo = document.getElementById('searchNormales').value;
+            
+            // Solo cargar si hay código para filtrar
+            if (!codigo.trim()) {
+                clearTableNormales();
+                return;
+            }
+            
+            try {
+                const url = `${API}/api/v1/formulas-normales?tipo=${tipo}&codigo=${encodeURIComponent(codigo)}&limit=100`;
+                
+                console.log(`🔍 Cargando fórmulas desde: ${url}`);
+                const response = await fetch(url);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    populateTableNormales(data.formulas || []);
+                    console.log(`✅ Cargadas ${data.formulas ? data.formulas.length : 0} fórmulas normales`);
+                } else {
+                    console.error('Error cargando fórmulas normales:', response.status);
+                    showError(`Error cargando fórmulas normales (${response.status})`);
+                }
+            } catch (error) {
+                console.error('Error en loadFormulasNormales:', error);
+                showError('Error de conexión al cargar fórmulas normales');
+            }
+        }
+
+        function populateTableNormales(formulas) {
+            const tbody = document.getElementById('tablaNormales');
+            
+            if (formulas.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            <h3>No se encontraron fórmulas</h3>
+                            <p>Intenta con otro código o agrega una nueva fórmula</p>
+                        </td>
+                    </tr>
+                `;
+                toggleColoranteButtons();
+                return;
+            }
+            
+            tbody.innerHTML = formulas.map(formula => `
+                <tr>
+                    <td>${formula.codigo_color}</td>
+                    <td>${formula.colorante_nombre}</td>
+                    <td>${formula.oz || ''}</td>
+                    <td>${formula._32s || ''}</td>
+                    <td>${formula._64s || ''}</td>
+                    <td>${formula._128s || ''}</td>
+                    <td class="actions">
+                        <button class="btn btn-primary btn-sm" onclick="editFormulaNormal('${formula.codigo_color}', '${formula.id_colorante}', '${formula.tipo}')">✏️</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteFormulaNormal('${formula.codigo_color}', '${formula.id_colorante}')">🗑️</button>
+                    </td>
+                </tr>
+            `).join('');
+            toggleColoranteButtons();
+        }
+
+        function searchFormulasNormales() {
+            loadFormulasNormales();
+        }
+        
+        function clearTableNormales() {
+            const tbody = document.getElementById('tablaNormales');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 40px; color: #666;">
+                        <div style="font-size: 1.1em; margin-bottom: 10px;">🔍</div>
+                        <div>Ingresa un código para buscar fórmulas</div>
+                    </td>
+                </tr>
+            `;
+            toggleColoranteButtons();
+        }
+
+        function clearSearchNormales() {
+            document.getElementById('searchNormales').value = '';
+            clearTableNormales();
+        }
+
+        // Funciones de fórmulas CCE
+        async function loadFormulasCCE() {
+            // CCE se carga solo con búsqueda
+            clearTableCCE();
+        }
+
+        function clearTableCCE() {
+            const tbody = document.getElementById('tablaCCE');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="empty-state">
+                        <h3>Tabla vacía</h3>
+                        <p>Ingresa un código para buscar fórmulas CCE</p>
+                    </td>
+                </tr>
+            `;
+            toggleColoranteButtons();
+        }
+
+        async function searchFormulasCCE() {
+            const tipo = document.querySelector('input[name="tipoCCE"]:checked').value;
+            const codigo = document.getElementById('searchCCE').value;
+            
+            if (!codigo.trim()) {
+                clearTableCCE();
+                return;
+            }
+            
+            try {
+                const url = `${API}/api/v1/formulas-cce?tipo=${tipo}&codigo=${encodeURIComponent(codigo)}&limit=100`;
+                
+                const response = await fetch(url);
+                if (response.ok) {
+                    const data = await response.json();
+                    populateTableCCE(data.formulas);
+                } else {
+                    showError('Error cargando fórmulas CCE');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Error de conexión');
+            }
+        }
+
+        function populateTableCCE(formulas) {
+            const tbody = document.getElementById('tablaCCE');
+            
+            if (formulas.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            <h3>No se encontraron fórmulas CCE</h3>
+                            <p>Intenta con otro código o agrega una nueva fórmula</p>
+                        </td>
+                    </tr>
+                `;
+                toggleColoranteButtons();
+                return;
+            }
+            
+            tbody.innerHTML = formulas.map(formula => `
+                <tr>
+                    <td>${formula.codigo_color}</td>
+                    <td>${formula.colorante_nombre}</td>
+                    <td>${formula.oz || ''}</td>
+                    <td>${formula._32s || ''}</td>
+                    <td>${formula._64s || ''}</td>
+                    <td>${formula._128s || ''}</td>
+                    <td class="actions">
+                        <button class="btn btn-primary btn-sm" onclick="editFormulaCCE(${formula.id}, '${formula.tipo}')">✏️</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteFormulaCCE(${formula.id}, '${formula.tipo}')">🗑️</button>
+                    </td>
+                </tr>
+            `).join('');
+            toggleColoranteButtons();
+        }
+
+        function clearSearchCCE() {
+            document.getElementById('searchCCE').value = '';
+            clearTableCCE();
+        }
+
+        // Modales
+        function openModalNormales() {
+            editingFormulaId = null;
+            document.getElementById('modalNormalesTitle').textContent = 'Agregar Fórmula Normal';
+            document.getElementById('tipoNormal').value = document.querySelector('input[name="tipoNormales"]:checked').value;
+            clearFormNormal();
+            document.getElementById('modalNormales').classList.add('active');
+        }
+
+        function closeModalNormales() {
+            document.getElementById('modalNormales').classList.remove('active');
+            hideError('modalNormalesError');
+        }
+
+        function openModalCCE() {
+            editingFormulaId = null;
+            document.getElementById('modalCCETitle').textContent = 'Agregar Fórmula CCE';
+            document.getElementById('tipoCCE').value = document.querySelector('input[name="tipoCCE"]:checked').value;
+            clearFormCCE();
+            document.getElementById('modalCCE').classList.add('active');
+        }
+
+        function openModalAgregarColorante(tipo) {
+            const codigoInput = tipo === 'normales' ? 'searchNormales' : 'searchCCE';
+            const codigo = document.getElementById(codigoInput).value.trim();
+            
+            if (!codigo) {
+                alert('⚠️ Para agregar un colorante, primero debes filtrar por un código de color específico.');
+                return;
+            }
+            
+            // Llenar el código en el modal
+            document.getElementById('codigoColorante').value = codigo;
+            
+            // Establecer el tipo basado en la presentación seleccionada
+            const tipoRadio = tipo === 'normales' 
+                ? document.querySelector('input[name="tipoNormales"]:checked')
+                : document.querySelector('input[name="tipoCCE"]:checked');
+            
+            if (tipoRadio) {
+                document.getElementById('tipoColorante').value = tipoRadio.value;
+            }
+            
+            // Guardar el tipo de fórmula (normales o cce) para el guardado
+            document.getElementById('modalAgregarColorante').setAttribute('data-tipo-formula', tipo);
+            
+            // Limpiar el formulario
+            clearFormAgregarColorante();
+            
+            // Mostrar el modal
+            document.getElementById('modalAgregarColorante').classList.add('active');
+            hideError('modalColoranteError');
+        }
+        
+        function closeModalAgregarColorante() {
+            document.getElementById('modalAgregarColorante').classList.remove('active');
+            hideError('modalColoranteError');
+        }
+
+        function clearFormAgregarColorante() {
+            ['ozColorante', '32sColorante', '64sColorante', '128sColorante'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            document.getElementById('coloranteSeleccionado').value = '';
+        }
+
+        async function saveColoranteAFormula() {
+            hideError('modalColoranteError');
+            
+            const codigoRaw = document.getElementById('codigoColorante').value.trim();
+            // Convertir formato SW-7009 a SW 7009 para BD
+            const codigo = codigoRaw.replace(/-/g, ' ');
+            const coloranteId = document.getElementById('coloranteSeleccionado').value;
+            const tipo = document.getElementById('tipoColorante').value;
+            const tipoFormula = document.getElementById('modalAgregarColorante').getAttribute('data-tipo-formula');
+            const oz = parseFloat(document.getElementById('ozColorante').value) || 0;
+            const _32s = parseFloat(document.getElementById('32sColorante').value) || 0;
+            const _64s = parseFloat(document.getElementById('64sColorante').value) || 0;
+            const _128s = parseFloat(document.getElementById('128sColorante').value) || 0;
+
+            if (!codigo || !coloranteId || !tipo) {
+                showError('Por favor completa todos los campos obligatorios', 'modalColoranteError');
+                return;
+            }
+
+            if (oz === 0 && _32s === 0 && _64s === 0 && _128s === 0) {
+                showError('Debe ingresar al menos una cantidad mayor a 0', 'modalColoranteError');
+                return;
+            }
+
+            try {
+                const endpoint = tipoFormula === 'normales' 
+                    ? `${API}/api/v1/formulas-normales`
+                    : `${API}/api/v1/formulas-cce`;
+
+                // Crear objeto JSON para el servidor
+                const payload = {
+                    codigo_color: codigo,
+                    id_colorante: coloranteId,
+                    tipo: tipo,
+                    oz: oz,
+                    x32s: _32s,
+                    x64s: _64s,
+                    x128s: _128s
+                };
+
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    closeModalAgregarColorante();
+                    
+                    // Recargar las fórmulas para mostrar la nueva
+                    if (tipoFormula === 'normales') {
+                        loadFormulasNormales();
+                    } else {
+                        loadFormulasCCE();
+                    }
+                    
+                    // Mostrar mensaje de éxito
+                    showSuccess('Colorante agregado exitosamente');
+                } else {
+                    const errorData = await response.json();
+                    showError(errorData.detail || 'Error al agregar colorante', 'modalColoranteError');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Error de conexión al agregar colorante', 'modalColoranteError');
+            }
+        }
+        
+        // Mostrar/ocultar botones según si hay fórmulas cargadas
+        function toggleColoranteButtons() {
+            // Solo mostrar botones si hay fórmulas en las tablas (no solo código filtrado)
+            const tablaNormales = document.getElementById('tablaNormales');
+            const tablaCCE = document.getElementById('tablaCCE');
+            
+            const btnNormal = document.getElementById('btnAgregarColoranteNormal');
+            const btnCCE = document.getElementById('btnAgregarColoranteCCE');
+            
+            // Verificar si hay filas de fórmulas (no mensajes de estado)
+            const hasNormalFormulas = tablaNormales && tablaNormales.children.length > 0 && 
+                !tablaNormales.innerHTML.includes('Ingresa un código') && 
+                !tablaNormales.innerHTML.includes('No se encontraron');
+                
+            const hasCCEFormulas = tablaCCE && tablaCCE.children.length > 0 && 
+                !tablaCCE.innerHTML.includes('Ingresa un código') && 
+                !tablaCCE.innerHTML.includes('No se encontraron') &&
+                !tablaCCE.innerHTML.includes('Tabla vacía');
+            
+            if (btnNormal) {
+                btnNormal.style.display = hasNormalFormulas ? 'inline-block' : 'none';
+            }
+            if (btnCCE) {
+                btnCCE.style.display = hasCCEFormulas ? 'inline-block' : 'none';
+            }
+        }
+
+        function closeModalCCE() {
+            document.getElementById('modalCCE').classList.remove('active');
+            hideError('modalCCEError');
+        }
+
+        function clearFormNormal() {
+            ['codigoNormal', 'ozNormal', '32sNormal', '64sNormal', '128sNormal'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            document.getElementById('coloranteNormal').value = '';
+        }
+
+        function clearFormCCE() {
+            ['codigoCCE', 'ozCCE', '32sCCE', '64sCCE', '128sCCE'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            document.getElementById('coloranteCCE').value = '';
+        }
+
+        // Guardar fórmulas
+        async function saveFormulaNormal() {
+            hideError('modalNormalesError');
+            
+            const codigo = document.getElementById('codigoNormal').value.trim();
+            const colorante = document.getElementById('coloranteNormal').value;
+            const tipo = document.getElementById('tipoNormal').value;
+            const oz = parseFloat(document.getElementById('ozNormal').value) || 0;
+            const _32s = parseFloat(document.getElementById('32sNormal').value) || 0;
+            const _64s = parseFloat(document.getElementById('64sNormal').value) || 0;
+            const _128s = parseFloat(document.getElementById('128sNormal').value) || 0;
+            
+            if (!codigo || !colorante) {
+                showError('Código y colorante son requeridos', 'modalNormalesError');
+                return;
+            }
+            
+            try {
+                const url = editingFormulaId 
+                    ? `${API}/api/v1/formulas-normales/${editingFormulaId}` 
+                    : `${API}/api/v1/formulas-normales`;
+                
+                const method = editingFormulaId ? 'PUT' : 'POST';
+                const params = new URLSearchParams({
+                    codigo_color: codigo,
+                    id_colorante: colorante,
+                    tipo: tipo,
+                    oz: oz,
+                    _32s: _32s,
+                    _64s: _64s,
+                    _128s: _128s
+                });
+                
+                const response = await fetch(`${url}?${params}`, { method });
+                
+                if (response.ok) {
+                    closeModalNormales();
+                    loadFormulasNormales();
+                    showSuccess(editingFormulaId ? 'Fórmula actualizada' : 'Fórmula creada exitosamente');
+                } else {
+                    const error = await response.text();
+                    showError('Error: ' + error, 'modalNormalesError');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Error de conexión', 'modalNormalesError');
+            }
+        }
+
+        async function saveFormulaCCE() {
+            hideError('modalCCEError');
+            
+            const codigo = document.getElementById('codigoCCE').value.trim();
+            const colorante = document.getElementById('coloranteCCE').value;
+            const tipo = document.getElementById('tipoCCE').value;
+            const oz = parseFloat(document.getElementById('ozCCE').value) || 0;
+            const _32s = parseFloat(document.getElementById('32sCCE').value) || 0;
+            const _64s = parseFloat(document.getElementById('64sCCE').value) || 0;
+            const _128s = parseFloat(document.getElementById('128sCCE').value) || 0;
+            
+            if (!codigo || !colorante) {
+                showError('Código y colorante son requeridos', 'modalCCEError');
+                return;
+            }
+            
+            try {
+                const url = `${API}/api/v1/formulas-cce`;
+                const params = new URLSearchParams({
+                    codigo_color: codigo,
+                    id_colorante: colorante,
+                    tipo: tipo,
+                    oz: oz,
+                    _32s: _32s,
+                    _64s: _64s,
+                    _128s: _128s
+                });
+                
+                const response = await fetch(`${url}?${params}`, { method: 'POST' });
+                
+                if (response.ok) {
+                    closeModalCCE();
+                    searchFormulasCCE(); // Recargar búsqueda actual
+                    showSuccess('Fórmula CCE creada exitosamente');
+                } else {
+                    const error = await response.text();
+                    showError('Error: ' + error, 'modalCCEError');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Error de conexión', 'modalCCEError');
+            }
+        }
+
+        // Editar fórmulas
+        function editFormulaNormal(idPintura, idColorante, tipo) {
+            // Implementar edición de fórmula normal
+            alert('Función de edición en desarrollo');
+        }
+
+        function editFormulaCCE(id, tipo) {
+            // Implementar edición de fórmula CCE
+            alert('Función de edición en desarrollo');
+        }
+
+        // Eliminar fórmulas
+        async function deleteFormulaNormal(idPintura, idColorante) {
+            if (!confirm('¿Estás seguro de eliminar esta fórmula?')) return;
+            
+            try {
+                const response = await fetch(`${API}/api/v1/formulas-normales/${encodeURIComponent(idPintura)}/${encodeURIComponent(idColorante)}`, { method: 'DELETE' });
+                
+                if (response.ok) {
+                    loadFormulasNormales();
+                    showSuccess('Fórmula eliminada');
+                } else {
+                    showError('Error eliminando fórmula');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Error de conexión');
+            }
+        }
+
+        async function deleteFormulaCCE(id, tipo) {
+            if (!confirm('¿Estás seguro de eliminar esta fórmula CCE?')) return;
+            
+            try {
+                const response = await fetch(`${API}/api/v1/formulas-cce/${id}?tipo=${tipo}`, { method: 'DELETE' });
+                
+                if (response.ok) {
+                    searchFormulasCCE(); // Recargar búsqueda actual
+                    showSuccess('Fórmula CCE eliminada');
+                } else {
+                    showError('Error eliminando fórmula CCE');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Error de conexión');
+            }
+        }
+
+        // Utilidades
+        function handleEnterKey(event, callback) {
+            if (event.key === 'Enter') {
+                callback();
+            }
+        }
+
+        function showError(message, elementId = null) {
+            if (elementId) {
+                const errorDiv = document.getElementById(elementId);
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+            } else {
+                alert('Error: ' + message);
+            }
+        }
+
+        function hideError(elementId) {
+            const errorDiv = document.getElementById(elementId);
+            errorDiv.style.display = 'none';
+        }
+
+        function showSuccess(message) {
+            alert(message);
+        }
+    </script>
+    <!-- Modal Perfil -->
+    <div id="modalPerfil" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; flex-direction: column; backdrop-filter: blur(5px);">
+        <style>
+            #modalPerfil.active {
+                display: flex !important;
+                animation: fadeIn 0.3s ease-out;
+            }
+            
+            @keyframes fadeIn {
+                from { opacity: 0; transform: scale(0.9); }
+                to { opacity: 1; transform: scale(1); }
+            }
+            
+            .profile-modal-content {
+                animation: slideUp 0.4s ease-out;
+            }
+            
+            @keyframes slideUp {
+                from { transform: translateY(30px); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
+            }
+            
+            @keyframes slideDown {
+                from { 
+                    opacity: 0; 
+                    transform: translateY(-20px); 
+                    max-height: 0;
+                }
+                to { 
+                    opacity: 1; 
+                    transform: translateY(0); 
+                    max-height: 500px;
+                }
+            }
+            
+            .profile-card {
+                background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+                color: white;
+                padding: 25px;
+                border-radius: 15px 15px 0 0;
+                text-align: center;
+                margin: -30px -30px 25px -30px;
+            }
+            
+            .profile-avatar {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                background: rgba(255,255,255,0.2);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 15px;
+                font-size: 2.5em;
+            }
+            
+            .profile-field {
+                position: relative;
+                margin-bottom: 20px;
+            }
+            
+            .profile-field .icon {
+                position: absolute;
+                left: 12px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #1a73e8;
+                font-size: 1.1em;
+                z-index: 1;
+            }
+            
+            .profile-field input {
+                padding-left: 40px !important;
+                transition: all 0.3s ease;
+                border: 2px solid #e0e0e0;
+            }
+            
+            .profile-field input:focus {
+                border-color: #1a73e8 !important;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+            }
+            
+            .password-section {
+                background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+                border-radius: 15px;
+                padding: 25px;
+                margin: 25px -30px -30px -30px;
+            }
+            
+            .password-field {
+                position: relative;
+                margin-bottom: 15px;
+            }
+            
+            .password-field .icon {
+                position: absolute;
+                left: 12px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #28a745;
+                font-size: 1.1em;
+            }
+            
+            .password-field input {
+                padding-left: 40px !important;
+                border: 2px solid #e0e0e0;
+                transition: all 0.3s ease;
+            }
+            
+            .password-field input:focus {
+                border-color: #28a745 !important;
+                box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1) !important;
+            }
+            
+            .btn-change-password {
+                background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+                border: none;
+                padding: 12px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: 600;
+                cursor: pointer;
+                width: 100%;
+                margin-bottom: 15px;
+                transition: all 0.3s ease;
+                position: relative;
+                overflow: hidden;
+            }
+            
+            .btn-change-password:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+            }
+            
+            .btn-close-modal {
+                background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%) !important;
+                border: none;
+                padding: 12px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: 600;
+                cursor: pointer;
+                width: 100%;
+                transition: all 0.3s ease;
+            }
+            
+            .btn-close-modal:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            }
+        </style>
+        <div class="profile-modal-content" style="background: #fff; width: 95%; max-width: 450px; border-radius: 20px; padding: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+            <div class="profile-card">
+                <div class="profile-avatar">👤</div>
+                <h2 style="margin: 0; font-size: 1.4em; font-weight: 600;">Mi Perfil</h2>
+                <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 0.9em;">Información de la cuenta</p>
+            </div>
+            <div class="profile-field">
+                <div class="icon">👤</div>
+                <label style="display: block; margin-bottom: 8px; color: #333; font-weight: 600; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.5px;">Nombre Completo</label>
+                <input type="text" id="perfilNombre" readonly style="width: 100%; padding: 12px 10px; border-radius: 10px; background: #f8f9fa; color: #333; font-size: 1em; box-sizing: border-box;">
+            </div>
+            <div class="profile-field">
+                <div class="icon">📧</div>
+                <label style="display: block; margin-bottom: 8px; color: #333; font-weight: 600; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.5px;">Email</label>
+                <input type="text" id="perfilEmail" readonly style="width: 100%; padding: 12px 10px; border-radius: 10px; background: #f8f9fa; color: #333; font-size: 1em; box-sizing: border-box;">
+            </div>
+            <div class="profile-field">
+                <div class="icon">🔑</div>
+                <label style="display: block; margin-bottom: 8px; color: #333; font-weight: 600; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.5px;">Usuario</label>
+                <input type="text" id="perfilUsername" readonly style="width: 100%; padding: 12px 10px; border-radius: 10px; background: #f8f9fa; color: #333; font-size: 1em; box-sizing: border-box;">
+            </div>
+            <div class="profile-field">
+                <div class="icon">🎭</div>
+                <label style="display: block; margin-bottom: 8px; color: #333; font-weight: 600; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.5px;">Rol</label>
+                <input type="text" id="perfilRol" readonly style="width: 100%; padding: 12px 10px; border-radius: 10px; background: #f8f9fa; color: #333; font-size: 1em; box-sizing: border-box;">
+            </div>
+            
+            <!-- Botón para abrir modal de cambio de contraseña -->
+            <div style="text-align: center; margin: 25px 0;">
+                <button onclick="abrirModalPassword()" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); border: none; padding: 12px 25px; border-radius: 10px; color: white; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(40, 167, 69, 0.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(40, 167, 69, 0.3)';">🔒 Cambiar Contraseña</button>
+            </div>
+            
+            <button onclick="cerrarModalPerfil()" class="btn-close-modal">✖️ Cerrar</button>
+        </div>
+    </div>
+
+    <!-- Modal Cambio de Contraseña -->
+    <div id="modalPassword" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 3000; display: none; align-items: center; justify-content: center; flex-direction: column; backdrop-filter: blur(8px);">
+        <style>
+            #modalPassword.active {
+                display: flex !important;
+                animation: fadeIn 0.3s ease-out;
+            }
+            
+            .password-modal-content {
+                animation: slideUp 0.4s ease-out;
+            }
+            
+            .password-header {
+                background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+                color: white;
+                padding: 25px;
+                border-radius: 15px 15px 0 0;
+                text-align: center;
+                margin: -30px -30px 25px -30px;
+            }
+            
+            .password-icon {
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                background: rgba(255,255,255,0.2);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 15px;
+                font-size: 2em;
+            }
+        </style>
+        <div class="password-modal-content" style="background: #fff; width: 95%; max-width: 420px; border-radius: 20px; padding: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.4);">
+            <div class="password-header">
+                <div class="password-icon">🔐</div>
+                <h2 style="margin: 0; font-size: 1.3em; font-weight: 600;">Cambiar Contraseña</h2>
+                <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 0.9em;">Actualiza tu contraseña de acceso</p>
+            </div>
+            
+            <div class="password-field" style="position: relative; margin-bottom: 20px;">
+                <div class="icon" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #28a745; font-size: 1.1em;">🔐</div>
+                <label style="display: block; margin-bottom: 8px; color: #333; font-weight: 600; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.5px;">Contraseña Actual *</label>
+                <input type="password" id="passwordActual" style="width: 100%; padding: 12px 12px 12px 40px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1em; box-sizing: border-box; transition: all 0.3s ease;" placeholder="Ingrese su contraseña actual" onfocus="this.style.borderColor='#28a745'; this.style.boxShadow='0 0 0 3px rgba(40, 167, 69, 0.1)';" onblur="this.style.borderColor='#e0e0e0'; this.style.boxShadow='none';">
+            </div>
+            
+            <div class="password-field" style="position: relative; margin-bottom: 20px;">
+                <div class="icon" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #28a745; font-size: 1.1em;">🆕</div>
+                <label style="display: block; margin-bottom: 8px; color: #333; font-weight: 600; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.5px;">Nueva Contraseña *</label>
+                <input type="password" id="passwordNueva" style="width: 100%; padding: 12px 12px 12px 40px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1em; box-sizing: border-box; transition: all 0.3s ease;" placeholder="Ingrese nueva contraseña" onfocus="this.style.borderColor='#28a745'; this.style.boxShadow='0 0 0 3px rgba(40, 167, 69, 0.1)';" onblur="this.style.borderColor='#e0e0e0'; this.style.boxShadow='none';">
+            </div>
+            
+            <div class="password-field" style="position: relative; margin-bottom: 20px;">
+                <div class="icon" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #28a745; font-size: 1.1em;">✅</div>
+                <label style="display: block; margin-bottom: 8px; color: #333; font-weight: 600; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.5px;">Confirmar Nueva Contraseña *</label>
+                <input type="password" id="passwordConfirmar" style="width: 100%; padding: 12px 12px 12px 40px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1em; box-sizing: border-box; transition: all 0.3s ease;" placeholder="Confirme la nueva contraseña" onfocus="this.style.borderColor='#28a745'; this.style.boxShadow='0 0 0 3px rgba(40, 167, 69, 0.1)';" onblur="this.style.borderColor='#e0e0e0'; this.style.boxShadow='none';">
+            </div>
+            
+            <div id="errorPassword" style="color: #dc3545; font-size: 0.9em; margin-bottom: 15px; display: none; background: #f8d7da; padding: 12px; border-radius: 8px; border: 1px solid #f5c6cb; font-weight: 500;"></div>
+            <div id="successPassword" style="color: #155724; font-size: 0.9em; margin-bottom: 15px; display: none; background: #d4edda; padding: 12px; border-radius: 8px; border: 1px solid #c3e6cb; font-weight: 500;"></div>
+            
+            <div style="display: flex; gap: 12px; margin-top: 25px;">
+                <button onclick="cambiarPassword()" style="flex: 1; background: linear-gradient(135deg, #28a745 0%, #20c997 100%); border: none; padding: 14px 20px; border-radius: 10px; color: white; font-weight: 600; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 0.5px;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(40, 167, 69, 0.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">🔄 Actualizar</button>
+                <button onclick="cerrarModalPassword()" style="background: #6c757d; border: none; padding: 14px 20px; border-radius: 10px; color: white; font-weight: 600; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 0.5px;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(108, 117, 125, 0.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">❌ Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
