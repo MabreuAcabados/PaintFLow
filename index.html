@@ -879,22 +879,6 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        /* Forzar centrado global de canvas - ALTA PRIORIDAD */
-        canvas {
-            margin: 0 auto !important;
-            display: block !important;
-            max-width: 100% !important;
-        }
-
-        /* Forzar centrado de containers de gráficas */
-        .dashboard-card > div[style*="min-height: 320px"],
-        .dashboard-card > div[style*="position: relative"] {
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            text-align: center !important;
-        }
-
         /* ========================================
            RESPONSIVE DESIGN - MEDIA QUERIES
            ======================================== */
@@ -949,65 +933,29 @@
             .dashboard-card {
                 min-height: 300px !important;
                 padding: 15px !important;
-                text-align: center !important;
-                display: flex !important;
-                flex-direction: column !important;
-                align-items: center !important;
-                justify-content: center !important;
             }
 
             .dashboard-card h3 {
                 font-size: 1.1em !important;
-                text-align: center !important;
-                width: 100% !important;
             }
 
             .dashboard-card .value {
                 font-size: 2em !important;
-                text-align: center !important;
             }
 
-            /* Centrar contenido de gráficas en tablet */
+            /* Centrar contenido de gráficas solo en tablet */
             .dashboard-card canvas {
                 margin: 0 auto !important;
                 display: block !important;
                 max-width: 100% !important;
             }
 
-            .dashboard-card > div {
-                width: 100% !important;
-                display: flex !important;
-                flex-direction: column !important;
-                align-items: center !important;
-            }
-
-            /* Override inline styles en tablet */
-            div[style*="min-height: 320px"] {
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                text-align: center !important;
-            }
-
+            .dashboard-card > div[style*="min-height: 320px"],
             .dashboard-card > div[style*="position: relative"] {
                 display: flex !important;
                 align-items: center !important;
                 justify-content: center !important;
                 text-align: center !important;
-            }
-
-            /* Selectores centrados en tablet */
-            .dashboard-card select {
-                max-width: 250px !important;
-                margin: 0 auto !important;
-                text-align: center !important;
-            }
-
-            .dashboard-card > div[style*="display: flex"] {
-                justify-content: center !important;
-                align-items: center !important;
-                flex-wrap: wrap !important;
-                gap: 15px !important;
             }
 
             /* Tablas responsive */
@@ -1081,17 +1029,12 @@
                 min-height: 200px !important;
                 padding: 10px !important;
                 text-align: center !important;
-                display: flex !important;
-                flex-direction: column !important;
-                align-items: center !important;
-                justify-content: center !important;
             }
 
             .dashboard-card h3 {
                 font-size: 1em !important;
                 margin-bottom: 5px !important;
                 text-align: center !important;
-                width: 100% !important;
             }
 
             .dashboard-card .value {
@@ -1106,22 +1049,7 @@
                 max-width: 100% !important;
             }
 
-            .dashboard-card > div {
-                width: 100% !important;
-                display: flex !important;
-                flex-direction: column !important;
-                align-items: center !important;
-            }
-
-            /* Override específico para containers de canvas en móvil */
-            div[style*="min-height: 320px"] {
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                text-align: center !important;
-                flex-direction: column !important;
-            }
-
+            .dashboard-card > div[style*="min-height: 320px"],
             .dashboard-card > div[style*="position: relative"] {
                 display: flex !important;
                 align-items: center !important;
