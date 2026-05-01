@@ -323,10 +323,13 @@ async def list_roles(db=Depends(get_db)):
 # ============================================================
 
 @app.get("/api/v1/empleados")
-async def list_empleados(skip: int = 0, limit: int = 200, db=Depends(get_db)):
+async def list_empleados(skip: int = 0, limit: int = 200, mostrar_inactivos: bool = False, db=Depends(get_db)):
     """Listar empleados desde tablas coloristas y encargados"""
     try:
         cur = db.cursor()
+        
+        # Debug: Log del parámetro recibido
+        logger.info(f"[GET EMPLEADOS DEBUG] mostrar_inactivos={mostrar_inactivos}, type={type(mostrar_inactivos)}")
         
         # Mapeo de sucursales
         mapeo_sucursal = {
@@ -345,6 +348,8 @@ async def list_empleados(skip: int = 0, limit: int = 200, db=Depends(get_db)):
         }
         
         # Consultar coloristas
+        activo_condition = not mostrar_inactivos  # Si mostrar_inactivos=True, queremos activo=False
+        logger.info(f"[GET EMPLEADOS DEBUG] activo_condition={activo_condition}")
         cur.execute("""
             SELECT 
                 c.id, 
@@ -357,9 +362,9 @@ async def list_empleados(skip: int = 0, limit: int = 200, db=Depends(get_db)):
                 c.codigo_empleado
             FROM coloristas c
             LEFT JOIN usuarios u ON u.id = c.id
-            WHERE c.activo = true
+            WHERE c.activo = %s
             ORDER BY c.nombre
-        """)
+        """, (activo_condition,))
         coloristas = cur.fetchall()
         
         # Consultar encargados
@@ -374,9 +379,9 @@ async def list_empleados(skip: int = 0, limit: int = 200, db=Depends(get_db)):
                 NULL as telefono,
                 NULL as codigo_empleado
             FROM encargados e
-            WHERE e.activo = true
+            WHERE e.activo = %s
             ORDER BY e.nombre
-        """)
+        """, (activo_condition,))
         encargados = cur.fetchall()
         
         # Combinar resultados
