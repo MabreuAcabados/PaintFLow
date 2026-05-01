@@ -1010,6 +1010,23 @@
             ? `http://${window.location.hostname}:8002`
             : 'https://paintflow.onrender.com';
 
+        // Funciones auxiliares para manejar roles
+        function addRoleToUrl(url) {
+            const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            const userRole = userData.rol || 'analista';
+            const separator = url.includes('?') ? '&' : '?';
+            return `${url}${separator}role=${encodeURIComponent(userRole)}`;
+        }
+
+        function addRoleHeaders() {
+            const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            const userRole = userData.rol || 'analista';
+            return {
+                'X-User-Role': userRole,
+                'Content-Type': 'application/json'
+            };
+        }
+
         // Variables globales
         let currentTabNormales = 'normales';
         let editingFormulaId = null;
@@ -1368,7 +1385,7 @@
             }
             
             try {
-                const url = `${API}/api/v1/formulas-normales?tipo=${tipo}&codigo=${encodeURIComponent(codigo)}&limit=100`;
+                const url = addRoleToUrl(`${API}/api/v1/formulas-normales?tipo=${tipo}&codigo=${encodeURIComponent(codigo)}&limit=100`);
                 
                 console.log(`🔍 Cargando fórmulas desde: ${url}`);
                 const response = await fetch(url);
@@ -1471,7 +1488,7 @@
             }
             
             try {
-                const url = `${API}/api/v1/formulas-cce?tipo=${tipo}&codigo=${encodeURIComponent(codigo)}&limit=100`;
+                const url = addRoleToUrl(`${API}/api/v1/formulas-cce?tipo=${tipo}&codigo=${encodeURIComponent(codigo)}&limit=100`);
                 
                 const response = await fetch(url);
                 if (response.ok) {
@@ -1632,7 +1649,7 @@
 
                 const response = await fetch(endpoint, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: addRoleHeaders(),
                     body: JSON.stringify(payload)
                 });
 
@@ -1737,7 +1754,10 @@
                     _128s: _128s
                 });
                 
-                const response = await fetch(`${url}?${params}`, { method });
+                const response = await fetch(addRoleToUrl(`${url}?${params}`), { 
+                    method,
+                    headers: addRoleHeaders() 
+                });
                 
                 if (response.ok) {
                     closeModalNormales();
@@ -1781,7 +1801,10 @@
                     _128s: _128s
                 });
                 
-                const response = await fetch(`${url}?${params}`, { method: 'POST' });
+                const response = await fetch(addRoleToUrl(`${url}?${params}`), { 
+                    method: 'POST',
+                    headers: addRoleHeaders()
+                });
                 
                 if (response.ok) {
                     closeModalCCE();
@@ -1813,7 +1836,10 @@
             if (!confirm('¿Estás seguro de eliminar esta fórmula?')) return;
             
             try {
-                const response = await fetch(`${API}/api/v1/formulas-normales/${encodeURIComponent(idPintura)}/${encodeURIComponent(idColorante)}`, { method: 'DELETE' });
+                const response = await fetch(addRoleToUrl(`${API}/api/v1/formulas-normales/${encodeURIComponent(idPintura)}/${encodeURIComponent(idColorante)}`), { 
+                    method: 'DELETE',
+                    headers: addRoleHeaders()
+                });
                 
                 if (response.ok) {
                     loadFormulasNormales();
@@ -1831,7 +1857,10 @@
             if (!confirm('¿Estás seguro de eliminar esta fórmula CCE?')) return;
             
             try {
-                const response = await fetch(`${API}/api/v1/formulas-cce/${id}?tipo=${tipo}`, { method: 'DELETE' });
+                const response = await fetch(addRoleToUrl(`${API}/api/v1/formulas-cce/${id}?tipo=${tipo}`), { 
+                    method: 'DELETE',
+                    headers: addRoleHeaders()
+                });
                 
                 if (response.ok) {
                     searchFormulasCCE(); // Recargar búsqueda actual

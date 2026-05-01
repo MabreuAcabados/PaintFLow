@@ -1005,8 +1005,13 @@ async def get_login_activity(limit: int = 50, db=Depends(get_db)):
 # ============================================================
 
 @app.get("/formulas")
-async def formulas_page():
-    """Servir interfaz de gestión de fórmulas para analistas"""
+async def formulas_page(request: Request):
+    """Servir interfaz de gestión de fórmulas solo para analistas"""
+    # Verificar que sea analista a través del header o parámetro
+    user_role = request.headers.get("X-User-Role") or request.query_params.get("role")
+    if not user_role or user_role.lower() != 'analista':
+        raise HTTPException(status_code=403, detail="Acceso restringido: Solo analistas pueden acceder a fórmulas")
+    
     html_path = os.path.join(os.path.dirname(__file__), "formulas.html")
     if os.path.exists(html_path):
         return FileResponse(html_path, media_type="text/html")
@@ -1028,8 +1033,13 @@ async def list_colorantes(skip: int = 0, limit: int = 200, db=Depends(get_db)):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/v1/formulas-normales")
-async def list_formulas_normales(codigo: str = None, tipo: str = "galon", skip: int = 0, limit: int = 100, db=Depends(get_db)):
-    """Listar fórmulas normales (tabla presentacion)"""
+async def list_formulas_normales(request: Request, codigo: str = None, tipo: str = "galon", skip: int = 0, limit: int = 100, db=Depends(get_db)):
+    """Listar fórmulas normales (tabla presentacion) - Solo analistas"""
+    # Verificar que sea analista
+    user_role = request.headers.get("X-User-Role") or request.query_params.get("role")
+    if not user_role or user_role.lower() != 'analista':
+        raise HTTPException(status_code=403, detail="Acceso restringido: Solo analistas pueden acceder a fórmulas")
+    
     try:
         cur = db.cursor()
         
@@ -1079,8 +1089,13 @@ async def list_formulas_normales(codigo: str = None, tipo: str = "galon", skip: 
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/v1/formulas-cce")
-async def list_formulas_cce(codigo: str = None, tipo: str = "galon", skip: int = 0, limit: int = 100, db=Depends(get_db)):
-    """Listar fórmulas CCE según tipo (galon, cubeta, cuarto)"""
+async def list_formulas_cce(request: Request, codigo: str = None, tipo: str = "galon", skip: int = 0, limit: int = 100, db=Depends(get_db)):
+    """Listar fórmulas CCE según tipo (galon, cubeta, cuarto) - Solo analistas"""
+    # Verificar que sea analista
+    user_role = request.headers.get("X-User-Role") or request.query_params.get("role")
+    if not user_role or user_role.lower() != 'analista':
+        raise HTTPException(status_code=403, detail="Acceso restringido: Solo analistas pueden acceder a fórmulas")
+    
     try:
         cur = db.cursor()
         
@@ -1141,8 +1156,13 @@ async def list_formulas_cce(codigo: str = None, tipo: str = "galon", skip: int =
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/v1/formulas-normales")
-async def create_formula_normal(formula: FormulaNormalCreate, db=Depends(get_db)):
-    """Crear fórmula normal en tabla presentacion"""
+async def create_formula_normal(request: Request, formula: FormulaNormalCreate, db=Depends(get_db)):
+    """Crear fórmula normal en tabla presentacion - Solo analistas"""
+    # Verificar que sea analista
+    user_role = request.headers.get("X-User-Role") or request.query_params.get("role")
+    if not user_role or user_role.lower() != 'analista':
+        raise HTTPException(status_code=403, detail="Acceso restringido: Solo analistas pueden gestionar fórmulas")
+    
     print(f"DEBUG - Received formula data: {formula}")
     print(f"DEBUG - Raw data: codigo_color={formula.codigo_color}, id_colorante={formula.id_colorante}, oz={formula.oz}, x32s={formula.x32s}, x64s={formula.x64s}, x128s={formula.x128s}, tipo={formula.tipo}")
     try:
@@ -1169,8 +1189,13 @@ async def create_formula_normal(formula: FormulaNormalCreate, db=Depends(get_db)
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/v1/formulas-cce")
-async def create_formula_cce(codigo_color: str, id_colorante: str, oz: float = 0, _32s: float = 0, _64s: float = 0, _128s: float = 0, tipo: str = "galon", db=Depends(get_db)):
-    """Crear fórmula CCE en tabla correspondiente"""
+async def create_formula_cce(request: Request, codigo_color: str, id_colorante: str, oz: float = 0, _32s: float = 0, _64s: float = 0, _128s: float = 0, tipo: str = "galon", db=Depends(get_db)):
+    """Crear fórmula CCE en tabla correspondiente - Solo analistas"""
+    # Verificar que sea analista
+    user_role = request.headers.get("X-User-Role") or request.query_params.get("role")
+    if not user_role or user_role.lower() != 'analista':
+        raise HTTPException(status_code=403, detail="Acceso restringido: Solo analistas pueden gestionar fórmulas")
+    
     try:
         cur = db.cursor()
         
@@ -1207,8 +1232,13 @@ async def create_formula_cce(codigo_color: str, id_colorante: str, oz: float = 0
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.put("/api/v1/formulas-normales/{id_pintura}/{id_colorante}")
-async def update_formula_normal(id_pintura: str, id_colorante: str, codigo_color: str = None, nuevo_colorante: str = None, oz: float = None, _32s: float = None, _64s: float = None, _128s: float = None, db=Depends(get_db)):
-    """Actualizar fórmula normal usando clave compuesta"""
+async def update_formula_normal(request: Request, id_pintura: str, id_colorante: str, codigo_color: str = None, nuevo_colorante: str = None, oz: float = None, _32s: float = None, _64s: float = None, _128s: float = None, db=Depends(get_db)):
+    """Actualizar fórmula normal usando clave compuesta - Solo analistas"""
+    # Verificar que sea analista
+    user_role = request.headers.get("X-User-Role") or request.query_params.get("role")
+    if not user_role or user_role.lower() != 'analista':
+        raise HTTPException(status_code=403, detail="Acceso restringido: Solo analistas pueden gestionar fórmulas")
+    
     try:
         cur = db.cursor()
         updates = []
@@ -1245,8 +1275,13 @@ async def update_formula_normal(id_pintura: str, id_colorante: str, codigo_color
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.delete("/api/v1/formulas-normales/{id_pintura}/{id_colorante}")
-async def delete_formula_normal(id_pintura: str, id_colorante: str, db=Depends(get_db)):
-    """Eliminar fórmula normal usando clave compuesta"""
+async def delete_formula_normal(request: Request, id_pintura: str, id_colorante: str, db=Depends(get_db)):
+    """Eliminar fórmula normal usando clave compuesta - Solo analistas"""
+    # Verificar que sea analista
+    user_role = request.headers.get("X-User-Role") or request.query_params.get("role")
+    if not user_role or user_role.lower() != 'analista':
+        raise HTTPException(status_code=403, detail="Acceso restringido: Solo analistas pueden gestionar fórmulas")
+    
     try:
         cur = db.cursor()
         cur.execute("DELETE FROM presentacion WHERE id_pintura = %s AND id_colorante = %s", (id_pintura, id_colorante))
@@ -1257,8 +1292,13 @@ async def delete_formula_normal(id_pintura: str, id_colorante: str, db=Depends(g
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.delete("/api/v1/formulas-cce/{formula_id}")
-async def delete_formula_cce(formula_id: int, tipo: str = "galon", db=Depends(get_db)):
-    """Eliminar fórmula CCE"""
+async def delete_formula_cce(request: Request, formula_id: int, tipo: str = "galon", db=Depends(get_db)):
+    """Eliminar fórmula CCE - Solo analistas"""
+    # Verificar que sea analista
+    user_role = request.headers.get("X-User-Role") or request.query_params.get("role")
+    if not user_role or user_role.lower() != 'analista':
+        raise HTTPException(status_code=403, detail="Acceso restringido: Solo analistas pueden gestionar fórmulas")
+    
     try:
         cur = db.cursor()
         

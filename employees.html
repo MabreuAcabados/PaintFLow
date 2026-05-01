@@ -788,107 +788,31 @@
         }
 
         
-        /* Confirm Modal Personalizado */
-        .confirm-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            animation: fadeIn 0.2s ease-out;
-        }
-        
-        .confirm-modal.active {
-            display: flex;
-        }
-        
-        .confirm-modal-content {
-            background: white;
-            padding: 40px 30px;
-            border-radius: 12px;
-            max-width: 400px;
-            width: 90%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            animation: slideIn 0.3s ease-out;
-        }
-        
-        .confirm-modal-icon {
-            font-size: 3.5em;
-            margin-bottom: 15px;
-            animation: bounce 0.6s ease-out;
-        }
-        
-        @keyframes bounce {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-        
-        .confirm-modal-content h3 {
-            color: #d32f2f;
-            font-size: 1.3em;
-            margin-bottom: 12px;
-            font-weight: 700;
-        }
-        
-        .confirm-modal-content p {
-            color: #666;
-            font-size: 0.95em;
-            margin-bottom: 25px;
-            line-height: 1.5;
-        }
-        
-        .confirm-modal-buttons {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-        }
-        
-        .btn-confirm-cancel {
-            background: linear-gradient(135deg, #e0e0e0 0%, #bdbdbd 100%);
-            color: #333;
-            padding: 12px 28px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 0.95em;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        
-        .btn-confirm-cancel:hover {
-            background: linear-gradient(135deg, #bdbdbd 0%, #9e9e9e 100%);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-            transform: translateY(-2px);
-        }
-        
-        .btn-confirm-delete {
-            background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+        .btn-warning { 
+            background-color: #f57c00;
             color: white;
-            padding: 12px 28px;
             border: none;
-            border-radius: 8px;
+            padding: 10px 20px;
+            border-radius: 5px;
             cursor: pointer;
-            font-weight: 700;
-            font-size: 0.95em;
+            font-size: 14px;
+            font-weight: 500;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.25);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
         
-        .btn-confirm-delete:hover {
-            background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%);
-            box-shadow: 0 6px 20px rgba(244, 67, 54, 0.35);
+        .btn-warning:hover { 
+            background-color: #e65100;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             transform: translateY(-2px);
         }
-        
-        .btn-confirm-delete:active {
-            transform: translateY(-1px);
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: flex-start;
+            flex-wrap: wrap;
         }
 
         /* Estilos del contenedor principal */
@@ -1064,18 +988,6 @@
             <div id="tablasContainer"></div>
         </div>
     </div>
-
-    <div id="confirmModal" class="confirm-modal">
-        <div class="confirm-modal-content">
-            <div class="confirm-modal-icon">⚠️</div>
-            <h3 id="confirmTitle">¿Confirmar acción?</h3>
-            <p id="confirmMessage">¿Estás seguro de que deseas eliminar este empleado?</p>
-            <div class="confirm-modal-buttons">
-                <button class="btn-confirm-cancel" onclick="closeConfirmModal()">Cancelar</button>
-                <button class="btn-confirm-delete" onclick="confirmAction()">Eliminar</button>
-            </div>
-        </div>
-    </div>
     
     <div id="modalEmpleado" class="modal">
         <div class="modal-content">
@@ -1120,6 +1032,7 @@
             <div class="modal-buttons">
                 <button class="btn-cancel" onclick="cerrarModalEmpleado()">Cancelar</button>
                 <button class="btn-save" onclick="guardarEmpleado()">Guardar</button>
+                <button id="btnToggleEstadoEmpleado" class="btn-warning" onclick="toggleEstadoEmpleadoModal()" style="display: none; background: #f57c00;">Inhabilitar Empleado</button>
             </div>
         </div>
     </div>
@@ -1131,7 +1044,6 @@
         let allEmpleados = [];
         let allSucursales = [];
         let sucursalesUnicas = [];
-        let empleadoAEliminar = null; // Para el modal de confirmación
         let activeSucursal = 'Alameda'; // Para guardar la sucursal activa
         
         function fmt(posicion) {
@@ -1270,7 +1182,7 @@
                             <td>${estado}</td>
                             <td>
                                 <button class="btn-action btn-edit" onclick="abrirModalEmpleado(${e.id})">Editar</button>
-                                <button class="btn-action btn-delete" onclick="eliminarEmpleado(${e.id})" title="Eliminar">&times;</button>
+                                <button class="btn-action" onclick="toggleEstadoEmpleado(${e.id}, ${!e.activo})" style="background: ${e.activo ? '#f57c00' : '#4CAF50'}; color: white;">${e.activo ? 'Inhabilitar' : 'Habilitar'}</button>
                             </td>
                         `;
                         tbody.appendChild(tr);
@@ -1346,6 +1258,12 @@
                     document.getElementById('inputSucursalEmpleado').value = empleado.sucursal_id || '';
                     document.getElementById('inputTelefonoEmpleado').value = empleado.telefono || '';
                     document.getElementById('inputActivoEmpleado').checked = (empleado.activo === true || empleado.activo === 1);
+                    
+                    // Configurar botón de habilitar/inhabilitar
+                    const btnToggle = document.getElementById('btnToggleEstadoEmpleado');
+                    btnToggle.style.display = 'inline-block'; // Mostrar en modo editar
+                    btnToggle.textContent = empleado.activo ? 'Inhabilitar Empleado' : 'Habilitar Empleado';
+                    btnToggle.style.background = empleado.activo ? '#f57c00' : '#4CAF50';
                 }
             } else {
                 document.getElementById('editingEmpleadoId').value = '';
@@ -1355,6 +1273,7 @@
                 document.getElementById('inputPosicionEmpleado').value = 'colorista';
                 document.getElementById('inputTelefonoEmpleado').value = '';
                 document.getElementById('inputActivoEmpleado').checked = true;
+                document.getElementById('btnToggleEstadoEmpleado').style.display = 'none'; // Ocultar en modo agregar
             }
             
             document.getElementById('modalEmpleado').classList.add('active');
@@ -1413,42 +1332,58 @@
             }
         }
         
-        async function eliminarEmpleado(id) {
-            empleadoAEliminar = id;
-            showConfirmModal('Eliminar empleado', '¿Estás seguro de que deseas eliminar este empleado?');
-        }
-        
-        function showConfirmModal(title, message) {
-            document.getElementById('confirmTitle').textContent = title;
-            document.getElementById('confirmMessage').textContent = message;
-            document.getElementById('confirmModal').classList.add('active');
-        }
-        
-        function closeConfirmModal() {
-            document.getElementById('confirmModal').classList.remove('active');
-            empleadoAEliminar = null;
-        }
-        
-        async function confirmAction() {
-            if (!empleadoAEliminar) return;
-            const id = empleadoAEliminar;
-            closeConfirmModal();
-            
+        async function toggleEstadoEmpleado(id, nuevoEstado) {
             try {
-                const res = await fetch(API + '/api/v1/empleados/' + id, {
-                    method: 'DELETE'
+                const res = await fetch(`${API}/api/v1/empleados/${id}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ activo: nuevoEstado })
                 });
                 
                 if (res.ok) {
                     loadData();
                 } else {
-                    alert('Error al eliminar empleado');
+                    alert('Error al cambiar estado del empleado');
                 }
             } catch (err) {
                 alert('Error: ' + err);
             }
         }
         
+        async function toggleEstadoEmpleadoModal() {
+            const empleadoId = document.getElementById('editingEmpleadoId').value;
+            if (!empleadoId) return;
+            
+            const empleado = allEmpleados.find(e => e.id == empleadoId);
+            if (!empleado) return;
+            
+            const nuevoEstado = !empleado.activo;
+            const accion = nuevoEstado ? "habilitar" : "inhabilitar";
+            
+            if (confirm(`¿Realmente deseas ${accion} este empleado?`)) {
+                try {
+                    const res = await fetch(`${API}/api/v1/empleados/${empleadoId}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ activo: nuevoEstado })
+                    });
+                    
+                    if (res.ok) {
+                        loadData();
+                        cerrarModalEmpleado();
+                    } else {
+                        alert('Error al cambiar estado del empleado');
+                    }
+                } catch (err) {
+                    alert('Error: ' + err);
+                }
+            }
+        }
+
         function toggleUserDropdown() {
             const userDropdown = document.getElementById('userDropdown');
             const userDropdownBtn = document.getElementById('userDropdownBtn');
@@ -1457,7 +1392,16 @@
         }
         
         function goToFormulas() {
-            window.location.href = '/formulas';
+            // Verificar rol antes de navegar
+            const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            const userRole = userData.rol;
+            
+            if (userRole !== 'analista') {
+                alert('Acceso restringido: Solo los analistas pueden acceder a fórmulas');
+                return;
+            }
+            
+            window.location.href = '/formulas?role=' + encodeURIComponent(userRole);
         }
         
         function abrirModalPerfil() {
@@ -1628,11 +1572,10 @@
                 let dropdownContent = '';
                 
                 if (userRole === 'administrador') {
-                    // Administrador tiene acceso a las 3 vistas
+                    // Administrador NO tiene acceso a fórmulas
                     dropdownContent = `
                         <button onclick="window.location.href='/'" style="color: #333; background: none; padding: 12px 16px; border: none; text-align: left; cursor: pointer; font-size: 0.9em;">🏠 Dashboard</button>
                         <button onclick="window.location.href='/employees'" style="color: #333; background: none; padding: 12px 16px; border: none; text-align: left; cursor: pointer; font-size: 0.9em;">👥 Gestión Empleados</button>
-                        <button onclick="goToFormulas()" style="color: #333; background: none; padding: 12px 16px; border: none; text-align: left; cursor: pointer; font-size: 0.9em;">🧪 Gestión Fórmulas</button>
                         <button onclick="abrirModalPerfil()" style="color: #333; background: none; padding: 12px 16px; border: none; text-align: left; cursor: pointer; font-size: 0.9em;">Perfil</button>
                         <button onclick="handleLogout()" style="color: #d32f2f; background: none; padding: 12px 16px; border-top: 1px solid #eee; border: none; text-align: left; cursor: pointer; font-size: 0.9em;">Cerrar Sesión</button>
                     `;

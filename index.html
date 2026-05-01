@@ -706,6 +706,33 @@
             transform: translateY(-2px);
         }
 
+        .btn-warning { 
+            background-color: #f57c00;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-warning:hover { 
+            background-color: #e65100;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+        }
+
         .user-dropdown-btn {
             background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
             color: #fff;
@@ -846,6 +873,275 @@
             border-radius: 50%;
         }
 
+        /* Tabla responsive */
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* ========================================
+           RESPONSIVE DESIGN - MEDIA QUERIES
+           ======================================== */
+
+        /* Tablet - 768px y abajo */
+        @media (max-width: 768px) {
+            /* Header responsive */
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+                padding: 0;
+            }
+
+            .navbar-tabs {
+                order: -1;
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .user-menu {
+                width: 100%;
+                justify-content: center;
+            }
+
+            /* Container responsive */
+            .container {
+                padding: 20px 15px;
+            }
+
+            /* Grid de estadísticas - 2 columnas en tablet */
+            #dashboard div[style*="grid-template-columns: repeat(4, 1fr)"] {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 15px !important;
+            }
+
+            /* Grid de gráficos - 1 columna en tablet */
+            #dashboard div[style*="grid-template-columns: repeat(2, 1fr)"] {
+                grid-template-columns: 1fr !important;
+                gap: 15px !important;
+            }
+
+            /* Dashboard cards más pequeñas */
+            .dashboard-card {
+                min-height: 300px !important;
+                padding: 15px !important;
+            }
+
+            .dashboard-card h3 {
+                font-size: 1.1em !important;
+            }
+
+            .dashboard-card .value {
+                font-size: 2em !important;
+            }
+
+            /* Tablas responsive */
+            table {
+                font-size: 14px;
+            }
+
+            table th, table td {
+                padding: 8px !important;
+            }
+
+            /* Botones más pequeños */
+            .btn-agregar, .btn-primary, .btn-secondary {
+                padding: 8px 15px !important;
+                font-size: 14px !important;
+            }
+
+            /* Modal responsive */
+            .modal-content {
+                width: 95% !important;
+                margin: 20px !important;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+        }
+
+        /* Mobile - 480px y abajo */
+        @media (max-width: 480px) {
+            /* Header móvil */
+            .header {
+                padding: 15px 10px;
+            }
+
+            .title {
+                font-size: 1.4em !important;
+            }
+
+            .logo {
+                width: 40px !important;
+                height: 40px !important;
+            }
+
+            /* Container móvil */
+            .container {
+                padding: 15px 10px;
+            }
+
+            /* Grid de estadísticas - 1 columna en móvil */
+            #dashboard div[style*="grid-template-columns: repeat(4, 1fr)"],
+            #dashboard div[style*="grid-template-columns: repeat(2, 1fr)"] {
+                grid-template-columns: 1fr !important;
+                gap: 10px !important;
+            }
+
+            /* Dashboard cards móvil */
+            .dashboard-card {
+                min-height: 200px !important;
+                padding: 10px !important;
+            }
+
+            .dashboard-card h3 {
+                font-size: 1em !important;
+                margin-bottom: 5px !important;
+            }
+
+            .dashboard-card .value {
+                font-size: 1.8em !important;
+            }
+
+            /* Tablas con scroll horizontal */
+            .tab-content, .table-responsive {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            table {
+                min-width: 600px;
+                font-size: 12px;
+            }
+
+            table th, table td {
+                padding: 6px !important;
+                white-space: nowrap;
+            }
+
+            /* Subtabs responsive */
+            .subtabs-container {
+                flex-wrap: wrap !important;
+                gap: 8px !important;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                padding-bottom: 10px;
+            }
+
+            .subtab-btn {
+                padding: 8px 12px !important;
+                font-size: 12px !important;
+                min-width: auto !important;
+                flex-shrink: 0;
+            }
+
+            /* Botones móvil */
+            .btn-agregar, .btn-primary, .btn-secondary, .btn-warning {
+                padding: 10px 12px !important;
+                font-size: 12px !important;
+                width: 100% !important;
+                margin-bottom: 8px !important;
+            }
+
+            /* Modal móvil */
+            .modal-content {
+                width: 98% !important;
+                margin: 10px !important;
+                padding: 15px !important;
+                max-height: 95vh;
+                overflow-y: auto;
+            }
+
+            .modal h2 {
+                font-size: 1.3em !important;
+            }
+
+            .form-group label {
+                font-size: 14px !important;
+            }
+
+            .form-group input, .form-group select, .form-group textarea {
+                padding: 10px !important;
+                font-size: 14px !important;
+            }
+
+            /* Dropdown de usuario móvil */
+            .dropdown-menu {
+                width: 100% !important;
+                left: 0 !important;
+                right: 0 !important;
+                position: fixed !important;
+                top: auto !important;
+                bottom: 0 !important;
+                border-radius: 15px 15px 0 0 !important;
+                max-height: 50vh;
+                overflow-y: auto;
+                box-shadow: 0 -4px 20px rgba(0,0,0,0.3) !important;
+            }
+
+            /* Selectores en gráficos móvil */
+            select {
+                width: 100% !important;
+                margin-bottom: 10px !important;
+                padding: 12px !important;
+                font-size: 14px !important;
+            }
+
+            /* Canvas de gráficos responsive */
+            canvas {
+                max-width: 100% !important;
+                height: auto !important;
+            }
+
+            /* Mejoras para gráficos en móvil */
+            .dashboard-card canvas {
+                min-height: 250px !important;
+            }
+
+            /* Touch targets más grandes */
+            button, .btn, .subtab-btn {
+                min-height: 44px !important;
+                touch-action: manipulation;
+            }
+
+            /* Mejorar legibilidad en móvil */
+            .section-header h2 {
+                font-size: 1.5em !important;
+            }
+        }
+
+        /* Mobile muy pequeño - 320px y abajo */
+        @media (max-width: 320px) {
+            .header {
+                padding: 10px 5px;
+            }
+
+            .container {
+                padding: 10px 5px;
+            }
+
+            .dashboard-card {
+                min-height: 150px !important;
+                padding: 8px !important;
+            }
+
+            .dashboard-card .value {
+                font-size: 1.5em !important;
+            }
+
+            table {
+                font-size: 11px;
+            }
+
+            .modal-content {
+                width: 100% !important;
+                margin: 0 !important;
+                border-radius: 0 !important;
+                height: 100vh !important;
+                max-height: 100vh !important;
+            }
+        }
+
 
     </style>
 </head>
@@ -928,40 +1224,52 @@
                     </div>
 
                     <div id="rol-Administrador" class="subtab-content active">
+                    <div class="table-responsive">
                         <table style="width: 100%; border-collapse: collapse;">
                             <thead><tr style="background: #f5f5f5;"><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Nombre</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Email</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Sucursal</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Telefono</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Estado</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Acciones</th></tr></thead>
                             <tbody id="tbody-rol-Administrador"><tr><td colspan="6" style="text-align: center;">Sin usuarios</td></tr></tbody>
                         </table>
                     </div>
+                    </div>
                     <div id="rol-Operador" class="subtab-content">
-                        <table style="width: 100%; border-collapse: collapse;">
-                            <thead><tr style="background: #f5f5f5;"><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Nombre</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Email</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Sucursal</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Telefono</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Estado</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Acciones</th></tr></thead>
-                            <tbody id="tbody-rol-Operador"><tr><td colspan="6" style="text-align: center;">Sin usuarios</td></tr></tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead><tr style="background: #f5f5f5;"><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Nombre</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Email</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Sucursal</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Telefono</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Estado</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Acciones</th></tr></thead>
+                                <tbody id="tbody-rol-Operador"><tr><td colspan="6" style="text-align: center;">Sin usuarios</td></tr></tbody>
+                            </table>
+                        </div>
                     </div>
                     <div id="rol-Facturador" class="subtab-content">
-                        <table style="width: 100%; border-collapse: collapse;">
-                            <thead><tr style="background: #f5f5f5;"><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Nombre</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Email</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Sucursal</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Telefono</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Estado</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Acciones</th></tr></thead>
-                            <tbody id="tbody-rol-Facturador"><tr><td colspan="6" style="text-align: center;">Sin usuarios</td></tr></tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead><tr style="background: #f5f5f5;"><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Nombre</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Email</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Sucursal</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Telefono</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Estado</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Acciones</th></tr></thead>
+                                <tbody id="tbody-rol-Facturador"><tr><td colspan="6" style="text-align: center;">Sin usuarios</td></tr></tbody>
+                            </table>
+                        </div>
                     </div>
                     <div id="rol-Colorista" class="subtab-content">
-                        <table style="width: 100%; border-collapse: collapse;">
-                            <thead><tr style="background: #f5f5f5;"><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Nombre</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Email</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Sucursal</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Telefono</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Estado</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Acciones</th></tr></thead>
-                            <tbody id="tbody-rol-Colorista"><tr><td colspan="6" style="text-align: center;">Sin usuarios</td></tr></tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead><tr style="background: #f5f5f5;"><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Nombre</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Email</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Sucursal</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Telefono</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Estado</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Acciones</th></tr></thead>
+                                <tbody id="tbody-rol-Colorista"><tr><td colspan="6" style="text-align: center;">Sin usuarios</td></tr></tbody>
+                            </table>
+                        </div>
                     </div>
                     <div id="rol-Analista" class="subtab-content">
-                        <table style="width: 100%; border-collapse: collapse;">
-                            <thead><tr style="background: #f5f5f5;"><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Nombre</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Email</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Sucursal</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Telefono</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Estado</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Acciones</th></tr></thead>
-                            <tbody id="tbody-rol-Analista"><tr><td colspan="6" style="text-align: center;">Sin usuarios</td></tr></tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead><tr style="background: #f5f5f5;"><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Nombre</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Email</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Sucursal</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Telefono</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Estado</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Acciones</th></tr></thead>
+                                <tbody id="tbody-rol-Analista"><tr><td colspan="6" style="text-align: center;">Sin usuarios</td></tr></tbody>
+                            </table>
+                        </div>
                     </div>
                     <div id="rol-Contabilidad" class="subtab-content">
-                        <table style="width: 100%; border-collapse: collapse;">
-                            <thead><tr style="background: #f5f5f5;"><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Nombre</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Email</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Sucursal</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Telefono</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Estado</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Acciones</th></tr></thead>
-                            <tbody id="tbody-rol-Contabilidad"><tr><td colspan="6" style="text-align: center;">Sin usuarios</td></tr></tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead><tr style="background: #f5f5f5;"><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Nombre</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Email</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Sucursal</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Telefono</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Estado</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Acciones</th></tr></thead>
+                                <tbody id="tbody-rol-Contabilidad"><tr><td colspan="6" style="text-align: center;">Sin usuarios</td></tr></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1034,20 +1342,22 @@
                 <div class="dashboard-card" style="padding: 20px; min-height: 400px; display: flex; flex-direction: column; margin-top: 20px;">
                     <h3 style="margin-bottom: 15px; flex-shrink: 0;">Últimos Logins</h3>
                     <div style="flex-grow: 1; position: relative; min-height: 320px; overflow-y: auto;">
-                        <table style="width: 100%; border-collapse: collapse;">
-                            <thead>
-                                <tr style="background: #f5f5f5; position: sticky; top: 0;">
-                                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: 700;">Usuario</th>
-                                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: 700;">Nombre Completo</th>
-                                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: 700;">Rol</th>
-                                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: 700;">Sucursal</th>
-                                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: 700;">Hora Login</th>
-                                </tr>
-                            </thead>
-                            <tbody id="loginActivityTableBody">
-                                <tr><td colspan="5" style="text-align: center; padding: 20px;">Cargando...</td></tr>
-                            </tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr style="background: #f5f5f5; position: sticky; top: 0;">
+                                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: 700;">Usuario</th>
+                                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: 700;">Nombre Completo</th>
+                                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: 700;">Rol</th>
+                                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: 700;">Sucursal</th>
+                                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: 700;">Hora Login</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="loginActivityTableBody">
+                                    <tr><td colspan="5" style="text-align: center; padding: 20px;">Cargando...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1067,28 +1377,36 @@
                     </div>
 
                     <div id="Santo_Domingo" class="subtab-content active">
-                        <table>
-                            <thead><tr><th>Nombre</th><th>Zona</th><th>Direccion</th><th>Telefono</th><th>Estado</th><th>Acciones</th></tr></thead>
-                            <tbody id="tbody-Santo_Domingo"><tr><td colspan="5" style="text-align: center;">Cargando...</td></tr></tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <table>
+                                <thead><tr><th>Nombre</th><th>Zona</th><th>Direccion</th><th>Telefono</th><th>Estado</th><th>Acciones</th></tr></thead>
+                                <tbody id="tbody-Santo_Domingo"><tr><td colspan="5" style="text-align: center;">Cargando...</td></tr></tbody>
+                            </table>
+                        </div>
                     </div>
                     <div id="Zona_Este" class="subtab-content">
-                        <table>
-                            <thead><tr><th>Nombre</th><th>Zona</th><th>Direccion</th><th>Telefono</th><th>Estado</th><th>Acciones</th></tr></thead>
-                            <tbody id="tbody-Zona_Este"><tr><td colspan="5" style="text-align: center;">Cargando...</td></tr></tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <table>
+                                <thead><tr><th>Nombre</th><th>Zona</th><th>Direccion</th><th>Telefono</th><th>Estado</th><th>Acciones</th></tr></thead>
+                                <tbody id="tbody-Zona_Este"><tr><td colspan="5" style="text-align: center;">Cargando...</td></tr></tbody>
+                            </table>
+                        </div>
                     </div>
                     <div id="Zona_Norte" class="subtab-content">
-                        <table>
-                            <thead><tr><th>Nombre</th><th>Zona</th><th>Direccion</th><th>Telefono</th><th>Estado</th><th>Acciones</th></tr></thead>
-                            <tbody id="tbody-Zona_Norte"><tr><td colspan="5" style="text-align: center;">Cargando...</td></tr></tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <table>
+                                <thead><tr><th>Nombre</th><th>Zona</th><th>Direccion</th><th>Telefono</th><th>Estado</th><th>Acciones</th></tr></thead>
+                                <tbody id="tbody-Zona_Norte"><tr><td colspan="5" style="text-align: center;">Cargando...</td></tr></tbody>
+                            </table>
+                        </div>
                     </div>
                     <div id="Zona_Sur" class="subtab-content">
-                        <table>
-                            <thead><tr><th>Nombre</th><th>Zona</th><th>Direccion</th><th>Telefono</th><th>Estado</th><th>Acciones</th></tr></thead>
-                            <tbody id="tbody-Zona_Sur"><tr><td colspan="5" style="text-align: center;">Cargando...</td></tr></tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <table>
+                                <thead><tr><th>Nombre</th><th>Zona</th><th>Direccion</th><th>Telefono</th><th>Estado</th><th>Acciones</th></tr></thead>
+                                <tbody id="tbody-Zona_Sur"><tr><td colspan="5" style="text-align: center;">Cargando...</td></tr></tbody>
+                            </table>
+                        </div>
                     </div>
         
 
@@ -1166,8 +1484,11 @@
             </select></div>
             <div class="form-group"><label>Sucursal</label><select id="inputSucursalUsuario"></select></div>
             <div class="form-group"><label>Telefono</label><input type="text" id="inputTelefonoUsuario"></div>
-            <button class="btn-primary" onclick="guardarUsuario()">Guardar</button>
-            <button class="btn-secondary" onclick="cerrarModalUsuario()">Cancelar</button>
+            <div class="modal-buttons">
+                <button class="btn-primary" onclick="guardarUsuario()">Guardar</button>
+                <button class="btn-secondary" onclick="cerrarModalUsuario()">Cancelar</button>
+                <button id="btnToggleEstadoUsuario" class="btn-warning" onclick="toggleEstadoUsuarioModal()" style="display: none; background: #f57c00;">Inhabilitar Usuario</button>
+            </div>
         </div>
     </div>
 
@@ -2046,7 +2367,7 @@ function renderUsuariosTable(usuarios) {
                 <td style="padding: 12px; border: 1px solid #ddd;"><span style="background: ${statusColor}; color: white; padding: 4px 8px; border-radius: 3px; font-size: 12px;">${usr.activo ? 'Activo' : 'Inactivo'}</span></td>
                 <td style="padding: 12px; border: 1px solid #ddd;">
                     <button onclick="editarUsuario(${usr.id})" style="padding: 5px 10px; background: #1a73e8; color: white; border: none; border-radius: 3px; cursor: pointer; margin-right: 5px; font-size: 12px;">Editar</button>
-                    <button onclick="eliminarUsuario(${usr.id})" style="padding: 5px 10px; background: #dc3545; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 12px;">X</button>
+                    <button onclick="toggleEstadoUsuario(${usr.id}, ${!usr.activo})" style="padding: 5px 10px; background: ${usr.activo ? '#f57c00' : '#4CAF50'}; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 12px;">${usr.activo ? 'Inhabilitar' : 'Habilitar'}</button>
                 </td>
             </tr>`;
         }).join('');
@@ -2437,6 +2758,13 @@ async function editarUsuario(id) {
         document.getElementById("inputRolUsuario").value = usuario.rol;
         document.getElementById("inputSucursalUsuario").value = usuario.sucursal_id;
         document.getElementById("inputTelefonoUsuario").value = usuario.telefono || "";
+        
+        // Configurar botón de habilitar/inhabilitar
+        const btnToggle = document.getElementById("btnToggleEstadoUsuario");
+        btnToggle.style.display = "inline-block"; // Mostrar en modo editar
+        btnToggle.textContent = usuario.activo ? "Inhabilitar Usuario" : "Habilitar Usuario";
+        btnToggle.style.background = usuario.activo ? "#f57c00" : "#4CAF50";
+        
         document.getElementById("modalUsuario").classList.add("active");
         poblarSucursalesModal();
     }
@@ -2489,21 +2817,6 @@ async function guardarUsuario() {
     }
 }
 
-async function eliminarUsuario(id) {
-    if (confirm("Realmente deseas eliminar este usuario?")) {
-        try {
-            const res = await fetch(API + "/api/v1/usuarios/" + id, { method: "DELETE" });
-            if (res.ok) {
-                loadUsuarios();
-            } else {
-                alert("Error al eliminar usuario");  // TODO: cambiar a modal
-            }
-        } catch (e) {
-            alert("Error: " + e.message);
-        }
-    }
-}
-
 async function toggleEstadoUsuario(id, activo) {
     try {
         const res = await fetch(API + "/api/v1/usuarios/" + id + "/estado?activo=" + activo, { method: "PATCH" });
@@ -2514,6 +2827,31 @@ async function toggleEstadoUsuario(id, activo) {
         }
     } catch (e) {
         alert("Error: " + e.message);
+    }
+}
+
+async function toggleEstadoUsuarioModal() {
+    if (!editingUsuarioId) return;
+    
+    const usuario = allUsuarios.find(u => u.id === editingUsuarioId);
+    if (!usuario) return;
+    
+    const nuevoEstado = !usuario.activo;
+    const accion = nuevoEstado ? "habilitar" : "inhabilitar";
+    
+    if (confirm(`¿Realmente deseas ${accion} este usuario?`)) {
+        try {
+            const res = await fetch(API + "/api/v1/usuarios/" + editingUsuarioId + "/estado?activo=" + nuevoEstado, { method: "PATCH" });
+            if (res.ok) {
+                // Actualizar la lista y cerrar modal
+                loadUsuarios();
+                cerrarModalUsuario();
+            } else {
+                alert("Error al cambiar estado del usuario");
+            }
+        } catch (e) {
+            alert("Error: " + e.message);
+        }
     }
 }
 
@@ -2873,7 +3211,16 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
 
         function goToFormulas() {
-            window.location.href = '/formulas';
+            // Verificar rol antes de navegar
+            const userData = JSON.parse(localStorage.getItem('currentUser') || '{}');
+            const userRole = userData.rol;
+            
+            if (userRole !== 'analista') {
+                alert('Acceso restringido: Solo los analistas pueden acceder a fórmulas');
+                return;
+            }
+            
+            window.location.href = '/formulas?role=' + encodeURIComponent(userRole);
         }
 
         function updateUserMenu(userRole) {
