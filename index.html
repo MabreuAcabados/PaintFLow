@@ -933,14 +933,50 @@
             .dashboard-card {
                 min-height: 300px !important;
                 padding: 15px !important;
+                text-align: center !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                justify-content: center !important;
             }
 
             .dashboard-card h3 {
                 font-size: 1.1em !important;
+                text-align: center !important;
+                width: 100% !important;
             }
 
             .dashboard-card .value {
                 font-size: 2em !important;
+                text-align: center !important;
+            }
+
+            /* Centrar contenido de gráficas en tablet */
+            .dashboard-card canvas {
+                margin: 0 auto !important;
+                display: block !important;
+                max-width: 100% !important;
+            }
+
+            .dashboard-card > div {
+                width: 100% !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+            }
+
+            /* Selectores centrados en tablet */
+            .dashboard-card select {
+                max-width: 250px !important;
+                margin: 0 auto !important;
+                text-align: center !important;
+            }
+
+            .dashboard-card > div[style*="display: flex"] {
+                justify-content: center !important;
+                align-items: center !important;
+                flex-wrap: wrap !important;
+                gap: 15px !important;
             }
 
             /* Tablas responsive */
@@ -1013,15 +1049,37 @@
             .dashboard-card {
                 min-height: 200px !important;
                 padding: 10px !important;
+                text-align: center !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                justify-content: center !important;
             }
 
             .dashboard-card h3 {
                 font-size: 1em !important;
                 margin-bottom: 5px !important;
+                text-align: center !important;
+                width: 100% !important;
             }
 
             .dashboard-card .value {
                 font-size: 1.8em !important;
+                text-align: center !important;
+            }
+
+            /* Centrar contenido de gráficas en móvil */
+            .dashboard-card canvas {
+                margin: 0 auto !important;
+                display: block !important;
+                max-width: 100% !important;
+            }
+
+            .dashboard-card > div {
+                width: 100% !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
             }
 
             /* Tablas con scroll horizontal */
@@ -1106,17 +1164,35 @@
                 margin-bottom: 10px !important;
                 padding: 12px !important;
                 font-size: 14px !important;
+                text-align: center !important;
+            }
+
+            /* Mejorar alineación de controles en cards */
+            .dashboard-card > div[style*="display: flex"] {
+                justify-content: center !important;
+                align-items: center !important;
+                flex-wrap: wrap !important;
+                gap: 10px !important;
+            }
+
+            .dashboard-card select {
+                max-width: 200px !important;
+                margin: 0 auto !important;
             }
 
             /* Canvas de gráficos responsive */
             canvas {
                 max-width: 100% !important;
                 height: auto !important;
+                margin: 0 auto !important;
+                display: block !important;
             }
 
             /* Mejoras para gráficos en móvil */
             .dashboard-card canvas {
                 min-height: 250px !important;
+                margin: 0 auto !important;
+                display: block !important;
             }
 
             /* Touch targets más grandes */
