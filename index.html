@@ -879,6 +879,22 @@
             -webkit-overflow-scrolling: touch;
         }
 
+        /* Forzar centrado global de canvas - ALTA PRIORIDAD */
+        canvas {
+            margin: 0 auto !important;
+            display: block !important;
+            max-width: 100% !important;
+        }
+
+        /* Forzar centrado de containers de gráficas */
+        .dashboard-card > div[style*="min-height: 320px"],
+        .dashboard-card > div[style*="position: relative"] {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            text-align: center !important;
+        }
+
         /* ========================================
            RESPONSIVE DESIGN - MEDIA QUERIES
            ======================================== */
@@ -963,6 +979,21 @@
                 display: flex !important;
                 flex-direction: column !important;
                 align-items: center !important;
+            }
+
+            /* Override inline styles en tablet */
+            div[style*="min-height: 320px"] {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                text-align: center !important;
+            }
+
+            .dashboard-card > div[style*="position: relative"] {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                text-align: center !important;
             }
 
             /* Selectores centrados en tablet */
@@ -1082,6 +1113,23 @@
                 align-items: center !important;
             }
 
+            /* Override específico para containers de canvas en móvil */
+            div[style*="min-height: 320px"] {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                text-align: center !important;
+                flex-direction: column !important;
+            }
+
+            .dashboard-card > div[style*="position: relative"] {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                text-align: center !important;
+                flex-direction: column !important;
+            }
+
             /* Tablas con scroll horizontal */
             .tab-content, .table-responsive {
                 overflow-x: auto;
@@ -1188,11 +1236,27 @@
                 display: block !important;
             }
 
+            /* Forzar centrado de containers de canvas */
+            div[style*="min-height: 320px"] {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                text-align: center !important;
+            }
+
             /* Mejoras para gráficos en móvil */
             .dashboard-card canvas {
                 min-height: 250px !important;
                 margin: 0 auto !important;
                 display: block !important;
+            }
+
+            /* Override inline styles para centrar canvas */
+            .dashboard-card > div[style*="position: relative"] {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                text-align: center !important;
             }
 
             /* Touch targets más grandes */
