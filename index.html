@@ -1398,30 +1398,27 @@
                     </div>
                 </div>
 
-                <!-- Gráficas -->
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
-                    <!-- Gráfica de Empleados por Sucursal -->
-                    <div class="dashboard-card" style="padding: 20px; min-height: 400px; display: flex; flex-direction: column;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                            <h3 style="margin: 0; flex-shrink: 0;">Empleados por Sucursal</h3>
-                            <select id="zonaEmpleadosSelector" onchange="updateEmpleadosPorSucursalChart()" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; background: white; font-size: 14px;">
-                                <option value="Santo_Domingo">Santo Domingo</option>
-                                <option value="Zona_Este">Zona Este</option>
-                                <option value="Zona_Norte">Zona Norte</option>
-                                <option value="Zona_Sur">Zona Sur</option>
-                            </select>
-                        </div>
-                        <div style="flex-grow: 1; position: relative; min-height: 320px;">
-                            <canvas id="empleadosPorSucursalChart"></canvas>
-                        </div>
+                <!-- Gráfica de Empleados por Sucursal (Ancho Completo) -->
+                <div class="dashboard-card" style="padding: 20px; min-height: 400px; display: flex; flex-direction: column; margin-top: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3 style="margin: 0; flex-shrink: 0;">Empleados por Sucursal</h3>
+                        <select id="zonaEmpleadosSelector" onchange="updateEmpleadosPorSucursalChart()" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; background: white; font-size: 14px;">
+                            <option value="Santo_Domingo">Santo Domingo</option>
+                            <option value="Zona_Este">Zona Este</option>
+                            <option value="Zona_Norte">Zona Norte</option>
+                            <option value="Zona_Sur">Zona Sur</option>
+                        </select>
                     </div>
+                    <div style="flex-grow: 1; position: relative; min-height: 320px;">
+                        <canvas id="empleadosPorSucursalChart"></canvas>
+                    </div>
+                </div>
 
-                    <!-- Gráfica de Rol de Usuarios -->
-                    <div class="dashboard-card" style="padding: 20px; min-height: 400px; display: flex; flex-direction: column;">
-                        <h3 style="margin-bottom: 15px; flex-shrink: 0;">Distribución por Rol</h3>
-                        <div style="flex-grow: 1; position: relative; min-height: 320px;">
-                            <canvas id="usuariosPorRolChart"></canvas>
-                        </div>
+                <!-- Gráfica de Distribución por Rol (Ancho Completo) -->
+                <div class="dashboard-card" style="padding: 20px; min-height: 400px; display: flex; flex-direction: column; margin-top: 20px;">
+                    <h3 style="margin-bottom: 15px; flex-shrink: 0;">Distribución por Rol</h3>
+                    <div style="flex-grow: 1; position: relative; min-height: 320px;">
+                        <canvas id="usuariosPorRolChart"></canvas>
                     </div>
                 </div>
 
