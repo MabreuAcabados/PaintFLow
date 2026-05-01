@@ -873,378 +873,6 @@
             border-radius: 50%;
         }
 
-        /* Tabla responsive */
-        .table-responsive {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        /* ========================================
-           RESPONSIVE DESIGN - MEDIA QUERIES
-           ======================================== */
-
-        /* Tablet - 768px y abajo */
-        @media (max-width: 768px) {
-            /* Header responsive */
-            .header-content {
-                flex-direction: column;
-                gap: 20px;
-                padding: 0;
-            }
-
-            .logo-section {
-                order: -2;
-                width: 100%;
-                justify-content: center;
-            }
-
-            .navbar-tabs {
-                order: -1;
-                width: 100%;
-                justify-content: center;
-                flex-wrap: wrap;
-                gap: 10px;
-            }
-            }
-
-            .user-menu {
-                width: 100%;
-                justify-content: center;
-            }
-
-            /* Container responsive */
-            .container {
-                padding: 20px 15px;
-            }
-
-            /* Grid de estadísticas - 2 columnas en tablet */
-            #dashboard div[style*="grid-template-columns: repeat(4, 1fr)"] {
-                grid-template-columns: repeat(2, 1fr) !important;
-                gap: 15px !important;
-            }
-
-            /* Grid de gráficos - 1 columna en tablet */
-            #dashboard div[style*="grid-template-columns: repeat(2, 1fr)"] {
-                grid-template-columns: 1fr !important;
-                gap: 15px !important;
-            }
-
-            /* Dashboard cards más pequeñas */
-            .dashboard-card {
-                min-height: 300px !important;
-                padding: 15px !important;
-            }
-
-            .dashboard-card h3 {
-                font-size: 1.1em !important;
-            }
-
-            .dashboard-card .value {
-                font-size: 2em !important;
-            }
-
-            /* Centrar contenido de gráficas solo en tablet */
-            .dashboard-card canvas {
-                margin: 0 auto !important;
-                display: block !important;
-                max-width: 100% !important;
-            }
-
-            .dashboard-card > div[style*="min-height: 320px"],
-            .dashboard-card > div[style*="position: relative"] {
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                text-align: center !important;
-            }
-
-            /* Tablas responsive */
-            table {
-                font-size: 14px;
-            }
-
-            table th, table td {
-                padding: 8px !important;
-            }
-
-            /* Botones más pequeños */
-            .btn-agregar, .btn-primary, .btn-secondary {
-                padding: 8px 15px !important;
-                font-size: 14px !important;
-            }
-
-            /* Modal responsive */
-            .modal-content {
-                width: 95% !important;
-                margin: 20px !important;
-                max-height: 90vh;
-                overflow-y: auto;
-            }
-        }
-
-        /* Mobile - 480px y abajo */
-        @media (max-width: 480px) {
-            /* Header móvil */
-            .header {
-                padding: 15px 10px;
-            }
-
-            .logo-section {
-                order: -2;
-                width: 100%;
-                justify-content: center;
-            }
-
-            .navbar-tabs {
-                order: -1;
-                width: 100%;
-                justify-content: center;
-                flex-wrap: wrap;
-                gap: 10px;
-            }
-
-            .title {
-                font-size: 1.4em !important;
-            }
-
-            .logo {
-                width: 40px !important;
-                height: 40px !important;
-            }
-
-            /* Container móvil */
-            .container {
-                padding: 15px 10px;
-            }
-
-            /* Grid de estadísticas - 1 columna en móvil */
-            #dashboard div[style*="grid-template-columns: repeat(4, 1fr)"],
-            #dashboard div[style*="grid-template-columns: repeat(2, 1fr)"] {
-                grid-template-columns: 1fr !important;
-                gap: 10px !important;
-            }
-
-            /* Dashboard cards móvil */
-            .dashboard-card {
-                min-height: 200px !important;
-                padding: 10px !important;
-                text-align: center !important;
-            }
-
-            .dashboard-card h3 {
-                font-size: 1em !important;
-                margin-bottom: 5px !important;
-                text-align: center !important;
-            }
-
-            .dashboard-card .value {
-                font-size: 1.8em !important;
-                text-align: center !important;
-            }
-
-            /* Centrar contenido de gráficas en móvil */
-            .dashboard-card canvas {
-                margin: 0 auto !important;
-                display: block !important;
-                max-width: 100% !important;
-            }
-
-            .dashboard-card > div[style*="min-height: 320px"],
-            .dashboard-card > div[style*="position: relative"] {
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                text-align: center !important;
-                flex-direction: column !important;
-            }
-
-            /* Tablas con scroll horizontal */
-            .tab-content, .table-responsive {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-
-            table {
-                min-width: 600px;
-                font-size: 12px;
-            }
-
-            table th, table td {
-                padding: 6px !important;
-                white-space: nowrap;
-            }
-
-            /* Subtabs responsive */
-            .subtabs-container {
-                flex-wrap: wrap !important;
-                gap: 8px !important;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-                padding-bottom: 10px;
-            }
-
-            .subtab-btn {
-                padding: 8px 12px !important;
-                font-size: 12px !important;
-                min-width: auto !important;
-                flex-shrink: 0;
-            }
-
-            /* Botones móvil */
-            .btn-agregar, .btn-primary, .btn-secondary, .btn-warning {
-                padding: 10px 12px !important;
-                font-size: 12px !important;
-                width: 100% !important;
-                margin-bottom: 8px !important;
-            }
-
-            /* Modal móvil */
-            .modal-content {
-                width: 98% !important;
-                margin: 10px !important;
-                padding: 15px !important;
-                max-height: 95vh;
-                overflow-y: auto;
-            }
-
-            .modal h2 {
-                font-size: 1.3em !important;
-            }
-
-            .form-group label {
-                font-size: 14px !important;
-            }
-
-            .form-group input, .form-group select, .form-group textarea {
-                padding: 10px !important;
-                font-size: 14px !important;
-            }
-
-            /* Dropdown de usuario móvil */
-            .dropdown-menu {
-                width: 100% !important;
-                left: 0 !important;
-                right: 0 !important;
-                position: fixed !important;
-                top: auto !important;
-                bottom: 0 !important;
-                border-radius: 15px 15px 0 0 !important;
-                max-height: 50vh;
-                overflow-y: auto;
-                box-shadow: 0 -4px 20px rgba(0,0,0,0.3) !important;
-            }
-
-            /* Selectores en gráficos móvil */
-            select {
-                width: 100% !important;
-                margin-bottom: 10px !important;
-                padding: 12px !important;
-                font-size: 14px !important;
-                text-align: center !important;
-            }
-
-            /* Mejorar alineación de controles en cards */
-            .dashboard-card > div[style*="display: flex"] {
-                justify-content: center !important;
-                align-items: center !important;
-                flex-wrap: wrap !important;
-                gap: 10px !important;
-            }
-
-            .dashboard-card select {
-                max-width: 200px !important;
-                margin: 0 auto !important;
-            }
-
-            /* Canvas de gráficos responsive */
-            canvas {
-                max-width: 100% !important;
-                height: auto !important;
-                margin: 0 auto !important;
-                display: block !important;
-            }
-
-            /* Forzar centrado de containers de canvas */
-            div[style*="min-height: 320px"] {
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                text-align: center !important;
-            }
-
-            /* Mejoras para gráficos en móvil */
-            .dashboard-card canvas {
-                min-height: 250px !important;
-                margin: 0 auto !important;
-                display: block !important;
-            }
-
-            /* Override inline styles para centrar canvas */
-            .dashboard-card > div[style*="position: relative"] {
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                text-align: center !important;
-            }
-
-            /* Touch targets más grandes */
-            button, .btn, .subtab-btn {
-                min-height: 44px !important;
-                touch-action: manipulation;
-            }
-
-            /* Mejorar legibilidad en móvil */
-            .section-header h2 {
-                font-size: 1.5em !important;
-            }
-        }
-
-        /* Mobile muy pequeño - 320px y abajo */
-        @media (max-width: 320px) {
-            .header {
-                padding: 10px 5px;
-            }
-
-            .logo-section {
-                order: -2;
-                width: 100%;
-                justify-content: center;
-            }
-
-            .navbar-tabs {
-                order: -1;
-                width: 100%;
-                justify-content: center;
-                flex-wrap: wrap;
-                gap: 8px;
-            }
-
-            .container {
-                padding: 10px 5px;
-            }
-
-            .dashboard-card {
-                min-height: 150px !important;
-                padding: 8px !important;
-            }
-
-            .dashboard-card .value {
-                font-size: 1.5em !important;
-            }
-
-            table {
-                font-size: 11px;
-            }
-
-            .modal-content {
-                width: 100% !important;
-                margin: 0 !important;
-                border-radius: 0 !important;
-                height: 100vh !important;
-                max-height: 100vh !important;
-            }
-        }
-
 
     </style>
 </head>
@@ -1327,52 +955,40 @@
                     </div>
 
                     <div id="rol-Administrador" class="subtab-content active">
-                    <div class="table-responsive">
                         <table style="width: 100%; border-collapse: collapse;">
                             <thead><tr style="background: #f5f5f5;"><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Nombre</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Email</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Sucursal</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Telefono</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Estado</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Acciones</th></tr></thead>
                             <tbody id="tbody-rol-Administrador"><tr><td colspan="6" style="text-align: center;">Sin usuarios</td></tr></tbody>
                         </table>
                     </div>
-                    </div>
                     <div id="rol-Operador" class="subtab-content">
-                        <div class="table-responsive">
-                            <table style="width: 100%; border-collapse: collapse;">
-                                <thead><tr style="background: #f5f5f5;"><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Nombre</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Email</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Sucursal</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Telefono</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Estado</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Acciones</th></tr></thead>
-                                <tbody id="tbody-rol-Operador"><tr><td colspan="6" style="text-align: center;">Sin usuarios</td></tr></tbody>
-                            </table>
-                        </div>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead><tr style="background: #f5f5f5;"><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Nombre</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Email</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Sucursal</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Telefono</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Estado</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Acciones</th></tr></thead>
+                            <tbody id="tbody-rol-Operador"><tr><td colspan="6" style="text-align: center;">Sin usuarios</td></tr></tbody>
+                        </table>
                     </div>
                     <div id="rol-Facturador" class="subtab-content">
-                        <div class="table-responsive">
-                            <table style="width: 100%; border-collapse: collapse;">
-                                <thead><tr style="background: #f5f5f5;"><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Nombre</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Email</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Sucursal</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Telefono</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Estado</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Acciones</th></tr></thead>
-                                <tbody id="tbody-rol-Facturador"><tr><td colspan="6" style="text-align: center;">Sin usuarios</td></tr></tbody>
-                            </table>
-                        </div>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead><tr style="background: #f5f5f5;"><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Nombre</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Email</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Sucursal</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Telefono</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Estado</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Acciones</th></tr></thead>
+                            <tbody id="tbody-rol-Facturador"><tr><td colspan="6" style="text-align: center;">Sin usuarios</td></tr></tbody>
+                        </table>
                     </div>
                     <div id="rol-Colorista" class="subtab-content">
-                        <div class="table-responsive">
-                            <table style="width: 100%; border-collapse: collapse;">
-                                <thead><tr style="background: #f5f5f5;"><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Nombre</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Email</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Sucursal</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Telefono</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Estado</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Acciones</th></tr></thead>
-                                <tbody id="tbody-rol-Colorista"><tr><td colspan="6" style="text-align: center;">Sin usuarios</td></tr></tbody>
-                            </table>
-                        </div>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead><tr style="background: #f5f5f5;"><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Nombre</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Email</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Sucursal</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Telefono</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Estado</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Acciones</th></tr></thead>
+                            <tbody id="tbody-rol-Colorista"><tr><td colspan="6" style="text-align: center;">Sin usuarios</td></tr></tbody>
+                        </table>
                     </div>
                     <div id="rol-Analista" class="subtab-content">
-                        <div class="table-responsive">
-                            <table style="width: 100%; border-collapse: collapse;">
-                                <thead><tr style="background: #f5f5f5;"><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Nombre</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Email</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Sucursal</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Telefono</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Estado</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Acciones</th></tr></thead>
-                                <tbody id="tbody-rol-Analista"><tr><td colspan="6" style="text-align: center;">Sin usuarios</td></tr></tbody>
-                            </table>
-                        </div>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead><tr style="background: #f5f5f5;"><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Nombre</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Email</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Sucursal</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Telefono</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Estado</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Acciones</th></tr></thead>
+                            <tbody id="tbody-rol-Analista"><tr><td colspan="6" style="text-align: center;">Sin usuarios</td></tr></tbody>
+                        </table>
                     </div>
                     <div id="rol-Contabilidad" class="subtab-content">
-                        <div class="table-responsive">
-                            <table style="width: 100%; border-collapse: collapse;">
-                                <thead><tr style="background: #f5f5f5;"><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Nombre</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Email</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Sucursal</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Telefono</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Estado</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Acciones</th></tr></thead>
-                                <tbody id="tbody-rol-Contabilidad"><tr><td colspan="6" style="text-align: center;">Sin usuarios</td></tr></tbody>
-                            </table>
-                        </div>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead><tr style="background: #f5f5f5;"><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Nombre</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Email</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Sucursal</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Telefono</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Estado</th><th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Acciones</th></tr></thead>
+                            <tbody id="tbody-rol-Contabilidad"><tr><td colspan="6" style="text-align: center;">Sin usuarios</td></tr></tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -1398,27 +1014,30 @@
                     </div>
                 </div>
 
-                <!-- Gráfica de Empleados por Sucursal (Ancho Completo) -->
-                <div class="dashboard-card" style="padding: 20px; min-height: 400px; display: flex; flex-direction: column; margin-top: 20px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                        <h3 style="margin: 0; flex-shrink: 0;">Empleados por Sucursal</h3>
-                        <select id="zonaEmpleadosSelector" onchange="updateEmpleadosPorSucursalChart()" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; background: white; font-size: 14px;">
-                            <option value="Santo_Domingo">Santo Domingo</option>
-                            <option value="Zona_Este">Zona Este</option>
-                            <option value="Zona_Norte">Zona Norte</option>
-                            <option value="Zona_Sur">Zona Sur</option>
-                        </select>
+                <!-- Gráficas -->
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                    <!-- Gráfica de Empleados por Sucursal -->
+                    <div class="dashboard-card" style="padding: 20px; min-height: 400px; display: flex; flex-direction: column;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <h3 style="margin: 0; flex-shrink: 0;">Empleados por Sucursal</h3>
+                            <select id="zonaEmpleadosSelector" onchange="updateEmpleadosPorSucursalChart()" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; background: white; font-size: 14px;">
+                                <option value="Santo_Domingo">Santo Domingo</option>
+                                <option value="Zona_Este">Zona Este</option>
+                                <option value="Zona_Norte">Zona Norte</option>
+                                <option value="Zona_Sur">Zona Sur</option>
+                            </select>
+                        </div>
+                        <div style="flex-grow: 1; position: relative; min-height: 320px;">
+                            <canvas id="empleadosPorSucursalChart"></canvas>
+                        </div>
                     </div>
-                    <div style="flex-grow: 1; position: relative; min-height: 320px;">
-                        <canvas id="empleadosPorSucursalChart"></canvas>
-                    </div>
-                </div>
 
-                <!-- Gráfica de Distribución por Rol (Ancho Completo) -->
-                <div class="dashboard-card" style="padding: 20px; min-height: 400px; display: flex; flex-direction: column; margin-top: 20px;">
-                    <h3 style="margin-bottom: 15px; flex-shrink: 0;">Distribución por Rol</h3>
-                    <div style="flex-grow: 1; position: relative; min-height: 320px;">
-                        <canvas id="usuariosPorRolChart"></canvas>
+                    <!-- Gráfica de Rol de Usuarios -->
+                    <div class="dashboard-card" style="padding: 20px; min-height: 400px; display: flex; flex-direction: column;">
+                        <h3 style="margin-bottom: 15px; flex-shrink: 0;">Distribución por Rol</h3>
+                        <div style="flex-grow: 1; position: relative; min-height: 320px;">
+                            <canvas id="usuariosPorRolChart"></canvas>
+                        </div>
                     </div>
                 </div>
 
@@ -1442,22 +1061,20 @@
                 <div class="dashboard-card" style="padding: 20px; min-height: 400px; display: flex; flex-direction: column; margin-top: 20px;">
                     <h3 style="margin-bottom: 15px; flex-shrink: 0;">Últimos Logins</h3>
                     <div style="flex-grow: 1; position: relative; min-height: 320px; overflow-y: auto;">
-                        <div class="table-responsive">
-                            <table style="width: 100%; border-collapse: collapse;">
-                                <thead>
-                                    <tr style="background: #f5f5f5; position: sticky; top: 0;">
-                                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: 700;">Usuario</th>
-                                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: 700;">Nombre Completo</th>
-                                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: 700;">Rol</th>
-                                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: 700;">Sucursal</th>
-                                        <th style="padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: 700;">Hora Login</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="loginActivityTableBody">
-                                    <tr><td colspan="5" style="text-align: center; padding: 20px;">Cargando...</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: #f5f5f5; position: sticky; top: 0;">
+                                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: 700;">Usuario</th>
+                                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: 700;">Nombre Completo</th>
+                                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: 700;">Rol</th>
+                                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: 700;">Sucursal</th>
+                                    <th style="padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: 700;">Hora Login</th>
+                                </tr>
+                            </thead>
+                            <tbody id="loginActivityTableBody">
+                                <tr><td colspan="5" style="text-align: center; padding: 20px;">Cargando...</td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -1477,36 +1094,28 @@
                     </div>
 
                     <div id="Santo_Domingo" class="subtab-content active">
-                        <div class="table-responsive">
-                            <table>
-                                <thead><tr><th>Nombre</th><th>Zona</th><th>Direccion</th><th>Telefono</th><th>Estado</th><th>Acciones</th></tr></thead>
-                                <tbody id="tbody-Santo_Domingo"><tr><td colspan="5" style="text-align: center;">Cargando...</td></tr></tbody>
-                            </table>
-                        </div>
+                        <table>
+                            <thead><tr><th>Nombre</th><th>Zona</th><th>Direccion</th><th>Telefono</th><th>Estado</th><th>Acciones</th></tr></thead>
+                            <tbody id="tbody-Santo_Domingo"><tr><td colspan="5" style="text-align: center;">Cargando...</td></tr></tbody>
+                        </table>
                     </div>
                     <div id="Zona_Este" class="subtab-content">
-                        <div class="table-responsive">
-                            <table>
-                                <thead><tr><th>Nombre</th><th>Zona</th><th>Direccion</th><th>Telefono</th><th>Estado</th><th>Acciones</th></tr></thead>
-                                <tbody id="tbody-Zona_Este"><tr><td colspan="5" style="text-align: center;">Cargando...</td></tr></tbody>
-                            </table>
-                        </div>
+                        <table>
+                            <thead><tr><th>Nombre</th><th>Zona</th><th>Direccion</th><th>Telefono</th><th>Estado</th><th>Acciones</th></tr></thead>
+                            <tbody id="tbody-Zona_Este"><tr><td colspan="5" style="text-align: center;">Cargando...</td></tr></tbody>
+                        </table>
                     </div>
                     <div id="Zona_Norte" class="subtab-content">
-                        <div class="table-responsive">
-                            <table>
-                                <thead><tr><th>Nombre</th><th>Zona</th><th>Direccion</th><th>Telefono</th><th>Estado</th><th>Acciones</th></tr></thead>
-                                <tbody id="tbody-Zona_Norte"><tr><td colspan="5" style="text-align: center;">Cargando...</td></tr></tbody>
-                            </table>
-                        </div>
+                        <table>
+                            <thead><tr><th>Nombre</th><th>Zona</th><th>Direccion</th><th>Telefono</th><th>Estado</th><th>Acciones</th></tr></thead>
+                            <tbody id="tbody-Zona_Norte"><tr><td colspan="5" style="text-align: center;">Cargando...</td></tr></tbody>
+                        </table>
                     </div>
                     <div id="Zona_Sur" class="subtab-content">
-                        <div class="table-responsive">
-                            <table>
-                                <thead><tr><th>Nombre</th><th>Zona</th><th>Direccion</th><th>Telefono</th><th>Estado</th><th>Acciones</th></tr></thead>
-                                <tbody id="tbody-Zona_Sur"><tr><td colspan="5" style="text-align: center;">Cargando...</td></tr></tbody>
-                            </table>
-                        </div>
+                        <table>
+                            <thead><tr><th>Nombre</th><th>Zona</th><th>Direccion</th><th>Telefono</th><th>Estado</th><th>Acciones</th></tr></thead>
+                            <tbody id="tbody-Zona_Sur"><tr><td colspan="5" style="text-align: center;">Cargando...</td></tr></tbody>
+                        </table>
                     </div>
         
 

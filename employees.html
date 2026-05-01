@@ -1685,8 +1685,8 @@
                     <td>${empleado.posicion}</td>
                     <td><span class="status-badge ${empleado.activo ? 'active' : 'inactive'}">${empleado.activo ? 'Activo' : 'Inactivo'}</span></td>
                     <td>
-                        <button class="btn-action btn-edit" onclick="editarEmpleado(${empleado.id_empleado})">Editar</button>
-                        <button class="btn-action btn-delete" onclick="confirmarEliminacion(${empleado.id_empleado})">×</button>
+                        <button class="btn-action btn-edit" onclick="editarEmpleado(${empleado.id})">Editar</button>
+                        <button class="btn-action" onclick="toggleEstadoEmpleado(${empleado.id}, ${!empleado.activo})" style="background: ${empleado.activo ? '#f57c00' : '#4CAF50'}; color: white;">${empleado.activo ? 'Inhabilitar' : 'Habilitar'}</button>
                     </td>
                 `;
                 tbody.appendChild(tr);

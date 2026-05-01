@@ -635,6 +635,32 @@ async def toggle_usuario_estado(usuario_id: int, activo: bool, db=Depends(get_db
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.patch("/api/v1/empleados/{empleado_id}")
+async def toggle_empleado_estado(empleado_id: int, request: Request, db=Depends(get_db)):
+    """Cambiar estado de empleado (activo/inactivo)"""
+    try:
+        # Obtener datos del body JSON
+        body = await request.json()
+        activo = body.get("activo")
+        
+        if activo is None:
+            raise HTTPException(status_code=400, detail="Se requiere el campo 'activo' en el body")
+        
+        cur = db.cursor()
+        
+        # Actualizar en coloristas
+        cur.execute("UPDATE coloristas SET activo = %s WHERE id = %s", (activo, empleado_id))
+        
+        if cur.rowcount == 0:
+            raise HTTPException(status_code=404, detail="Empleado no encontrado")
+            
+        db.commit()
+        return {"id": empleado_id, "activo": activo, "message": "Estado del empleado actualizado"}
+        
+    except Exception as e:
+        logger.error(f"Error updating empleado estado: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 
 # ============================================================
